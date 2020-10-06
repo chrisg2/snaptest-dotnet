@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SnapTest.NUnit.Tests
 {
-    public class SnapshotBuilderBase
+    public class SnapshotBuilderTest
     {
         [Test]
         public void Does_MatchSnapshot_can_be_used_with_builder()
