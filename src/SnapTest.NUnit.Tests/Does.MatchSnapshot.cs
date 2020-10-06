@@ -67,7 +67,8 @@ namespace SnapTest.NUnit.Tests
         {
             yield return new object[]{ "null", null, };
             yield return new object[]{ "simple_string", "simple string" };
-            yield return new object[]{ "non-ANSI_string", "Non-ANSI string ¤¥£¢©۝" };
+            yield return new object[]{ "non-ANSI_chars_¤¥£¢©۝", "Non-ANSI string ¤¥£¢©۝" };
+            yield return new object[]{ "special_chars_!@#$%^&*()_+-=[]\\{}|;':\",./<>?", "Special characters !@#$%^&*()_+-=[]\\{}|;':\",./<>?" };
             yield return new object[]{ "integer", 42 };
             yield return new object[]{ "anonymous_object", new { aItem = "string", bItem = new { b1Item = 5 } } };
             yield return new object[]{ "guid", System.Guid.Parse("{81d130d2-802f-4cf1-d376-63edeb730e9f}") };

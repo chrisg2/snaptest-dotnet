@@ -17,6 +17,6 @@ namespace SnapTest.Middleware
         public string Extension { get; set; } = ".snapshot";
 
         public string GetSnapshotFilePath(string testName)
-            => System.IO.Path.Combine(SnapshotDirectory, testName + Extension);
+            => System.IO.Path.Combine(SnapshotDirectory, (testName + Extension).Replace('/','_').Replace('\\', '_'));
     }
 }

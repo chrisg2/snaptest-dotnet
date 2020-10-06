@@ -11,6 +11,22 @@ This library has been inspired by:
 
 Treat this as experimental status. This means (amongst other things) that the interfaces and classes exposed from the SnapTest namespace are subject to change. If you are interested in using this library and the potential for changes is problematic for you then get in touch and we can discuss.
 
+# Points to document
+
+## Default snapshot file naming
+
+### NUnit
+
+By default snapshot files are placed in `<Directory containing test source file>/_snapshots/<Test class name>.<Test name>.snapshot`.
+
+Any `/` or `\` characters in the filename are replaced with `_` (to avoid the characters being treated as a directory separator character on various operating systems).
+
+TIP: It is possible that the same default snapshot filename selected for multiple tests may be the same. To avoid this, consider explicitly setting the test name. For example:
+
+```C#
+Assert.That(actualValue, Does.MatchSnapshot(nameof(MyTestClass) + ".Overridden_test_name_that_is_unique"));
+```
+
 # Things to be done
 
 1. Add unit tests for FileStorageReadingMiddleware, SnapshotBuilder
