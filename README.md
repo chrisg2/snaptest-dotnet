@@ -19,7 +19,7 @@ Treat this as experimental status. This means (amongst other things) that the in
 
 By default snapshot files are placed in `<Directory containing test source file>/_snapshots/<Test class name>.<Test name>.snapshot`.
 
-Any `/` or `\` characters in the filename are replaced with `_` (to avoid the characters being treated as a directory separator character on various operating systems).
+Any of the following special characters in the filename are replaced with `_` to avoid using filenames which are not possible to have on filesystems with both Windows and UNIX-like operating systems: `/|:*?\"<>`
 
 TIP: It is possible that the same default snapshot filename selected for multiple tests may be the same. To avoid this, consider explicitly setting the test name. For example:
 
