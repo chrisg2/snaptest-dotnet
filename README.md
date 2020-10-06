@@ -1,4 +1,4 @@
-!snaptest-dotnet
+# snaptest-dotnet
 
 This is snaptest-dotnet, a tool to enable effective snapshot testing with .NET Core and .NET Framework.
 
