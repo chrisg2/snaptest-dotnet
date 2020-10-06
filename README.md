@@ -17,7 +17,25 @@ Treat this as experimental status. This means (amongst other things) that the in
 
 ### NUnit
 
-By default snapshot files are placed in `<Directory containing test source file>/_snapshots/<Test class name>.<Test name>.snapshot`.
+By default snapshot files are placed in `<Test source file directory path>/_snapshots/<Test class name>.<Test name>.snapshot`.
+
+The components used to construct the full snapshot file path can be individually specified as follows:
+
+```C#
+var builder = new SnapshotBuilder()
+    .WithFileStorageOptions(_ => _.SnapshotDirectory = @"C:\MyPath")
+    .WithFileStorageOptions(_ => _.Extension = ".txt")
+;
+
+Assert.That("actual output", Does.MatchSnapshot("filename", builder));
+```
+
+With the above settings the full path of snapshot file used by `Does.MatchSnapshot` will be `C:\MyPath\filename.txt`.
+
+To override the directory name `_snapshots` that is appended by default to the source file directory path (that is, when the `SnapshotDirectory` file storage option has not be explicitly set), set the `SnapshotBuilder.SnapshotDirectoryTail` property:
+```C#
+var builder = new SnapshotBuilder() { SnapshotDirectoryTail = ".snapshots" };
+```
 
 Any of the following special characters in the filename are replaced with `_` to avoid using filenames which are not possible to have on filesystems with both Windows and UNIX-like operating systems: `/|:*?\"<>`
 
@@ -29,12 +47,16 @@ Assert.That(actualValue, Does.MatchSnapshot(nameof(MyTestClass) + ".Overridden_t
 
 # Things to be done
 
-1. Add unit tests for FileStorageReadingMiddleware, SnapshotBuilder
+1. Add unit tests for FileStorageReadingMiddleware, SnapshotBuilderBase
 
 1. Add filtering middleware
-
-1. Add XML comments for all public interfaces
 
 1. Put strings into resx files
 
 1. Look at other projects to check for other interesting capabilities/ideas
+
+1. Add SnapTest interfaces for Xunit and MSTest
+
+1. Add XML comments for all public interfaces
+
+1. Documentation
