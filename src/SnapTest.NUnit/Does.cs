@@ -14,23 +14,23 @@ namespace SnapTest.NUnit
         /// <summary>
         /// Returns a constraint that tests an object value matches a snapshot.
         /// </summary>
-        public static SnapshotConstraint MatchSnapshot(string testName = null, SnapshotBuilder snapshotBuilder = null)
+        public static SnapshotConstraint MatchSnapshot(string testName = null, SnapshotBuilderBase snapshotBuilder = null)
             => new SnapshotConstraint(testName, snapshotBuilder);
 
-        public static SnapshotConstraint MatchSnapshot(SnapshotBuilder snapshotBuilder)
+        public static SnapshotConstraint MatchSnapshot(SnapshotBuilderBase snapshotBuilder)
             => new SnapshotConstraint(null, snapshotBuilder);
     }
 
     public static class SnapshotConstraintExtensions
     {
-        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string testName = null, SnapshotBuilder snapshotBuilder = null)
+        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string testName = null, SnapshotBuilderBase snapshotBuilder = null)
         {
             var constraint = new SnapshotConstraint(testName, snapshotBuilder);
             expression.Append(constraint);
             return constraint;
         }
 
-        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotBuilder snapshotBuilder)
+        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotBuilderBase snapshotBuilder)
             => MatchSnapshot(null, snapshotBuilder);
     }
 }

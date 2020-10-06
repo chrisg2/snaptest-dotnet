@@ -8,7 +8,7 @@ namespace SnapTest
 {
     /// <summary>
     /// </summary>
-    public class SnapshotBuilder: SnapshotMiddlewarePipeline
+    public class SnapshotBuilderBase: SnapshotMiddlewarePipeline
     {
         #region Static and instance fields
         private List<Action<FileStorageOptions>> _fileStorageOptionBuilders = new List<Action<FileStorageOptions>>();
@@ -30,7 +30,7 @@ namespace SnapTest
             return options;
         }
 
-        public SnapshotBuilder WithFileStorageOptions(Action<FileStorageOptions> action)
+        public SnapshotBuilderBase WithFileStorageOptions(Action<FileStorageOptions> action)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -39,7 +39,7 @@ namespace SnapTest
             return this;
         }
 
-        public SnapshotBuilder WithJsonOptions(Action<JsonSerializerOptions> action)
+        public SnapshotBuilderBase WithJsonOptions(Action<JsonSerializerOptions> action)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -77,25 +77,25 @@ namespace SnapTest
         #endregion
 
         #region Overrides/New'ed methods
-        public new SnapshotBuilder Use(ISnapshotMiddleware middleware)
+        public new SnapshotBuilderBase Use(ISnapshotMiddleware middleware)
         {
             base.Use(middleware);
             return this;
         }
 
-        public new SnapshotBuilder Use<T>(Action<T> initializer = null) where T : ISnapshotMiddleware, new()
+        public new SnapshotBuilderBase Use<T>(Action<T> initializer = null) where T : ISnapshotMiddleware, new()
         {
             base.Use<T>(initializer);
             return this;
         }
 
-        public new SnapshotBuilder Use(Func<SnapshotContext, bool> process)
+        public new SnapshotBuilderBase Use(Func<SnapshotContext, bool> process)
         {
             base.Use(process);
             return this;
         }
 
-        public new SnapshotBuilder Use(Action<SnapshotContext> process)
+        public new SnapshotBuilderBase Use(Action<SnapshotContext> process)
         {
             base.Use(process);
             return this;

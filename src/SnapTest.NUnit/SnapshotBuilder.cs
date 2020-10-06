@@ -11,9 +11,9 @@ namespace SnapTest.NUnit
 {
     /// <summary>
     /// </summary>
-    public class NUnitSnapshotBuilder: SnapshotBuilder
+    public class SnapshotBuilder: SnapshotBuilderBase
     {
-        public NUnitSnapshotBuilder()
+        public SnapshotBuilder()
         {
             WithFileStorageOptions(_ => _.SnapshotDirectory = GetSnapshotDirectoryFromStackTrace());
         }

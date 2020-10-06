@@ -10,7 +10,7 @@ namespace SnapTest.Tests
     /// Care should be taken to dispose TempFileSnapshotBuilder objects once they are no longer needed to ensure
     /// that temporary files they create get deleted from the filesystem.
     /// </remarks>
-    public class TempFileSnapshotBuilder : SnapshotBuilder, IDisposable
+    public class TempFileSnapshotBuilder : SnapshotBuilderBase, IDisposable
     {
         public readonly string SnapshotFileName = Path.GetTempFileName();
 

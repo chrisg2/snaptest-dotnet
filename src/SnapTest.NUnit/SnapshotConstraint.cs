@@ -14,17 +14,17 @@ namespace SnapTest.NUnit
         /// </summary>
         private string _testName;
 
-        private SnapshotBuilder _snapshotBuilder;
+        private SnapshotBuilderBase _snapshotBuilder;
         #endregion
 
         #region Constructors
-        public SnapshotConstraint(string testName = null, SnapshotBuilder snapshotBuilder = null)
+        public SnapshotConstraint(string testName = null, SnapshotBuilderBase snapshotBuilder = null)
         {
             _testName = testName;
-            _snapshotBuilder = snapshotBuilder ?? new NUnitSnapshotBuilder();
+            _snapshotBuilder = snapshotBuilder ?? new SnapshotBuilder();
         }
 
-        public SnapshotConstraint(SnapshotBuilder snapshotBuilder) : this(null, snapshotBuilder) { }
+        public SnapshotConstraint(SnapshotBuilderBase snapshotBuilder) : this(null, snapshotBuilder) { }
         #endregion
 
         #region Properties
