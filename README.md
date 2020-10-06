@@ -1,5 +1,7 @@
 # snaptest-dotnet
 
+![.NET Core](https://github.com/chrisg2/snaptest-dotnet/workflows/.NET%20Core/badge.svg)
+
 This is snaptest-dotnet, a tool to enable effective snapshot testing with .NET Core and .NET Framework.
 
 This library has been inspired by:
