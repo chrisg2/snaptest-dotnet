@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace SnapTest.Middleware
 {
     public class FileStorageOptions
@@ -16,7 +18,9 @@ namespace SnapTest.Middleware
         /// </summary>
         public string Extension { get; set; } = ".snapshot";
 
+        private static readonly Regex badFilenameCharacters = new Regex(@"[/|:*?\\\""<>]");
+
         public string GetSnapshotFilePath(string testName)
-            => System.IO.Path.Combine(SnapshotDirectory, (testName + Extension).Replace('/','_').Replace('\\', '_'));
+            => System.IO.Path.Combine(SnapshotDirectory, badFilenameCharacters.Replace(testName + Extension, "_"));
     }
 }
