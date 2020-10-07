@@ -31,6 +31,6 @@ namespace SnapTest.NUnit
         }
 
         public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotBuilderBase snapshotBuilder)
-            => MatchSnapshot(null, snapshotBuilder);
+            => expression.MatchSnapshot(null, snapshotBuilder);
     }
 }
