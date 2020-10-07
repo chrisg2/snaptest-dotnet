@@ -14,9 +14,7 @@ namespace SnapTest.Middleware
             string fullFilePath = Options.GetSnapshotFilePath(context.TestName);
 
             // Determine whether the actual result should be saved to the snapshot
-            bool shouldSaveSnapshot = ok && (Options.ForceSnapshotRefresh || (Options.CreateMissingSnapshots && !File.Exists(fullFilePath)));
-
-            if (shouldSaveSnapshot) {
+            if (ok && (Options.ForceSnapshotRefresh || (Options.CreateMissingSnapshots && !File.Exists(fullFilePath)))) {
                 if (!(context.Actual is string)) {
                     throw new NotImplementedException(
                         "The snapshot middleware pipeline has produced a " +
