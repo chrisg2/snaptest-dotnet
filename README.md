@@ -47,7 +47,9 @@ Assert.That(actualValue, Does.MatchSnapshot(nameof(MyTestClass) + ".Overridden_t
 
 # Things to be done
 
-1. Add unit tests for FileStorageReadingMiddleware, SnapshotBuilderBase
+1. Consider renaming Snapshot.CompareTo to Snapshot.ExecutePipeline or similar
+
+1. Add unit tests for SnapshotBuilderBase
 
 1. Add filtering middleware
 
