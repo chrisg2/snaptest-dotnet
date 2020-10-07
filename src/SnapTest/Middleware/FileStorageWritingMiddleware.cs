@@ -29,13 +29,13 @@ namespace SnapTest.Middleware
                 if (!System.IO.Directory.Exists(fullDirectory))
                     System.IO.Directory.CreateDirectory(fullDirectory);
 
-                context.Message($"Creating new snapshot file at {fullFilePath}");
+                File.WriteAllText(fullFilePath, context.Actual.ToString());
+
+                context.Message($"Created or refreshed snapshot file at {fullFilePath}");
                 if (!shownReviewTip) { // Show this tip once per process execution
                     shownReviewTip = true;
                     context.Message("===> Tip: Review the content of newly created snapshot files to ensure they reflect expected output.");
                 }
-
-                File.WriteAllText(fullFilePath, context.Actual.ToString());
             }
 
             return ok;
