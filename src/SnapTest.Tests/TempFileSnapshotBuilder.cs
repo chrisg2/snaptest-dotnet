@@ -30,8 +30,14 @@ namespace SnapTest.Tests
             });
         }
 
-        public bool BuildAndCompareTo(object actual)
-            => Build().CompareTo(actual, new SnapshotContext() { TestName = TestName });
+        public bool BuildAndCompareTo(object actual, SnapshotContext context = null)
+        {
+            if (context == null)
+                context = new SnapshotContext();
+
+            context.TestName = TestName;
+            return Build().CompareTo(actual, context);
+        }
 
         public void EnsureSnapshotFileIsDeleted()
         {
