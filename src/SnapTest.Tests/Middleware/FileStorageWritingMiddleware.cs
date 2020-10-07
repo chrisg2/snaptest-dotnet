@@ -22,12 +22,17 @@ namespace SnapTest.Tests
             builder.WithFileStorageOptions(_ => _.ForceSnapshotRefresh = forceSnapshotRefresh);
 
             builder.UseFileStorageWritingMiddleware();
-            builder.BuildAndCompareTo(actualValue);
 
-            if (!createMissingSnapshots && !forceSnapshotRefresh)
+            var context = new SnapshotContextMock();
+            bool result = builder.BuildAndCompareTo(actualValue, context);
+
+            Assert.That(result, Is.True, "Snapshot middleware pipeline returned unexpected value");
+            if (!createMissingSnapshots && !forceSnapshotRefresh) {
                 Assert.That(builder.SnapshotFileName, Does.Not.Exist, "Snapshot file created unexpectedly");
-            else {
+                Assert.That(context.MessageCalled, Is.False, "SnapshotContext.Message was called unexpectedly");
+            } else {
                 Assert.That(builder.SnapshotFileName, Does.Exist, "Snapshot file not created");
+                Assert.That(context.MessageCalled, Is.True, "SnapshotContext.Message was not called as expected");
                 Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo(actualValue), "Bad snapshot file contents");
             }
         }
@@ -54,10 +59,13 @@ namespace SnapTest.Tests
 
             // Do a snapshot comparison with CreateMissingSnapshots and ForceSnapshotRefresh parameters as specified
             builder.UseFileStorageWritingMiddleware();
-            builder.BuildAndCompareTo(updatedValue);
+
+            var context = new SnapshotContextMock();
+            builder.BuildAndCompareTo(updatedValue, context);
 
             // Verify outcomes
-            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo(forceSnapshotRefresh ? updatedValue : originalValue));
+            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo(forceSnapshotRefresh ? updatedValue : originalValue), "Snapshot file contents don't match expected value");
+            Assert.That(context.MessageCalled, Is.EqualTo(forceSnapshotRefresh), "SnapshotContext.Message was not called as expected");
         }
 
         [Test]
@@ -88,6 +96,12 @@ namespace SnapTest.Tests
             builder.UseFileStorageWritingMiddleware();
             Assert.Throws<NotImplementedException>(() => builder.BuildAndCompareTo(actualValue));
             Assert.That(builder.SnapshotFileName, Does.Not.Exist);
+        }
+
+        private class SnapshotContextMock: SnapshotContext
+        {
+            public bool MessageCalled = false;
+            public override void Message(string message) { MessageCalled = true; }
         }
    }
 }
