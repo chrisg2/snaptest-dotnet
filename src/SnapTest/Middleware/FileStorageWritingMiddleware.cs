@@ -56,7 +56,7 @@ namespace SnapTest.Middleware
             if (!System.IO.Directory.Exists(fullDirectory))
                 System.IO.Directory.CreateDirectory(fullDirectory);
 
-            File.WriteAllText(filePath, value.ToString());
+            File.WriteAllText(filePath, value.ToString()+Environment.NewLine);
         }
     }
 }

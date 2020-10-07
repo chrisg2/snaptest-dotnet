@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace SnapTest.Middleware
@@ -13,11 +14,18 @@ namespace SnapTest.Middleware
 
             string fullFilePath = Options.GetSnapshotFilePath(context.TestName);
 
-            if (File.Exists(fullFilePath) && !Options.ForceSnapshotRefresh)
-                context.Expected = File.ReadAllText(fullFilePath);
-            else if (Options.CreateMissingSnapshots || Options.ForceSnapshotRefresh)
+            if (File.Exists(fullFilePath) && !Options.ForceSnapshotRefresh) {
+                string expected = File.ReadAllText(fullFilePath);
+
+                // Trim trailing new line if it exists
+                context.Expected = (
+                    expected.EndsWith(Environment.NewLine)
+                    ? expected.Substring(0, expected.Length - Environment.NewLine.Length)
+                    : expected
+                );
+            } else if (Options.CreateMissingSnapshots || Options.ForceSnapshotRefresh) {
                 context.Expected = context.Actual;
-            else {
+            } else {
                 context.Message($"WARNING: Test result snapshot file does not exist: {fullFilePath}");
 
                 if (!shownRerunTip) {

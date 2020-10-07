@@ -25,7 +25,7 @@ namespace SnapTest.Tests
             string actualValue = $"actual value: {Guid.NewGuid().ToString()}";
 
             if (createFileForTest)
-                File.WriteAllText(builder.SnapshotFileName, fileContent);
+                File.WriteAllText(builder.SnapshotFileName, fileContent + Environment.NewLine);
 
             builder.WithFileStorageOptions(_ => {
                 _.CreateMissingSnapshots = createMissingSnapshots;

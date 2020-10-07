@@ -23,7 +23,7 @@ namespace SnapTest.Tests
         )
         {
             if (startingSnapshotFileContent != null)
-                File.WriteAllText(builder.SnapshotFileName, startingSnapshotFileContent);
+                File.WriteAllText(builder.SnapshotFileName, startingSnapshotFileContent + Environment.NewLine);
             else
                 Assume.That(builder.SnapshotFileName, Does.Not.Exist);
 
@@ -72,7 +72,7 @@ namespace SnapTest.Tests
             var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
             Assert.That(
                 File.ReadAllText(builder.SnapshotFileName),
-                Is.EqualTo(forceSnapshotRefresh || startingSnapshotFileContent == null ? context.Actual : startingSnapshotFileContent)
+                Is.EqualTo((forceSnapshotRefresh || startingSnapshotFileContent == null ? context.Actual : startingSnapshotFileContent) + Environment.NewLine)
             );
         }
 
@@ -95,7 +95,7 @@ namespace SnapTest.Tests
 
             using var builder = new TempFileSnapshotBuilder();
             var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
-            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo(context.Actual));
+            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo(context.Actual + Environment.NewLine));
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace SnapTest.Tests
             builder.BuildAndCompareTo("actual value");
 
             Assert.That(builder.SnapshotFileName, Does.Not.Exist, "Snapshot file created unexpectedly");
-            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo("actual value"), "Snapshot mismatch actual file contents don't match expected value");
+            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo("actual value" + Environment.NewLine), "Snapshot mismatch actual file contents don't match expected value");
         }
 
         [TestCase(null)]

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace SnapTest.Tests
@@ -14,7 +15,7 @@ namespace SnapTest.Tests
             // Run snapshot to create snapshot file based on actualValue and check results
             builder.WithFileStorageOptions(_ => _.ForceSnapshotRefresh = true);
             Assert.That(builder.BuildAndCompareTo(actualValue), Is.True);
-            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo(expectedSnapshottedString), "Snapshot file created with unexpected content");
+            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo(expectedSnapshottedString + Environment.NewLine), "Snapshot file created with unexpected content");
             Assert.That(builder.MismatchedActualSnapshotFileName, Does.Not.Exist);
         }
 
@@ -24,7 +25,7 @@ namespace SnapTest.Tests
             using var builder = new TempFileSnapshotBuilder();
             Assume.That(builder.SnapshotFileName, Does.Not.Exist);
 
-            File.WriteAllText(builder.SnapshotFileName, expectedSnapshottedString);
+            File.WriteAllText(builder.SnapshotFileName, expectedSnapshottedString + Environment.NewLine);
 
             // Run snapshot to compare to snapshot file created above and check results
             Assert.That(builder.BuildAndCompareTo(actualValue), Is.True);
@@ -36,7 +37,7 @@ namespace SnapTest.Tests
         {
             using var builder = new TempFileSnapshotBuilder();
             Assert.That(builder.BuildAndCompareTo(actualValue), Is.False);
-            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo(expectedSnapshottedString), "Snapshot mismatched actual file created with unexpected content");
+            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo(expectedSnapshottedString + Environment.NewLine));
         }
 
         public static System.Collections.Generic.IEnumerable<object[]> SnapshotTestCases()
@@ -44,9 +45,10 @@ namespace SnapTest.Tests
             yield return new object[]{ null, "null" };
             yield return new object[]{ "simple string", "simple string" };
             yield return new object[]{ "Non-ANSI string ¤¥£¢©۝", "Non-ANSI string ¤¥£¢©۝" };
+            yield return new object[]{ Environment.NewLine, Environment.NewLine };
             yield return new object[]{ 42, "42" };
-            yield return new object[]{ new { anItem = 42 }, "{\n  \"anItem\": 42\n}".Replace("\n", System.Environment.NewLine) };
-            yield return new object[]{ new { aItem = "string", bItem = new { b1Item = 5 } }, "{\n  \"aItem\": \"string\",\n  \"bItem\": {\n    \"b1Item\": 5\n  }\n}".Replace("\n", System.Environment.NewLine) };
+            yield return new object[]{ new { anItem = 42 }, "{\n  \"anItem\": 42\n}".Replace("\n", Environment.NewLine) };
+            yield return new object[]{ new { aItem = "string", bItem = new { b1Item = 5 } }, "{\n  \"aItem\": \"string\",\n  \"bItem\": {\n    \"b1Item\": 5\n  }\n}".Replace("\n", Environment.NewLine) };
 
             var guid = System.Guid.NewGuid();
             yield return new object[]{ guid, $"\"{guid.ToString()}\"" };

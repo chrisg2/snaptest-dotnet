@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.IO;
 
 using SnapTest.Middleware;
@@ -118,7 +119,7 @@ namespace SnapTest.Tests
 
             builder.BuildAndCompareTo("actual");
             Assert.That(builder.SnapshotFileName, Does.Exist);
-            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo("actual"));
+            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo("actual" + Environment.NewLine));
         }
 
         [Test]
@@ -132,7 +133,7 @@ namespace SnapTest.Tests
 
             pipeline.MiddlewarePipeline.Process(new SnapshotContext() { TestName = builder.TestName, Actual = "actual" });
             Assert.That(builder.SnapshotFileName, Does.Exist);
-            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo("actual"));
+            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo("actual" + Environment.NewLine));
         }
         #endregion
 
