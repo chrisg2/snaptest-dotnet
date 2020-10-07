@@ -5,13 +5,19 @@ using SnapTest.Middleware;
 
 namespace SnapTest.Tests
 {
+    // Simple non-abstract mock class desrived from SnapshotBuilderBase for testing
+    public class SnapshotBuilder : SnapshotBuilderBase
+    {
+        protected override bool IsTestMethod(System.Reflection.MethodBase method) => false;
+    }
+
     public class SnapshotBuilderBaseTest
     {
         #region Test With*Options methods can be called and have expected effect
         [Test]
         public void WithFileStorageOptions_is_effective()
         {
-            var b = new SnapshotBuilderBase();
+            var b = new SnapshotBuilder();
 
             var initialOptions = b.BuildFileStorageOptions();
 
@@ -22,8 +28,8 @@ namespace SnapTest.Tests
             var finalOptions = b.BuildFileStorageOptions();
 
             // Assume initial option state
-            Assume.That(initialOptions.SnapshotDirectory, Is.Null);
-            Assume.That(initialOptions.Extension, Is.EqualTo(".txt"));
+            Assume.That(initialOptions.SnapshotDirectory, Is.Not.EqualTo("dir"));
+            Assume.That(initialOptions.Extension, Is.Not.EqualTo(".snapshot"));
 
             // Assert final initial option state
             Assert.That(finalOptions.SnapshotDirectory, Is.EqualTo("dir"));
@@ -33,7 +39,7 @@ namespace SnapTest.Tests
         [Test]
         public void WithJsonOptions_is_effective()
         {
-            var b = new SnapshotBuilderBase();
+            var b = new SnapshotBuilder();
 
             var initialOptions = b.BuildJsonOptions();
 
@@ -57,7 +63,7 @@ namespace SnapTest.Tests
         [Test]
         public void Can_UseFileStorageReadingMiddleware()
         {
-            var builder = new SnapshotBuilderBase();
+            var builder = new SnapshotBuilder();
 
             builder.WithFileStorageOptions(_ => _.ForceSnapshotRefresh = true);
             builder.UseFileStorageReadingMiddleware();
@@ -69,7 +75,7 @@ namespace SnapTest.Tests
         [Test]
         public void Can_UseFileStorageReadingMiddleware_on_pipeline()
         {
-            var builder = new SnapshotBuilderBase();
+            var builder = new SnapshotBuilder();
             var pipeline = new SnapshotMiddlewarePipeline();
 
             builder.WithFileStorageOptions(_ => _.ForceSnapshotRefresh = true);
@@ -82,7 +88,7 @@ namespace SnapTest.Tests
         [Test]
         public void Can_UseJsonSerializerMiddlware()
         {
-            var builder = new SnapshotBuilderBase();
+            var builder = new SnapshotBuilder();
 
             builder.UseJsonSerializerMiddlware();
             builder.Use(_ => { Assert.That(_.Actual, Is.EqualTo("null")); return false; });
@@ -93,7 +99,7 @@ namespace SnapTest.Tests
         [Test]
         public void Can_UseJsonSerializerMiddlware_on_pipeline()
         {
-            var builder = new SnapshotBuilderBase();
+            var builder = new SnapshotBuilder();
             var pipeline = new SnapshotMiddlewarePipeline();
 
             builder.UseJsonSerializerMiddlware(pipeline);
@@ -138,21 +144,21 @@ namespace SnapTest.Tests
 
             ISnapshotMiddleware mw = new FunctionCallMiddleware(_ => { called = true; return false; });
 
-            Assert.That(new SnapshotBuilderBase().Use(mw).MiddlewarePipeline.Process(null), Is.False);
+            Assert.That(new SnapshotBuilder().Use(mw).MiddlewarePipeline.Process(null), Is.False);
             Assert.That(called, Is.True);
         }
 
         public void Can_Use_T_without_initializer()
         {
             var context = new SnapshotContext() { Actual = new { item = 42 } };
-            new SnapshotBuilderBase().Use<JsonSerializerMiddlware>().MiddlewarePipeline.Process(context);
+            new SnapshotBuilder().Use<JsonSerializerMiddlware>().MiddlewarePipeline.Process(context);
             Assert.That(context.Actual, Is.EqualTo("{\n  \"item\": 42\n}".Replace("\n", System.Environment.NewLine)));
         }
 
         public void Can_Use_T_with_initializer()
         {
             var context = new SnapshotContext() { Actual = new { item = 42 } };
-            new SnapshotBuilderBase().Use<JsonSerializerMiddlware>(_ => _.Options.WriteIndented = false).MiddlewarePipeline.Process(context);
+            new SnapshotBuilder().Use<JsonSerializerMiddlware>(_ => _.Options.WriteIndented = false).MiddlewarePipeline.Process(context);
             Assert.That(context.Actual, Is.EqualTo("{\"item\":42}"));
         }
 
@@ -160,7 +166,7 @@ namespace SnapTest.Tests
         public void Can_Use_Func()
         {
             bool called = false;
-            Assert.That(new SnapshotBuilderBase().Use(_ => { called = true; return false; }).MiddlewarePipeline.Process(null), Is.False);
+            Assert.That(new SnapshotBuilder().Use(_ => { called = true; return false; }).MiddlewarePipeline.Process(null), Is.False);
             Assert.That(called, Is.True);
         }
 
@@ -168,7 +174,7 @@ namespace SnapTest.Tests
         public void Can_Use_Action()
         {
             bool called = false;
-            Assert.That(new SnapshotBuilderBase().Use(_ => { called = true; }).MiddlewarePipeline.Process(null), Is.True);
+            Assert.That(new SnapshotBuilder().Use(_ => { called = true; }).MiddlewarePipeline.Process(null), Is.True);
             Assert.That(called, Is.True);
         }
         #endregion

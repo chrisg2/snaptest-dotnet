@@ -1,5 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 using SnapTest.Middleware;
@@ -8,11 +13,20 @@ namespace SnapTest
 {
     /// <summary>
     /// </summary>
-    public class SnapshotBuilderBase: SnapshotMiddlewarePipeline
+    public abstract class SnapshotBuilderBase: SnapshotMiddlewarePipeline
     {
         #region Static and instance fields
         private List<Action<FileStorageOptions>> _fileStorageOptionBuilders = new List<Action<FileStorageOptions>>();
         private List<Action<JsonSerializerOptions>> _jsonSerializerOptionBuilders = new List<Action<JsonSerializerOptions>>();
+        #endregion
+
+        #region Properties
+        public string SnapshotDirectoryTail = "_snapshots";
+        #endregion
+
+        #region Constructors
+        public SnapshotBuilderBase()
+            => WithFileStorageOptions(_ => _.SnapshotDirectory = GetSnapshotDirectoryFromStackTrace());
         #endregion
 
         #region Methods
@@ -74,6 +88,21 @@ namespace SnapTest
 
         public void UseFileStorageWritingMiddleware(SnapshotMiddlewarePipeline pipeline) => pipeline.Use<FileStorageWritingMiddleware>(_ => BuildFileStorageOptions(_.Options));
         public void UseFileStorageWritingMiddleware() => UseFileStorageWritingMiddleware(this);
+
+        protected string GetSnapshotDirectoryFromStackTrace()
+            => Path.Combine(
+                (
+                    from frame in new StackTrace(1, true).GetFrames()
+                    let method = frame.GetMethod()
+                    where method != null
+                    let syncMethod = (IsAsyncMethod(method) ? FindAsynchMethodBase(method) : method)
+                    where IsTestMethod(syncMethod)
+                    select Path.GetDirectoryName(frame.GetFileName())
+                ).FirstOrDefault() ?? string.Empty,
+                SnapshotDirectoryTail ?? string.Empty
+            );
+
+        protected abstract bool IsTestMethod(MethodBase method);
         #endregion
 
         #region Overrides/New'ed methods
@@ -108,6 +137,25 @@ namespace SnapTest
 
         protected void BuildJsonOptions(JsonSerializerOptions options)
             => _jsonSerializerOptionBuilders.ForEach(_ => _(options));
+
+        private static bool IsAsyncMethod(MemberInfo method)
+            => typeof(IAsyncStateMachine).IsAssignableFrom(method.DeclaringType);
+
+        private static MethodBase FindAsynchMethodBase(MemberInfo method)
+        {
+            Type methodDeclaringType = method.DeclaringType;
+            Type classDeclaringType = methodDeclaringType?.DeclaringType;
+
+            if (classDeclaringType == null)
+                return null;
+
+            return (
+                from methodInfo in classDeclaringType.GetMethods()
+                let stateMachineAttribute = methodInfo.GetCustomAttribute<AsyncStateMachineAttribute>()
+                where stateMachineAttribute != null && stateMachineAttribute.StateMachineType == methodDeclaringType
+                select methodInfo
+            ).SingleOrDefault();
+        }
         #endregion
    }
 }

@@ -45,7 +45,8 @@ namespace SnapTest.Tests
                 File.Delete(SnapshotFileName);
         }
 
-        void IDisposable.Dispose()
-            => EnsureSnapshotFileIsDeleted();
+        protected override bool IsTestMethod(System.Reflection.MethodBase method) => false;
+
+        void IDisposable.Dispose() => EnsureSnapshotFileIsDeleted();
     }
 }
