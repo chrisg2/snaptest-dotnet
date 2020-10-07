@@ -6,11 +6,11 @@ namespace SnapTest.Tests
 {
     public class FileStorageWritingMiddlewareTest
     {
-        [TestCase(false, false, false)]
-        [TestCase(false, true, false)]
-        [TestCase(false, false, true)]
-        [TestCase(false, true, true)]
-        public void Snapshot_file_is_created_when_expected(bool snapshotExistsAtStart, bool createMissingSnapshots, bool forceSnapshotRefresh)
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(true, true)]
+        public void Snapshot_file_is_created_when_expected(bool createMissingSnapshots, bool forceSnapshotRefresh)
         {
             using var builder = new TempFileSnapshotBuilder();
 
