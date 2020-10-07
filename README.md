@@ -17,20 +17,20 @@ Treat this as experimental status. This means (amongst other things) that the in
 
 ### NUnit
 
-By default snapshot files are placed in `<Test source file directory path>/_snapshots/<Test class name>.<Test name>.snapshot`.
+By default snapshot files are placed in `<Test source file directory path>/_snapshots/<Test class name>.<Test name>.txt`.
 
 The components used to construct the full snapshot file path can be individually specified as follows:
 
 ```C#
 var builder = new SnapshotBuilder()
     .WithFileStorageOptions(_ => _.SnapshotDirectory = @"C:\MyPath")
-    .WithFileStorageOptions(_ => _.Extension = ".txt")
+    .WithFileStorageOptions(_ => _.Extension = ".snapshot")
 ;
 
 Assert.That("actual output", Does.MatchSnapshot("filename", builder));
 ```
 
-With the above settings the full path of snapshot file used by `Does.MatchSnapshot` will be `C:\MyPath\filename.txt`.
+With the above settings the full path of snapshot file used by `Does.MatchSnapshot` will be `C:\MyPath\filename.snapshot`.
 
 To override the directory name `_snapshots` that is appended by default to the source file directory path (that is, when the `SnapshotDirectory` file storage option has not be explicitly set), set the `SnapshotBuilder.SnapshotDirectoryTail` property:
 ```C#

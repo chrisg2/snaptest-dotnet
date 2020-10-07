@@ -16,7 +16,7 @@ namespace SnapTest.Middleware
         /// <summary>
         /// The extension to append as a suffix to snapshot filenames, including a ".".
         /// </summary>
-        public string Extension { get; set; } = ".snapshot";
+        public string Extension { get; set; } = ".txt";
 
         private static readonly Regex badFilenameCharacters = new Regex(@"[/|:*?\\\""<>]");
 
