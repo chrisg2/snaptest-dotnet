@@ -21,6 +21,6 @@ namespace SnapTest.Middleware
         private static readonly Regex badFilenameCharacters = new Regex(@"[/|:*?\\\""<>]");
 
         public string GetSnapshotFilePath(string testName)
-            => System.IO.Path.Combine(SnapshotDirectory, badFilenameCharacters.Replace(testName + Extension, "_"));
+            => System.IO.Path.Combine(SnapshotDirectory ?? string.Empty, badFilenameCharacters.Replace(testName + Extension, "_"));
     }
 }
