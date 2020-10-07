@@ -49,10 +49,10 @@ namespace SnapTest.NUnit
         {
             return
                 method != null && (
-                    (method.GetCustomAttributes(typeof(TestAttribute))?.Any() ?? false)
-                    || (method.GetCustomAttributes(typeof(TestCaseAttribute))?.Any() ?? false)
-                    || (method.GetCustomAttributes(typeof(TestCaseSourceAttribute))?.Any() ?? false)
-                    || (method.GetCustomAttributes(typeof(TheoryAttribute))?.Any() ?? false)
+                    method.GetCustomAttributes<TestAttribute>().Any()
+                    || method.GetCustomAttributes<TestCaseAttribute>().Any()
+                    || method.GetCustomAttributes<TestCaseSourceAttribute>().Any()
+                    || method.GetCustomAttributes<TheoryAttribute>().Any()
                 );
         }
 
