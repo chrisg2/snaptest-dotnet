@@ -49,8 +49,6 @@ Assert.That(actualValue, Does.MatchSnapshot(nameof(MyTestClass) + ".Overridden_t
 
 1. Consider renaming Snapshot.CompareTo to Snapshot.ExecutePipeline or similar
 
-1. Add unit tests for SnapshotBuilderBase
-
 1. Add filtering middleware
 
 1. Put strings into resx files
