@@ -6,15 +6,26 @@ namespace SnapTest.Tests
 {
     public class FileStorageWritingMiddlewareTest
     {
-        [TestCase(false, false)]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(true, true)]
-        public void Snapshot_file_is_created_when_expected(bool createMissingSnapshots, bool forceSnapshotRefresh)
-        {
-            using var builder = new TempFileSnapshotBuilder();
+        public static System.Collections.Generic.IEnumerable<object[]> AllCreateAndForceCombinations()
+            =>  new object[][] {
+                new object[]{ null, false, false },
+                new object[]{ null, false, true },
+                new object[]{ null, true, false },
+                new object[]{ null, true, true },
+                new object[]{ "starting content", false, false },
+                new object[]{ "starting content", false, true },
+                new object[]{ "starting content", true, false },
+                new object[]{ "starting content", true, true },
+            };
 
-            Assume.That(builder.SnapshotFileName, Does.Not.Exist);
+        private (SnapshotContextMock, bool) RunNakedFileStorageWritingMiddlewarePipeline(
+            TempFileSnapshotBuilder builder, string startingSnapshotFileContent, bool createMissingSnapshots, bool forceSnapshotRefresh
+        )
+        {
+            if (startingSnapshotFileContent != null)
+                File.WriteAllText(builder.SnapshotFileName, startingSnapshotFileContent);
+            else
+                Assume.That(builder.SnapshotFileName, Does.Not.Exist);
 
             string actualValue = $"actual: {Guid.NewGuid().ToString()}";
 
@@ -24,48 +35,67 @@ namespace SnapTest.Tests
             builder.UseFileStorageWritingMiddleware();
 
             var context = new SnapshotContextMock();
-            bool result = builder.BuildAndCompareTo(actualValue, context);
-
-            Assert.That(result, Is.True, "Snapshot middleware pipeline returned unexpected value");
-            if (!createMissingSnapshots && !forceSnapshotRefresh) {
-                Assert.That(builder.SnapshotFileName, Does.Not.Exist, "Snapshot file created unexpectedly");
-                Assert.That(context.MessageCalled, Is.False, "SnapshotContext.Message was called unexpectedly");
-            } else {
-                Assert.That(builder.SnapshotFileName, Does.Exist, "Snapshot file not created");
-                Assert.That(context.MessageCalled, Is.True, "SnapshotContext.Message was not called as expected");
-                Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo(actualValue), "Bad snapshot file contents");
-            }
+            return (context, builder.BuildAndCompareTo(actualValue, context));
         }
 
-        [TestCase(false, false)]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(true, true)]
-        public void Snapshot_file_is_updated_when_expected(bool createMissingSnapshots, bool forceSnapshotRefresh)
+        [TestCaseSource(nameof(AllCreateAndForceCombinations))]
+        public void Naked_FileStorageWritingMiddleware_processing_result_is_true(string startingSnapshotFileContent, bool createMissingSnapshots, bool forceSnapshotRefresh)
         {
             using var builder = new TempFileSnapshotBuilder();
+            var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
+            Assert.That(result, Is.True);
+        }
 
-            // Create snapshot file containing originalValue
-            string originalValue = $"original: {Guid.NewGuid().ToString()}";
-            File.WriteAllText(builder.SnapshotFileName, originalValue);
+        [TestCaseSource(nameof(AllCreateAndForceCombinations))]
+        public void Naked_FileStorageWritingMiddleware_emits_message(string startingSnapshotFileContent, bool createMissingSnapshots, bool forceSnapshotRefresh)
+        {
+            using var builder = new TempFileSnapshotBuilder();
+            var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
+            Assert.That(context.MessageCalled, Is.EqualTo(startingSnapshotFileContent == null || forceSnapshotRefresh));
+        }
 
-            string updatedValue = $"updated: {Guid.NewGuid().ToString()}";
-            Assume.That(updatedValue, Is.Not.EqualTo(originalValue));
+        [TestCaseSource(nameof(AllCreateAndForceCombinations))]
+        public void Naked_FileStorageWritingMiddleware_snapshot_exists_when_expected(string startingSnapshotFileContent, bool createMissingSnapshots, bool forceSnapshotRefresh)
+        {
+            using var builder = new TempFileSnapshotBuilder();
+            var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
+            Assert.That(builder.SnapshotFileName, startingSnapshotFileContent != null || createMissingSnapshots || forceSnapshotRefresh ? Does.Exist : Does.Not.Exist);
+        }
 
-            builder.WithFileStorageOptions(_ => {
-                _.CreateMissingSnapshots = createMissingSnapshots;
-                _.ForceSnapshotRefresh = forceSnapshotRefresh;
-            });
+        [TestCaseSource(nameof(AllCreateAndForceCombinations))]
+        public void Naked_FileStorageWritingMiddleware_snapshot_content_set_correctly(string startingSnapshotFileContent, bool createMissingSnapshots, bool forceSnapshotRefresh)
+        {
+            if (startingSnapshotFileContent == null && !createMissingSnapshots && !forceSnapshotRefresh)
+                return; // Snapshot doesn't get created for this combination
 
-            // Do a snapshot comparison with CreateMissingSnapshots and ForceSnapshotRefresh parameters as specified
-            builder.UseFileStorageWritingMiddleware();
+            using var builder = new TempFileSnapshotBuilder();
+            var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
+            Assert.That(
+                File.ReadAllText(builder.SnapshotFileName),
+                Is.EqualTo(forceSnapshotRefresh || startingSnapshotFileContent == null ? context.Actual : startingSnapshotFileContent)
+            );
+        }
 
-            var context = new SnapshotContextMock();
-            builder.BuildAndCompareTo(updatedValue, context);
+        [TestCaseSource(nameof(AllCreateAndForceCombinations))]
+        public void Naked_FileStorageWritingMiddleware_creates_mismatch_snapshot_when_expected(string startingSnapshotFileContent, bool createMissingSnapshots, bool forceSnapshotRefresh)
+        {
+            using var builder = new TempFileSnapshotBuilder();
+            var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
+            Assert.That(
+                builder.MismatchedActualSnapshotFileName,
+                startingSnapshotFileContent != null || createMissingSnapshots || forceSnapshotRefresh ? Does.Not.Exist : Does.Exist
+            );
+        }
 
-            // Verify outcomes
-            Assert.That(File.ReadAllText(builder.SnapshotFileName), Is.EqualTo(forceSnapshotRefresh ? updatedValue : originalValue), "Snapshot file contents don't match expected value");
-            Assert.That(context.MessageCalled, Is.EqualTo(forceSnapshotRefresh), "SnapshotContext.Message was not called as expected");
+        [TestCaseSource(nameof(AllCreateAndForceCombinations))]
+        public void Naked_FileStorageWritingMiddleware_mismatch_snapshot_content_set_correctly(string startingSnapshotFileContent, bool createMissingSnapshots, bool forceSnapshotRefresh)
+        {
+            if (startingSnapshotFileContent != null || createMissingSnapshots || forceSnapshotRefresh)
+                return; // Snapshot doesn't get created for this combination
+
+            using var builder = new TempFileSnapshotBuilder();
+            var (context, result) = RunNakedFileStorageWritingMiddlewarePipeline(builder, startingSnapshotFileContent, createMissingSnapshots, forceSnapshotRefresh);
+            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo(context.Actual));
         }
 
         [Test]
@@ -80,9 +110,10 @@ namespace SnapTest.Tests
                 .Use(_ => false) // First middleware returns false - which should abort further processing
                 .UseFileStorageWritingMiddleware();
 
-            builder.BuildAndCompareTo(null);
+            builder.BuildAndCompareTo("actual value");
 
-            Assert.That(builder.SnapshotFileName, Does.Not.Exist);
+            Assert.That(builder.SnapshotFileName, Does.Not.Exist, "Snapshot file created unexpectedly");
+            Assert.That(File.ReadAllText(builder.MismatchedActualSnapshotFileName), Is.EqualTo("actual value"), "Snapshot mismatch actual file contents don't match expected value");
         }
 
         [TestCase(null)]
@@ -96,6 +127,7 @@ namespace SnapTest.Tests
             builder.UseFileStorageWritingMiddleware();
             Assert.Throws<NotImplementedException>(() => builder.BuildAndCompareTo(actualValue));
             Assert.That(builder.SnapshotFileName, Does.Not.Exist);
+            Assert.That(builder.MismatchedActualSnapshotFileName, Does.Not.Exist);
         }
 
         private class SnapshotContextMock: SnapshotContext

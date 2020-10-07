@@ -23,17 +23,17 @@ namespace SnapTest.Tests
 
             // Set a couple of properties
             b.WithFileStorageOptions(_ => _.SnapshotDirectory = "dir");
-            b.WithFileStorageOptions(_ => _.Extension = ".snapshot");
+            b.WithFileStorageOptions(_ => _.SnapshotExtension = ".snapshot");
 
             var finalOptions = b.BuildFileStorageOptions();
 
             // Assume initial option state
             Assume.That(initialOptions.SnapshotDirectory, Is.Not.EqualTo("dir"));
-            Assume.That(initialOptions.Extension, Is.Not.EqualTo(".snapshot"));
+            Assume.That(initialOptions.SnapshotExtension, Is.Not.EqualTo(".snapshot"));
 
-            // Assert final initial option state
+            // Assert final option state
             Assert.That(finalOptions.SnapshotDirectory, Is.EqualTo("dir"));
-            Assert.That(finalOptions.Extension, Is.EqualTo(".snapshot"));
+            Assert.That(finalOptions.SnapshotExtension, Is.EqualTo(".snapshot"));
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace SnapTest.Tests
             Assume.That(initialOptions.IgnoreNullValues, Is.False);
             Assume.That(initialOptions.WriteIndented, Is.False);
 
-            // Assert final initial option state
+            // Assert final option state
             Assert.That(finalOptions.IgnoreNullValues, Is.True);
             Assert.That(finalOptions.WriteIndented, Is.True);
         }

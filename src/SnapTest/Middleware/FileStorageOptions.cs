@@ -16,11 +16,16 @@ namespace SnapTest.Middleware
         /// <summary>
         /// The extension to append as a suffix to snapshot filenames, including a ".".
         /// </summary>
-        public string Extension { get; set; } = ".txt";
+        public string SnapshotExtension { get; set; } = ".txt";
+        public string MismatchedActualExtension { get; set; } = ".txt.actual";
 
         private static readonly Regex badFilenameCharacters = new Regex(@"[/|:*?\\\""<>]");
 
-        public string GetSnapshotFilePath(string testName)
-            => System.IO.Path.Combine(SnapshotDirectory ?? string.Empty, badFilenameCharacters.Replace(testName + Extension, "_"));
+        private string GetFilePathWithExtension(string testName, string extension)
+            => System.IO.Path.Combine(SnapshotDirectory ?? string.Empty, badFilenameCharacters.Replace(testName + extension, "_"));
+
+        public string GetSnapshotFilePath(string testName) => GetFilePathWithExtension(testName, SnapshotExtension);
+
+        public string GetMismatedActualFilePath(string testName) => GetFilePathWithExtension(testName, MismatchedActualExtension);
     }
 }

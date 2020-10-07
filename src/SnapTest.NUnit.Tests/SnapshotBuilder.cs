@@ -9,14 +9,14 @@ namespace SnapTest.NUnit.Tests
         [Test]
         public void Does_MatchSnapshot_can_be_used_with_builder()
         {
-            var builder = new SnapshotBuilder().WithFileStorageOptions(_ => _.Extension = ".txt");
+            var builder = new SnapshotBuilder().WithFileStorageOptions(_ => _.SnapshotExtension = ".txt");
             Assert.That("actual output", Does.MatchSnapshot("actual_output", builder));
         }
 
         [Test]
         public void Does_Not_MatchSnapshot_can_be_used_with_builder()
         {
-            var builder = new SnapshotBuilder().WithFileStorageOptions(_ => _.Extension = ".txt");
+            var builder = new SnapshotBuilder().WithFileStorageOptions(_ => _.SnapshotExtension = ".txt");
             Assert.That("different actual output", Does.Not.MatchSnapshot("actual_output", builder));
         }
 

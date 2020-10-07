@@ -24,7 +24,8 @@ The components used to construct the full snapshot file path can be individually
 ```C#
 var builder = new SnapshotBuilder()
     .WithFileStorageOptions(_ => _.SnapshotDirectory = @"C:\MyPath")
-    .WithFileStorageOptions(_ => _.Extension = ".snapshot")
+    .WithFileStorageOptions(_ => _.SnapshotExtension = ".snapshot")
+    .WithFileStorageOptions(_ => _.MismatchedActualExtension = ".snapshot.actual")
 ;
 
 Assert.That("actual output", Does.MatchSnapshot("filename", builder));

@@ -14,20 +14,23 @@ namespace SnapTest.Tests
     {
         public readonly string SnapshotFileName = Path.GetTempFileName();
 
+        public string MismatchedActualSnapshotFileName
+            => BuildFileStorageOptions().GetMismatedActualFilePath(TestName);
+
         public string TempSnapshotDirectory => Path.GetDirectoryName(SnapshotFileName);
         public string TestName => Path.GetFileNameWithoutExtension(SnapshotFileName);
-        public string Extension => Path.GetExtension(SnapshotFileName);
+        public string SnapshotExtension => Path.GetExtension(SnapshotFileName);
 
         public TempFileSnapshotBuilder()
         {
-            EnsureSnapshotFileIsDeleted();
-
             WithFileStorageOptions(_ => {
                 _.SnapshotDirectory = TempSnapshotDirectory;
-                _.Extension = Extension;
+                _.SnapshotExtension = SnapshotExtension;
                 _.CreateMissingSnapshots = false;
                 _.ForceSnapshotRefresh = false;
             });
+
+            EnsureSnapshotFilesAreDeleted();
         }
 
         public bool BuildAndCompareTo(object actual, SnapshotContext context = null)
@@ -39,14 +42,19 @@ namespace SnapTest.Tests
             return Build().CompareTo(actual, context);
         }
 
-        public void EnsureSnapshotFileIsDeleted()
+        private void EnsureSnapshotFilesAreDeleted()
         {
+            string m = MismatchedActualSnapshotFileName;
+
+            if (File.Exists(m))
+                File.Delete(m);
+
             if (File.Exists(SnapshotFileName))
                 File.Delete(SnapshotFileName);
         }
 
         protected override bool IsTestMethod(System.Reflection.MethodBase method) => false;
 
-        void IDisposable.Dispose() => EnsureSnapshotFileIsDeleted();
+        public void Dispose() => EnsureSnapshotFilesAreDeleted();
     }
 }
