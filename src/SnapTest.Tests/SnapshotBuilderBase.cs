@@ -45,18 +45,18 @@ namespace SnapTest.Tests
             var initialOptions = b.BuildJsonOptions();
 
             // Set a couple of properties to non-default values
-            b.WithJsonOptions(_ => _.IgnoreNullValues = true);
-            b.WithJsonOptions(_ => _.WriteIndented = true);
+            b.WithJsonOptions(_ => _.SelectPath = "$");
+            b.WithJsonOptions(_ => _.WriteIndented = false);
 
             var finalOptions = b.BuildJsonOptions();
 
             // Assume initial option state
-            Assume.That(initialOptions.IgnoreNullValues, Is.False);
-            Assume.That(initialOptions.WriteIndented, Is.False);
+            Assume.That(initialOptions.SelectPath, Is.Null);
+            Assume.That(initialOptions.WriteIndented, Is.True);
 
             // Assert final option state
-            Assert.That(finalOptions.IgnoreNullValues, Is.True);
-            Assert.That(finalOptions.WriteIndented, Is.True);
+            Assert.That(finalOptions.SelectPath, Is.Not.Null);
+            Assert.That(finalOptions.WriteIndented, Is.False);
         }
         #endregion
 
