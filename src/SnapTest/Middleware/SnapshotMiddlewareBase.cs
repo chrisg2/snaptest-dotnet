@@ -18,7 +18,7 @@ namespace SnapTest.Middleware
             return this;
         }
 
-        public bool ProcessNext(SnapshotContext context) { return _next == null ? true : _next.Process(context); }
+        protected bool ProcessNext(SnapshotContext context) { return _next == null ? true : _next.Process(context); }
         public abstract bool Process(SnapshotContext context);
     }
 }
