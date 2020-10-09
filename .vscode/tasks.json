@@ -4,15 +4,32 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build all",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "${workspaceFolder}/src/SnapTest.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "build SnapTest",
             "command": "dotnet",
             "type": "shell",
             "args": [
                 "build",
                 "${workspaceFolder}/src/SnapTest/SnapTest.csproj",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
@@ -28,9 +45,7 @@
             "args": [
                 "build",
                 "${workspaceFolder}/src/SnapTest.NUnit/SnapTest.NUnit.csproj",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
@@ -46,9 +61,7 @@
             "args": [
                 "build",
                 "${workspaceFolder}/src/SnapTest.NUnit.Tests/SnapTest.NUnit.Tests.csproj",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
@@ -64,9 +77,7 @@
             "args": [
                 "build",
                 "${workspaceFolder}/src/SnapTest.Tests/SnapTest.Tests.csproj",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
