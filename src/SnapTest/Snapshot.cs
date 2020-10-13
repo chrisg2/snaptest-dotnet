@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 
 namespace SnapTest
 {
@@ -26,14 +25,14 @@ namespace SnapTest
             bool snapshottedValueIsSimpleString = (settings.SnapshotGroup == null && (actual is string || actual is Guid));
             var (snapshottedValue, completeSnapshotGroup) = GetSnapshottedValue(settings, snapshottedValueIsSimpleString);
 
-            JToken actualJson = ActualValueAsJson(actual, settings);
+            var actualSnapshotValue = ActualSnapshotValue(actual, settings);
 
             bool comparisonResult =
                 settings.ForceSnapshotRefresh
                 || (settings.CreateMissingSnapshots && snapshottedValue == null)
-                || (settings.SnapshotComparer ?? SnapshotComparer.Default).Compare(actualJson, snapshottedValue);
+                || (settings.SnapshotComparer ?? SnapshotComparer.Default).Compare(actualSnapshotValue, snapshottedValue);
 
-            WriteSnapshotIfRequired(comparisonResult, actualJson, snapshottedValue, completeSnapshotGroup, settings);
+            WriteSnapshotIfRequired(comparisonResult, actualSnapshotValue, snapshottedValue, completeSnapshotGroup, settings);
 
             return comparisonResult;
         }

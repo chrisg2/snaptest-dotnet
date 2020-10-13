@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.IO;
 
 namespace SnapTest
@@ -13,7 +12,7 @@ namespace SnapTest
         #endregion
 
         #region File reading & writing methods
-        private static JToken ReadSnapshotFromFile(SnapshotSettings settings, bool readAsString)
+        private static SnapshotValue ReadSnapshotFromFile(SnapshotSettings settings, bool readAsString)
         {
             string snapshotFilePath = settings.SnapshotFilePath;
 
@@ -22,11 +21,11 @@ namespace SnapTest
                 var fileContents = File.ReadAllText(snapshotFilePath);
                 if (readAsString) {
                     // Trim a trailing Environment.NewLine
-                    return JValue.FromObject(fileContents.EndsWith(Environment.NewLine) ? fileContents.Substring(0, fileContents.Length - Environment.NewLine.Length) : fileContents);
+                    return SnapshotValue.ValueFromObject(fileContents.EndsWith(Environment.NewLine) ? fileContents.Substring(0, fileContents.Length - Environment.NewLine.Length) : fileContents);
                 }
 
                 try {
-                    return JToken.Parse(fileContents);
+                    return SnapshotValue.Parse(fileContents);
                 }
                 catch (Exception ex) {
                     throw new SnapTestParseException($"Unable to read and parse contents of file as JSON: {snapshotFilePath}", ex);
@@ -56,26 +55,26 @@ namespace SnapTest
         /// <param name="settings"></param>
         /// <param name="readAsString"></param>
         /// <returns>
-        /// A pair of JToken values: (snapshotted value to compare to the actual value, complete snapshot group).
-        /// These values are the null if no snapshot is available.
-        /// Otherwise if a snapshot group is not used then the values will be the same.
-        /// Otherwise a snapshot group is used: the first item is the specific snapshotted value to compare (if specified in the group),
+        /// A pair of <see cref="SnapshotValue"/> values: (snapshotted value to compare to the actual value, complete snapshot group).
+        /// If no snapshot is available, these values are the null.
+        /// Otherwise if a snapshot group is not used, then the values will be the same.
+        /// Otherwise a snapshot group is used, and the first item is the specific snapshotted value to compare (if specified in the group),
         /// while the second item is the full snapshot group.
         /// </returns>
-        private static (JToken, JToken) GetSnapshottedValue(SnapshotSettings settings, bool readAsString)
+        private static (SnapshotValue, SnapshotValue) GetSnapshottedValue(SnapshotSettings settings, bool readAsString)
         {
             var snapshot = ReadSnapshotFromFile(settings, readAsString);
 
             if (settings.SnapshotGroup == null || snapshot == null)
                 return (snapshot, snapshot);
 
-            if (!(snapshot is JObject o))
+            if (!snapshot.IsObject)
                 throw new SnapTestParseException($"File does not contain JSON object representing a snapshot group: {settings.SnapshotFilePath}");
 
-            return (o.Property(settings.SnapshotGroup)?.Value, snapshot);
+            return (snapshot.PropertyValue(settings.SnapshotGroup), snapshot);
         }
 
-        private static void WriteSnapshotIfRequired(bool comparisonResult, JToken actualJson, JToken snapshottedValue, JToken completeSnapshot, SnapshotSettings settings)
+        private static void WriteSnapshotIfRequired(bool comparisonResult, SnapshotValue actualValue, SnapshotValue snapshottedValue, SnapshotValue completeSnapshot, SnapshotSettings settings)
         {
             string mismatchFilePath = settings.MismatchedActualFilePath;
 
@@ -105,24 +104,22 @@ namespace SnapTest
             }
 
             if (fileToWrite != null) {
+                SnapshotValue snapshotValueToWrite;
                 if (settings.SnapshotGroup == null) {
-                    WriteValueToFile(Serialize(actualJson, settings), fileToWrite);
-                } else {
-                    JObject jsonToWrite;
-                    if (fileToWrite == mismatchFilePath) {
-                        jsonToWrite = new JObject();
-                        jsonToWrite.Add(settings.SnapshotGroup, actualJson);
-                    }
-                    else {
-                        jsonToWrite = completeSnapshot as JObject ?? new JObject();
-                        if (snapshottedValue != null)
-                            snapshottedValue.Replace(actualJson);
-                        else
-                            jsonToWrite.Add(settings.SnapshotGroup, actualJson);
-                    }
-
-                    WriteValueToFile(Serialize(jsonToWrite, settings), fileToWrite);
+                    snapshotValueToWrite = actualValue;
+                } else if (fileToWrite == mismatchFilePath) {
+                    snapshotValueToWrite = SnapshotValue.CreateObject();
+                    snapshotValueToWrite.Add(settings.SnapshotGroup, actualValue);
                 }
+                else {
+                    snapshotValueToWrite = (completeSnapshot != null && completeSnapshot.IsObject) ? completeSnapshot : SnapshotValue.CreateObject();
+                    if (snapshottedValue != null)
+                        snapshottedValue.Replace(actualValue);
+                    else
+                        snapshotValueToWrite.Add(settings.SnapshotGroup, actualValue);
+                }
+
+                WriteValueToFile(Serialize(snapshotValueToWrite, settings), fileToWrite);
             }
         }
 
