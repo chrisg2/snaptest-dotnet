@@ -1,8 +1,7 @@
-﻿using NUnit.Framework;
-using NUnit.Framework.Constraints;
+﻿using NUnit.Framework.Constraints;
 using System;
 
-// See the following page for guidance on writing custom NUnit constraints: https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Constraints.html
+// See the following page for information about writing custom NUnit constraints: https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Constraints.html
 
 namespace SnapTest.NUnit
 {
@@ -14,23 +13,32 @@ namespace SnapTest.NUnit
         /// <summary>
         /// Returns a constraint that tests an object value matches a snapshot.
         /// </summary>
-        public static SnapshotConstraint MatchSnapshot(string testName = null, SnapshotBuilderBase snapshotBuilder = null)
-            => new SnapshotConstraint(testName, snapshotBuilder);
+        public static SnapshotConstraint MatchSnapshot(SnapshotSettingsBuilder settingsBuilder = null)
+            => new SnapshotConstraint(settingsBuilder);
 
-        public static SnapshotConstraint MatchSnapshot(SnapshotBuilderBase snapshotBuilder)
-            => new SnapshotConstraint(null, snapshotBuilder);
+        public static SnapshotConstraint MatchSnapshot(string testName)
+            => new SnapshotConstraint(testName);
+
+        public static SnapshotConstraint MatchSnapshot(Action<SnapshotSettings> settingsInitializer)
+            => new SnapshotConstraint(settingsInitializer);
     }
 
     public static class SnapshotConstraintExtensions
     {
-        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string testName = null, SnapshotBuilderBase snapshotBuilder = null)
+        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotSettingsBuilder settingsBuilder = null)
+            => expression.MatchSnapshot(() => new SnapshotConstraint(settingsBuilder));
+
+        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string testName)
+            => expression.MatchSnapshot(() => new SnapshotConstraint(testName));
+
+        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, Action<SnapshotSettings> settingsInitializer)
+            => expression.MatchSnapshot(() => new SnapshotConstraint(settingsInitializer));
+
+        private static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, Func<SnapshotConstraint> constraintBuilder)
         {
-            var constraint = new SnapshotConstraint(testName, snapshotBuilder);
+            var constraint = constraintBuilder();
             expression.Append(constraint);
             return constraint;
         }
-
-        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotBuilderBase snapshotBuilder)
-            => expression.MatchSnapshot(null, snapshotBuilder);
     }
 }

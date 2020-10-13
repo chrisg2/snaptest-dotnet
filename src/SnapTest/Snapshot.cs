@@ -1,51 +1,50 @@
-﻿using System;
-
-using SnapTest.Middleware;
+﻿using Newtonsoft.Json.Linq;
+using System;
 
 namespace SnapTest
 {
-    public class Snapshot: SnapshotMiddlewarePipeline
+    public partial class Snapshot
     {
-        #region Methods
-        public bool CompareTo(object actual, SnapshotContext context = null)
+        #region Public methods
+        /// <summary>
+        /// Compares an actual value to the value stored in a snapshot.
+        /// </summary>
+        /// <param name="actual">Actual value to be compared.</param>
+        /// <param name="settings">Settings controlling the details of how and where the snapshot is stored and updated.</param>
+        /// <returns>true if the actual value matches the snapshot, otherwise false.</returns>
+        /// <exception cref="SnapTestParseException">
+        /// Thrown if:
+        /// - A snapshot file contains content that is not valid JSON.
+        /// - A snapshot file contains JSON that is not an object when an object is expected.
+        /// - A value in settings.ExcludedPaths results in the entire actual value being excluded from snapshotting.
+        /// </exception>
+        public static bool CompareTo(object actual, SnapshotSettings settings)
         {
-            if (MiddlewarePipeline == null)
-                throw new InvalidOperationException($"{nameof(CompareTo)} cannot be called without any middleware configured. Call Use(ISnapshotMiddleware) before calling CompareTo.");
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
 
-            if (context == null)
-                context = new SnapshotContext();
+            bool snapshottedValueIsSimpleString = (settings.SnapshotGroup == null && (actual is string || actual is Guid));
+            var (snapshottedValue, completeSnapshotGroup) = GetSnapshottedValue(settings, snapshottedValueIsSimpleString);
 
-            context.Snapshot = this;
-            context.Actual = actual;
+            JToken actualJson = ActualValueAsJson(actual, settings);
 
-            return MiddlewarePipeline.Process(context);
+            bool comparisonResult =
+                settings.ForceSnapshotRefresh
+                || (settings.CreateMissingSnapshots && snapshottedValue == null)
+                || (settings.SnapshotComparer ?? SnapshotComparer.Default).Compare(actualJson, snapshottedValue);
+
+            WriteSnapshotIfRequired(comparisonResult, actualJson, snapshottedValue, completeSnapshotGroup, settings);
+
+            return comparisonResult;
         }
         #endregion
 
-        #region Overrides/New'ed methods
-        public new Snapshot Use(ISnapshotMiddleware middleware)
+        #region Helper methods
+        private static void Message(string message, SnapshotSettings settings)
         {
-            base.Use(middleware);
-            return this;
-        }
-
-        public new Snapshot Use<T>(Action<T> initializer = null) where T : ISnapshotMiddleware, new()
-        {
-            base.Use<T>(initializer);
-            return this;
-        }
-
-        public new Snapshot Use(Func<SnapshotContext, bool> process)
-        {
-            base.Use(process);
-            return this;
-        }
-
-        public new Snapshot Use(Action<SnapshotContext> process)
-        {
-            base.Use(process);
-            return this;
+            if (settings.MessageWriter != null)
+                settings.MessageWriter.Write(message);
         }
         #endregion
-   }
+    }
 }

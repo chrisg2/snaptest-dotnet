@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using NUnit.Framework.Constraints;
+﻿using NUnit.Framework.Constraints;
+using System;
 
 namespace SnapTest.NUnit
 {
@@ -7,73 +7,74 @@ namespace SnapTest.NUnit
     /// </summary>
     public class SnapshotConstraint : Constraint
     {
-        #region Static and instance fields
-        /// <summary>
-        /// Field to store the snapshot name.
-        /// If this is null, the test name is dynamically determined from the NUnit TestContext.
-        /// </summary>
-        private string _testName;
-
-        private SnapshotBuilderBase _snapshotBuilder;
-        #endregion
-
         #region Constructors
-        public SnapshotConstraint(string testName = null, SnapshotBuilderBase snapshotBuilder = null)
+        public SnapshotConstraint(SnapshotSettingsBuilder settingsBuilder = null)
         {
-            _testName = testName;
-            _snapshotBuilder = snapshotBuilder ?? new SnapshotBuilder();
+            SettingsBuilder = settingsBuilder ?? new SnapshotSettingsBuilder();
         }
 
-        public SnapshotConstraint(SnapshotBuilderBase snapshotBuilder) : this(null, snapshotBuilder) { }
+        public SnapshotConstraint(string testName) : this()
+        {
+            SettingsBuilder.WithSettings(_ => _.TestName = testName);
+        }
+
+        public SnapshotConstraint(Action<SnapshotSettings> settingsInitializer) : this()
+        {
+            if (settingsInitializer == null)
+                throw new ArgumentNullException(nameof(settingsInitializer));
+
+            SettingsBuilder.WithSettings(settingsInitializer);
+        }
         #endregion
 
         #region Properties
-        public string TestName
+        public SnapshotSettingsBuilder SettingsBuilder { get; }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Shortcut method to call SettingsBuilder.WithSettings.
+        /// </summary>
+        /// <remarks>
+        /// See <see cref="SnapshotSettingsBuilder.WithSettings"/> for further details.
+        /// </remarks>
+        /// <param name="settingsInitializer">
+        /// An action to be called to initialize settings.
+        /// A <see cref="SnapshotSettings"/> object is passed as the single parameter to the action.
+        /// The action should set properties as appropriate on this object.
+        /// </param>
+        /// <returns>This SnapshotConstraint's <see cref="SettingsBuilder"/></returns>
+        public SnapshotConstraint WithSettings(Action<SnapshotSettings> settingsInitializer)
         {
-            get {
-                if (_testName != null)
-                    return _testName; // Use explicitly set test name
-
-                // Otherwise fall back to using dynamically determined test name
-                var tc = TestContext.CurrentContext;
-
-                if (tc.Test == null || tc.Test.Name == null || tc.Test.ClassName == null) {
-                    throw new SnapTestException(
-                        "TestName can only be dynamically determined when accessed from while an NUnit test method is executing. " +
-                        "To access TestName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
-                    );
-                }
-
-                var classNameParts = tc.Test.ClassName.Split('.');
-                return $"{classNameParts[classNameParts.Length - 1]}.{tc.Test.Name}";
-            }
-
-            set {
-                _testName = value;
-            }
+            SettingsBuilder.WithSettings(settingsInitializer);
+            return this;
         }
         #endregion
 
         #region Overrides
         public override string Description
-            => $"snapshotted value from {_snapshotBuilder.BuildFileStorageOptions().GetSnapshotFilePath(TestName)}";
+            => $"snapshotted value from {SettingsBuilder.Build().SnapshotFilePath}";
 
         public override ConstraintResult ApplyTo<TActual>(TActual actual)
         {
-            if (string.IsNullOrEmpty(_snapshotBuilder.BuildFileStorageOptions().SnapshotDirectory)) {
+            var settings = SettingsBuilder.Build();
+
+            if (string.IsNullOrEmpty(settings.SnapshotDirectory)) {
                 throw new SnapTestException(
                     "The directory to hold snapshot files could not be determined from the current stack trace. " +
-                    "You may need to explicitly specify a source directory when creating the SnapshotConstraint, " + // TODO: Add example of how?
+                    "You may need to explicitly specify a snapshot directory using the SnapshotConstraint's SettingsBuilder " +
+                    "(for example: constraint.WithSettings(_ => _.SnapshotDirectory = \"...\"); ), " +
                     "or verify that the stack trace includes a method marked with one of the NUnit test method attributes such as [Test], [TestCase] etc. " +
                     "This error may occur if you perform a snapshot match within an async test helper child method."
                 );
             }
 
-            var context = new NUnitSnapshotContext(TestName, this);
+            var comparer = new NUnitSnapshotComparer(this);
+            settings.SnapshotComparer = comparer;
 
-            bool result = _snapshotBuilder.Build().CompareTo(actual, context);
+            bool result = Snapshot.CompareTo(actual, settings);
 
-            return context.ConstraintResult ?? new ConstraintResult(this, actual, result);
+            return comparer.ConstraintResult ?? new ConstraintResult(this, actual, result);
         }
         #endregion
    }
