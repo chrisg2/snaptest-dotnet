@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace SnapTest
 {
-    public partial class Snapshot
+    partial class Snapshot
     {
         private static SnapshotValue ActualSnapshotValue(object actual, SnapshotSettings settings)
             => actual == null ? SnapshotValue.CreateNull() : FilterValue(SnapshotValue.FromObject(actual), settings);

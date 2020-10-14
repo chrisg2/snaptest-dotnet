@@ -3,7 +3,7 @@ using System.IO;
 
 namespace SnapTest
 {
-    public partial class Snapshot
+    partial class Snapshot
     {
         #region Fields
         private static bool shownRerunTip = false;
