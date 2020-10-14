@@ -62,6 +62,20 @@ namespace SnapTest.NUnit.Tests
             builder.WithSettings(_ => _.SnapshotDirectoryTail = null);
             Assert.That(builder.Build().SnapshotDirectory, Does.EndWith(nameof(SnapTest.NUnit.Tests)));
         }
+
+        [Test]
+        public void SnapshotGroup_with_DefaultSnapshotGroupFromNUnitTestName_set_is_NUnit_TestName()
+        {
+            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupFromNUnitTestName = true);
+            Assert.That(builder.Build().SnapshotGroup, Is.EqualTo(TestContext.CurrentContext.Test.Name));
+        }
+
+        [Test]
+        public void TestName_with_DefaultSnapshotGroupFromNUnitTestName_set_is_fixture_class_name()
+        {
+            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupFromNUnitTestName = true);
+            Assert.That(builder.Build().TestName, Is.EqualTo(nameof(SnapshotSettingsBuilderTest)));
+        }
         #endregion
     }
 }

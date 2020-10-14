@@ -22,10 +22,13 @@ namespace SnapTest.NUnit
             settingsInitializers.ForEach(_ => _(s));
 
             if (string.IsNullOrWhiteSpace(s.TestName))
-                s.TestName = TestNameFromTestContext;
+                s.TestName = GetTestNameFromTestContext(s);
+
+            if (string.IsNullOrWhiteSpace(s.SnapshotGroup))
+                s.SnapshotGroup = GetSnapshotGroupFromTestContext(s);
 
             if (string.IsNullOrWhiteSpace(s.SnapshotDirectory)) {
-                var d = SnapshotDirectoryFromStackTrace;
+                var d = GetSnapshotDirectoryFromStackTrace();
                 if (!string.IsNullOrEmpty(d))
                     s.SnapshotDirectory = Path.Combine(d, s.SnapshotDirectoryTail ?? string.Empty);
             }
@@ -52,24 +55,26 @@ namespace SnapTest.NUnit
         }
 
         #region Helper methods
-        private static string TestNameFromTestContext
+        private static string GetTestNameFromTestContext(SnapshotSettings settings)
         {
-            get {
-                var tc = TestContext.CurrentContext;
+            var tc = TestContext.CurrentContext;
 
-                if (tc.Test == null || tc.Test.Name == null || tc.Test.ClassName == null) {
-                    throw new SnapTestException(
-                        "TestName can only be dynamically determined when accessed from while an NUnit test method is executing. " +
-                        "To access TestName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
-                    );
-                }
-
-                var classNameParts = tc.Test.ClassName.Split('.');
-                return $"{classNameParts[classNameParts.Length - 1]}.{tc.Test.Name}";
+            if (tc.Test == null || tc.Test.Name == null || tc.Test.ClassName == null) {
+                throw new SnapTestException(
+                    "TestName can only be dynamically determined when accessed from while an NUnit test method is executing. " +
+                    "To access TestName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
+                );
             }
+
+            var classNameParts = tc.Test.ClassName.Split('.');
+            var className = classNameParts[classNameParts.Length - 1];
+            return settings.DefaultSnapshotGroupFromNUnitTestName ? className : $"{className}.{tc.Test.Name}";
         }
 
-        private static string SnapshotDirectoryFromStackTrace
+        private static string GetSnapshotGroupFromTestContext(SnapshotSettings settings)
+            => settings.DefaultSnapshotGroupFromNUnitTestName ? TestContext.CurrentContext.Test.Name : null;
+
+        private static string GetSnapshotDirectoryFromStackTrace()
             => (
                 from frame in new StackTrace(1, true).GetFrames()
                 let method = frame.GetMethod()
