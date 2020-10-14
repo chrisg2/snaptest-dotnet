@@ -58,18 +58,25 @@ Assert.That(actualValue, SnapshotDoes.Match(nameof(MyTestClass) + ".Overridden_t
 ```
 
 
+# Questions and feedback sought
+
+## How should configuration to force snapshots to be updated or missing snapshots created be managed?
+
+Currently this is done only through setting environment variables, or properties on the `SnapshotSettings` object
+used when comparing a snapshot. What other kinds of options and approaches might be helpful to add to suit different
+styles of development practices & workflows?
+
+
 # Things to be done
 
-1. Consider renaming Snapshot.CompareTo to Snapshot.ExecutePipeline or similar
+1. Choose a license, add copyright messages to source files
 
-1. Add filtering middleware
+1. Confirm out how to use classic NUnit "Assert(...)" NUnit coding style with snapshots
 
-1. Put strings into resx files
+1. Consider fancy diff'ing ala [Snapper](https://github.com/theramis/Snapper/blob/master/project/Snapper/Json/JsonDiffGenerator.cs)
 
-1. Look at other projects to check for other interesting capabilities/ideas
+   Maybe save diffs in a file along with the mismatched actual value.
 
 1. Add SnapTest interfaces for Xunit and MSTest
 
-1. Add XML comments for all public interfaces
-
-1. Documentation
+1. Documentation (possibly including API documentation ala DocFX)
