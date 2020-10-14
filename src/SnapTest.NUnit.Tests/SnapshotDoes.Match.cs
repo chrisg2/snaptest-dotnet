@@ -3,7 +3,7 @@ using NUnit.Framework.Constraints;
 using SnapTest.NUnit;
 using System.Collections.Generic;
 
-namespace SnapTest.xNUnit.Tests
+namespace SnapTest.NUnit.Tests
 {
     public class Does_MatchSnapshot
     {
@@ -14,19 +14,6 @@ namespace SnapTest.xNUnit.Tests
         [Test]
         public void MatchSnapshot_can_accept_test_name()
             => Assert.That(SnapshotDoes.Match("snapshot name").SnapshotName, Is.EqualTo("snapshot name"));
-
-        [Test]
-        public void MatchSnapshot_default_SnapshotName_matches_class_dot_method()
-            => Assert.That(SnapshotDoes.Match().SettingsBuilder.Build().SnapshotName, Is.EqualTo(nameof(Does_MatchSnapshot) + "." + nameof(MatchSnapshot_default_SnapshotName_matches_class_dot_method)));
-
-        [TestCaseSource(nameof(SimpleTestCaseSource))]
-        public void MatchSnapshot_default_SnapshotName_matches_class_dot_method_paramvalue_with_TestCaseSource(string param)
-            => Assert.That(
-                SnapshotDoes.Match().SettingsBuilder.Build().SnapshotName,
-                Is.EqualTo(
-                    $"{nameof(Does_MatchSnapshot)}.{nameof(MatchSnapshot_default_SnapshotName_matches_class_dot_method_paramvalue_with_TestCaseSource)}(\"{param}\")"));
-
-        public static IEnumerable<object> SimpleTestCaseSource() { yield return "a value"; }
 
         [Test]
         public void Does_MatchSnapshot_ApplyTo_result_properties_show_success_for_matching_content()
@@ -78,24 +65,24 @@ namespace SnapTest.xNUnit.Tests
 
         #region Exercise different interfaces for configuring snapshot settings
         [Test]
-        public void SnapshotDirectoryTail_can_be_set_through_SettingsBuilder()
-            => Assert.That("a value", SnapshotDoes.Match(new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotDirectoryTail = "_alternateSnapshots")));
+        public void SnapshotSubdirectory_can_be_set_through_SettingsBuilder()
+            => Assert.That("a value", SnapshotDoes.Match(new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots")));
 
         [Test]
-        public void SnapshotDirectoryTail_can_be_set_through_WithSettings()
-            => Assert.That("a value", SnapshotDoes.Match().WithSettings(_ => _.SnapshotDirectoryTail = "_alternateSnapshots"));
+        public void SnapshotSubdirectory_can_be_set_through_WithSettings()
+            => Assert.That("a value", SnapshotDoes.Match().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots"));
 
         [Test]
-        public void SnapshotDirectoryTail_can_be_set_through_MatchSnapshot()
-            => Assert.That("a value", SnapshotDoes.Match(_ => _.SnapshotDirectoryTail = "_alternateSnapshots"));
+        public void SnapshotSubdirectory_can_be_set_through_MatchSnapshot()
+            => Assert.That("a value", SnapshotDoes.Match(_ => _.SnapshotSubdirectory = "_alternateSnapshots"));
 
         [Test]
-        public void SnapshotDirectoryTail_can_be_set_through_SettingsBuilder_on_ConstraintExpression()
-            => Assert.That("a value", Is.False.Or.MatchSnapshot(new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotDirectoryTail = "_alternateSnapshots")));
+        public void SnapshotSubdirectory_can_be_set_through_SettingsBuilder_on_ConstraintExpression()
+            => Assert.That("a value", Is.False.Or.MatchSnapshot(new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots")));
 
         [Test]
-        public void SnapshotDirectoryTail_can_be_set_through_MatchSnapshot_on_ConstraintExpression()
-            => Assert.That("a value", Is.False.Or.MatchSnapshot(_ => _.SnapshotDirectoryTail = "_alternateSnapshots"));
+        public void SnapshotSubdirectory_can_be_set_through_MatchSnapshot_on_ConstraintExpression()
+            => Assert.That("a value", Is.False.Or.MatchSnapshot(_ => _.SnapshotSubdirectory = "_alternateSnapshots"));
 
         [Test]
         public void SnapshotExtension_can_be_set()

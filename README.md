@@ -33,10 +33,10 @@ The components used to construct the full snapshot file path can be individually
 ```C#
 var builder = new SnapshotSettingsBuilder()
     .WithSettings(_ => {
-        _.SnapshotDirectory = @"C:\MyPath";
+        _.SnapshotDirectoryPath = @"C:\MyPath";
         _.SnapshotExtension = ".snapshot";
         _.MismatchedActualExtension = ".snapshot.actual"
-        _.TestName = "filename"
+        _.SnapshotName = "filename"
     });
 
 Assert.That("actual output", SnapshotDoes.Match(builder));
@@ -44,9 +44,9 @@ Assert.That("actual output", SnapshotDoes.Match(builder));
 
 With the above settings the full path of snapshot file used by `SnapshotDoes.Match` will be `C:\MyPath\filename.snapshot`. If a snapshot comparison fails and a mismatch file is created then it will be created at `C:\MyPath.filename.snapshot.actual`.
 
-To override the directory name `_snapshots` that is appended by default to the source file directory path (that is, when the `SnapshotDirectory` setting has not be explicitly set), set the `SnapshotSettings.SnapshotDirectoryTail` property:
+To override the directory name `_snapshots` that is appended by default to the source file directory path (that is, when the `SnapshotDirectoryPath` setting has not be explicitly set), set the `SnapshotSettings.SnapshotSubdirectory` property:
 ```C#
-var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotDirectoryTail = ".snapshots");
+var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirectory = ".snapshots");
 ```
 
 Any of the following special characters in the filename are replaced with `_` to avoid using filenames which are not possible to have on filesystems with both Windows and UNIX-like operating systems: `/|:*?\"<>`

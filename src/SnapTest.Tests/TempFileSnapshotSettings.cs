@@ -20,7 +20,7 @@ namespace SnapTest.Tests
                 File.Delete(SnapshotFileName);
 
             SnapshotName = Path.GetFileNameWithoutExtension(SnapshotFileName);
-            SnapshotDirectory = Path.GetDirectoryName(SnapshotFileName);
+            SnapshotDirectoryPath = Path.GetDirectoryName(SnapshotFileName);
             SnapshotExtension = Path.GetExtension(SnapshotFileName);
 
             // Set properties to fixed defined values for stable testing

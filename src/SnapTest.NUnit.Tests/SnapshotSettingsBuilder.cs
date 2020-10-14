@@ -20,54 +20,91 @@ namespace SnapTest.NUnit.Tests
             Assert.That("different actual output", Does.Not.MatchSnapshot(builder));
         }
 
-        #region Tests verifying behavior of SnapshotSettingsBuilder.Build().SnapshotDirectory
+        #region Tests verifying behavior of SnapshotSettingsBuilder.Build().SnapshotDirectoryPath
         [Test]
-        public void Default_SnapshotDirectory_in_Test_ends_with_source_directory()
-            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectory, Does.EndWith(Path.Combine(nameof(SnapTest.NUnit.Tests), "_snapshots")));
+        public void Default_SnapshotDirectoryPath_in_Test_ends_with_source_directory()
+            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectoryPath, Does.EndWith(Path.Combine("SnapTest.NUnit.Tests", "_snapshots")));
 
         [TestCase]
-        public void Default_SnapshotDirectory_in_TestCase_ends_with_source_directory()
-            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectory, Does.EndWith(Path.Combine(nameof(SnapTest.NUnit.Tests), "_snapshots")));
+        public void Default_SnapshotDirectoryPath_in_TestCase_ends_with_source_directory()
+            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectoryPath, Does.EndWith(Path.Combine("SnapTest.NUnit.Tests", "_snapshots")));
 
         [TestCaseSource(nameof(SimpleTestCaseSource))]
-        public void Default_SnapshotDirectory_in_TestCaseSource_ends_with_source_directory(string _)
-            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectory, Does.EndWith(Path.Combine(nameof(SnapTest.NUnit.Tests), "_snapshots")));
+        public void Default_SnapshotDirectoryPath_in_TestCaseSource_ends_with_source_directory(string _)
+            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectoryPath, Does.EndWith(Path.Combine("SnapTest.NUnit.Tests", "_snapshots")));
 
         public static IEnumerable<object> SimpleTestCaseSource() { yield return "a value"; }
 
         [Theory]
-        public void Default_SnapshotDirectory_in_Theory_ends_with_source_directory()
-            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectory, Does.EndWith(Path.Combine(nameof(SnapTest.NUnit.Tests), "_snapshots")));
+        public void Default_SnapshotDirectoryPath_in_Theory_ends_with_source_directory()
+            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotDirectoryPath, Does.EndWith(Path.Combine("SnapTest.NUnit.Tests", "_snapshots")));
 
         [Test]
-        public void SnapshotDirectory_tail_can_be_set()
+        public void SnapshotSubdirectory_can_be_set()
         {
             var builder = new SnapshotSettingsBuilder();
-            builder.WithSettings(_ => _.SnapshotDirectoryTail = "tail");
-            Assert.That(builder.Build().SnapshotDirectory, Does.EndWith(Path.Combine(nameof(SnapTest.NUnit.Tests), "tail")));
+            builder.WithSettings(_ => _.SnapshotSubdirectory = "tail");
+            Assert.That(builder.Build().SnapshotDirectoryPath, Does.EndWith(Path.Combine("SnapTest.NUnit.Tests", "tail")));
         }
 
         [Test]
-        public void SnapshotDirectory_tail_can_be_blank()
+        public void SnapshotSubdirectory_can_be_blank()
         {
             var builder = new SnapshotSettingsBuilder();
-            builder.WithSettings(_ => _.SnapshotDirectoryTail = string.Empty);
-            Assert.That(builder.Build().SnapshotDirectory, Does.EndWith(nameof(SnapTest.NUnit.Tests)));
+            builder.WithSettings(_ => _.SnapshotSubdirectory = string.Empty);
+            Assert.That(builder.Build().SnapshotDirectoryPath, Does.EndWith("SnapTest.NUnit.Tests"));
         }
 
         [Test]
-        public void SnapshotDirectory_tail_can_be_null()
+        public void SnapshotSubdirectory_can_be_null()
         {
             var builder = new SnapshotSettingsBuilder();
-            builder.WithSettings(_ => _.SnapshotDirectoryTail = null);
-            Assert.That(builder.Build().SnapshotDirectory, Does.EndWith(nameof(SnapTest.NUnit.Tests)));
+            builder.WithSettings(_ => _.SnapshotSubdirectory = null);
+            Assert.That(builder.Build().SnapshotDirectoryPath, Does.EndWith("SnapTest.NUnit.Tests"));
         }
 
         [Test]
-        public void SnapshotGroup_with_DefaultSnapshotGroupFromNUnitTestName_set_is_NUnit_TestName()
+        public void Built_SnapshotSettings_SnapshotName_matches_class_dot_method()
+            => Assert.That(new SnapshotSettingsBuilder().Build().SnapshotName, Is.EqualTo(nameof(SnapshotSettingsBuilderTest) + "." + nameof(Built_SnapshotSettings_SnapshotName_matches_class_dot_method)));
+
+        [TestCaseSource(nameof(SimpleTestCaseSource))]
+        public void Built_SnapshotSettings_SnapshotName_matches_class_dot_method_paramvalue_with_TestCaseSource(string param)
+            => Assert.That(
+                new SnapshotSettingsBuilder().Build().SnapshotName,
+                Is.EqualTo(
+                    $"{nameof(SnapshotSettingsBuilderTest)}.{nameof(Built_SnapshotSettings_SnapshotName_matches_class_dot_method_paramvalue_with_TestCaseSource)}(\"{param}\")"));
+
+        [Test]
+        public void SnapshotName_takes_explicitly_set_value()
+        {
+            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotName = "explicit");
+            Assert.That(builder.Build().SnapshotName, Is.EqualTo("explicit"));
+        }
+
+
+        [Test]
+        public void SnapshotDirectoryPath_takes_explicitly_set_value()
+        {
+            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotDirectoryPath = "explicit");
+            Assert.That(builder.Build().SnapshotDirectoryPath, Is.EqualTo("explicit"));
+        }
+
+        [Test]
+        public void SnapshotGroup_with_DefaultSnapshotGroupFromNUnitTestName_set_defaults_to_NUnit_TestName()
         {
             var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupFromNUnitTestName = true);
             Assert.That(builder.Build().SnapshotGroup, Is.EqualTo(TestContext.CurrentContext.Test.Name));
+        }
+
+        [Test]
+        public void SnapshotGroup_with_DefaultSnapshotGroupFromNUnitTestName_set_takes_explicitly_set_value()
+        {
+            var builder = new SnapshotSettingsBuilder().WithSettings(_ => {
+                _.DefaultSnapshotGroupFromNUnitTestName = true;
+                _.SnapshotGroup = "explicit";
+            });
+
+            Assert.That(builder.Build().SnapshotGroup, Is.EqualTo("explicit"));
         }
 
         [Test]
