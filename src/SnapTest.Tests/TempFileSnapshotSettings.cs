@@ -19,7 +19,7 @@ namespace SnapTest.Tests
             if (File.Exists(SnapshotFileName))
                 File.Delete(SnapshotFileName);
 
-            TestName = Path.GetFileNameWithoutExtension(SnapshotFileName);
+            SnapshotName = Path.GetFileNameWithoutExtension(SnapshotFileName);
             SnapshotDirectory = Path.GetDirectoryName(SnapshotFileName);
             SnapshotExtension = Path.GetExtension(SnapshotFileName);
 

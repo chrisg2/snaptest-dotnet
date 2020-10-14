@@ -71,10 +71,10 @@ namespace SnapTest.NUnit.Tests
         }
 
         [Test]
-        public void TestName_with_DefaultSnapshotGroupFromNUnitTestName_set_is_fixture_class_name()
+        public void SnapshotName_with_DefaultSnapshotGroupFromNUnitTestName_set_is_fixture_class_name()
         {
             var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupFromNUnitTestName = true);
-            Assert.That(builder.Build().TestName, Is.EqualTo(nameof(SnapshotSettingsBuilderTest)));
+            Assert.That(builder.Build().SnapshotName, Is.EqualTo(nameof(SnapshotSettingsBuilderTest)));
         }
         #endregion
     }

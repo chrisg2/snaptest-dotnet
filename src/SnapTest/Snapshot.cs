@@ -2,12 +2,22 @@
 
 namespace SnapTest
 {
-    public partial class Snapshot
+    /// <summary>
+    /// Core class providing methods to compare an actual value against a snapshotted value.
+    /// </summary>
+    public static partial class Snapshot
     {
         #region Public methods
         /// <summary>
         /// Compares an actual value to the value stored in a snapshot.
         /// </summary>
+        /// <remarks>
+        /// A snapshot file and mismatch file may be created or updated based on the values of
+        /// <see cref="SnapshotSettings.ForceSnapshotRefresh"/> and <see cref="SnapshotSettings.CreateMissingSnapshots"/>,
+        /// whether or not a snapshot currently exists, and whether the actual value matches the snapshot (if it exists). In the
+        /// case that these settings result in the snapshot being created or updated, the comparison result is true despite
+        /// what value the snapshot currently shows.
+        /// </remarks>
         /// <param name="actual">Actual value to be compared.</param>
         /// <param name="settings">Settings controlling the details of how and where the snapshot is stored and updated.</param>
         /// <returns>true if the actual value matches the snapshot, otherwise false.</returns>

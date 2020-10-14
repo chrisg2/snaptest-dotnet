@@ -13,14 +13,14 @@ namespace SnapTest.NUnit
             SettingsBuilder = settingsBuilder ?? new SnapshotSettingsBuilder();
         }
 
-        public SnapshotConstraint(string testName, SnapshotSettingsBuilder settingsBuilder = null) : this(settingsBuilder)
+        public SnapshotConstraint(string snapshotName, SnapshotSettingsBuilder settingsBuilder = null) : this(settingsBuilder)
         {
             // Do not use WithSettings on a caller-supplied SnapshotSettingsBuilder here, as
             // that would change the operationg of their builder which could be unexpected.
-            // Instead the testName is stored in property to be used to explicitly override the TestName
+            // Instead the snapshotName is stored in property to be used to explicitly override the SnapshotName
             // in built SnapshotSettings when needed.
 
-            TestName = testName;
+            SnapshotName = snapshotName;
         }
 
         public SnapshotConstraint(Action<SnapshotSettings> settingsInitializer) : this()
@@ -35,7 +35,7 @@ namespace SnapTest.NUnit
         #region Properties
         public SnapshotSettingsBuilder SettingsBuilder { get; }
 
-        public string TestName { get; set; }
+        public string SnapshotName { get; set; }
         #endregion
 
         #region Methods
@@ -73,8 +73,8 @@ namespace SnapTest.NUnit
                 );
             }
 
-            if (!string.IsNullOrEmpty(TestName))
-                settings.TestName = TestName;
+            if (!string.IsNullOrEmpty(SnapshotName))
+                settings.SnapshotName = SnapshotName;
 
             var comparer = new NUnitSnapshotComparer(this);
             settings.SnapshotComparer = comparer;

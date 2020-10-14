@@ -21,11 +21,11 @@ namespace SnapTest.NUnit
 
             settingsInitializers.ForEach(_ => _(s));
 
-            if (string.IsNullOrWhiteSpace(s.TestName))
-                s.TestName = GetTestNameFromTestContext(s);
+            if (string.IsNullOrWhiteSpace(s.SnapshotName))
+                s.SnapshotName = DeriveSnapshotNameFromTestContext(s);
 
             if (string.IsNullOrWhiteSpace(s.SnapshotGroup))
-                s.SnapshotGroup = GetSnapshotGroupFromTestContext(s);
+                s.SnapshotGroup = DeriveSnapshotGroupFromTestContext(s);
 
             if (string.IsNullOrWhiteSpace(s.SnapshotDirectory)) {
                 var d = GetSnapshotDirectoryFromStackTrace();
@@ -55,14 +55,14 @@ namespace SnapTest.NUnit
         }
 
         #region Helper methods
-        private static string GetTestNameFromTestContext(SnapshotSettings settings)
+        private static string DeriveSnapshotNameFromTestContext(SnapshotSettings settings)
         {
             var tc = TestContext.CurrentContext;
 
             if (tc.Test == null || tc.Test.Name == null || tc.Test.ClassName == null) {
                 throw new SnapTestException(
-                    "TestName can only be dynamically determined when accessed from while an NUnit test method is executing. " +
-                    "To access TestName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
+                    "SnapshotName can only be dynamically determined when accessed from while an NUnit test method is executing. " +
+                    "To access SnapshotName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
                 );
             }
 
@@ -71,7 +71,7 @@ namespace SnapTest.NUnit
             return settings.DefaultSnapshotGroupFromNUnitTestName ? className : $"{className}.{tc.Test.Name}";
         }
 
-        private static string GetSnapshotGroupFromTestContext(SnapshotSettings settings)
+        private static string DeriveSnapshotGroupFromTestContext(SnapshotSettings settings)
             => settings.DefaultSnapshotGroupFromNUnitTestName ? TestContext.CurrentContext.Test.Name : null;
 
         private static string GetSnapshotDirectoryFromStackTrace()

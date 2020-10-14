@@ -11,11 +11,11 @@ namespace SnapTest
     /// This class represents a snapshot value, which can be null value, simple (primitive) value, object containing properties and other values, or an array of values.
     /// </summary>
     /// <remarks>
-    /// Much of the interface exposed by this class is marked as "internal" as the details of SnapshotValue objects are
-    /// generally intended to be opaque for code outside the SnapTest assembly.
+    /// <para>Much of the interface exposed by this class is marked as "internal" as the details of SnapshotValue objects are
+    /// generally intended to be opaque for code outside the SnapTest assembly.</para>
     ///
-    /// The implementations of this clsas is based on <see cref="Newtonsoft.Json"/> capabilities and represents
-    /// underlying values as <see cref="JToken"/> values, but the purpose of this class is to hide that detail from all users of the class.
+    /// <para>The implementations of this clsas is based on <see cref="Newtonsoft.Json"/> capabilities and represents
+    /// underlying values as <see cref="JToken"/> values, but the purpose of this class is to hide that detail from all users of the class.</para>
     /// </remarks>
     public class SnapshotValue
     {
@@ -48,7 +48,7 @@ namespace SnapTest
         }
         #endregion
 
-        #region Properties
+        #region Internal properties
         /// <summary>
         /// Identifies whether the <see cref="SnapshotValue"/> is an object, that is, a container able to hold properties.
         /// </summary>
@@ -61,6 +61,17 @@ namespace SnapTest
         #endregion
 
         #region Methods
+        #region Public methods
+        /// <summary>
+        /// Serialize a <see cref="SnapshotValue"/> to JSON form.
+        /// </summary>
+        /// <param name="indented">Flag indicating whether the serialized JSON string should be indented.</param>
+        /// <returns>The snapshot value as a JSON string.</returns>
+        public string Serialize(bool indented) => JsonConvert.SerializeObject(jToken, indented ? Formatting.Indented : Formatting.None);
+
+        public override string ToString() => jToken.ToString();
+        #endregion
+
         #region Methods to create new SnapshotValues
         /// <summary>
         /// Creates a <see cref="SnapshotValue"/> representing a null value.
@@ -74,6 +85,7 @@ namespace SnapTest
         internal static SnapshotValue ArrayToken(IEnumerable<SnapshotValue> content) => new SnapshotValue(new JArray(content.Select(_ => _.jToken)));
         #endregion
 
+        #region Internal methods to perform various operations on snapshot values
         internal static bool DeepEquals(SnapshotValue t1, SnapshotValue t2) => JToken.DeepEquals(t1.jToken, t2.jToken);
 
         internal void Add(string propertyName, SnapshotValue value)
@@ -109,10 +121,7 @@ namespace SnapTest
                 );
 
         internal IEnumerable<SnapshotValue> SelectTokens(string selectPath) => jToken.SelectTokens(selectPath ?? "$").Select(_ => new SnapshotValue(_));
-
-        public string Serialize(bool indented) => JsonConvert.SerializeObject(jToken, indented ? Formatting.Indented : Formatting.None);
-
-        public override string ToString() => jToken.ToString();
+        #endregion
         #endregion
 
         #region Helper classes

@@ -13,18 +13,18 @@ namespace SnapTest.xNUnit.Tests
 
         [Test]
         public void MatchSnapshot_can_accept_test_name()
-            => Assert.That(SnapshotDoes.Match("snapshot name").TestName, Is.EqualTo("snapshot name"));
+            => Assert.That(SnapshotDoes.Match("snapshot name").SnapshotName, Is.EqualTo("snapshot name"));
 
         [Test]
-        public void MatchSnapshot_default_TestName_matches_class_dot_method()
-            => Assert.That(SnapshotDoes.Match().SettingsBuilder.Build().TestName, Is.EqualTo(nameof(Does_MatchSnapshot) + "." + nameof(MatchSnapshot_default_TestName_matches_class_dot_method)));
+        public void MatchSnapshot_default_SnapshotName_matches_class_dot_method()
+            => Assert.That(SnapshotDoes.Match().SettingsBuilder.Build().SnapshotName, Is.EqualTo(nameof(Does_MatchSnapshot) + "." + nameof(MatchSnapshot_default_SnapshotName_matches_class_dot_method)));
 
         [TestCaseSource(nameof(SimpleTestCaseSource))]
-        public void MatchSnapshot_default_TestName_matches_class_dot_method_paramvalue_with_TestCaseSource(string param)
+        public void MatchSnapshot_default_SnapshotName_matches_class_dot_method_paramvalue_with_TestCaseSource(string param)
             => Assert.That(
-                SnapshotDoes.Match().SettingsBuilder.Build().TestName,
+                SnapshotDoes.Match().SettingsBuilder.Build().SnapshotName,
                 Is.EqualTo(
-                    $"{nameof(Does_MatchSnapshot)}.{nameof(MatchSnapshot_default_TestName_matches_class_dot_method_paramvalue_with_TestCaseSource)}(\"{param}\")"));
+                    $"{nameof(Does_MatchSnapshot)}.{nameof(MatchSnapshot_default_SnapshotName_matches_class_dot_method_paramvalue_with_TestCaseSource)}(\"{param}\")"));
 
         public static IEnumerable<object> SimpleTestCaseSource() { yield return "a value"; }
 

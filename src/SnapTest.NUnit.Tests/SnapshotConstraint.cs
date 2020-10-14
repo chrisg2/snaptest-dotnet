@@ -5,20 +5,20 @@ namespace SnapTest.NUnit.Tests
     class SnapshotConstraintTests
     {
         [Test]
-        public void Applying_SnapshotConstraint_constructed_with_name_does_not_affect_TestName_from_SnapshotSettingsBuilder()
+        public void Applying_SnapshotConstraint_constructed_with_name_does_not_affect_SnapshotName_from_SnapshotSettingsBuilder()
         {
             var b = new SnapshotSettingsBuilder();
-            b.WithSettings(_ => _.TestName = "initial");
+            b.WithSettings(_ => _.SnapshotName = "initial");
             new SnapshotConstraint("alternate name", b).ApplyTo(42);
-            Assert.That(b.Build().TestName, Is.EqualTo("initial"));
+            Assert.That(b.Build().SnapshotName, Is.EqualTo("initial"));
         }
 
         [Test]
         public void SnapshotConstraint_WithSettings_modifies_supplied_SnapshotSettingsBuilder()
         {
             var b = new SnapshotSettingsBuilder();
-            new SnapshotConstraint(b).WithSettings(_ => _.TestName = "alternate");
-            Assert.That(b.Build().TestName, Is.EqualTo("alternate"));
+            new SnapshotConstraint(b).WithSettings(_ => _.SnapshotName = "alternate");
+            Assert.That(b.Build().SnapshotName, Is.EqualTo("alternate"));
         }
     }
 }

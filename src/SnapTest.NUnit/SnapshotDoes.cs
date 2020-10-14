@@ -16,8 +16,8 @@ namespace SnapTest.NUnit
         public static SnapshotConstraint Match(SnapshotSettingsBuilder settingsBuilder = null)
             => new SnapshotConstraint(settingsBuilder);
 
-        public static SnapshotConstraint Match(string testName, SnapshotSettingsBuilder settingsBuilder = null)
-            => new SnapshotConstraint(testName, settingsBuilder);
+        public static SnapshotConstraint Match(string snapshotName, SnapshotSettingsBuilder settingsBuilder = null)
+            => new SnapshotConstraint(snapshotName, settingsBuilder);
 
         public static SnapshotConstraint Match(Action<SnapshotSettings> settingsInitializer)
             => new SnapshotConstraint(settingsInitializer);
@@ -28,8 +28,8 @@ namespace SnapTest.NUnit
         public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotSettingsBuilder settingsBuilder = null)
             => expression.MatchSnapshot(() => new SnapshotConstraint(settingsBuilder));
 
-        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string testName, SnapshotSettingsBuilder settingsBuilder = null)
-            => expression.MatchSnapshot(() => new SnapshotConstraint(testName, settingsBuilder));
+        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string snapshotName, SnapshotSettingsBuilder settingsBuilder = null)
+            => expression.MatchSnapshot(() => new SnapshotConstraint(snapshotName, settingsBuilder));
 
         public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, Action<SnapshotSettings> settingsInitializer)
             => expression.MatchSnapshot(() => new SnapshotConstraint(settingsInitializer));

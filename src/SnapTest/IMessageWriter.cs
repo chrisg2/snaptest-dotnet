@@ -1,5 +1,8 @@
 namespace SnapTest
 {
+    /// <summary>
+    /// The <c>IMessageWriter</c> interface is used to emit informational messages related to snapshot processing.
+    /// </summary>
     public interface IMessageWriter
     {
         /// <summary>
