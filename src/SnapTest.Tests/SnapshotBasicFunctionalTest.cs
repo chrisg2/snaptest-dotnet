@@ -255,6 +255,9 @@ namespace SnapTest.Tests
 
             i.SelectPath = "Trees[0,0]";
             Assume.That(i.ActualSerialized, Is.EqualTo("[\"Elm\",\"Elm\"]"));
+
+            i.SelectPath = "$['Name','Address']";
+            Assume.That(i.ActualSerialized, Is.EqualTo("[\"Flagstaff\",{\"Postcode\":\"3000\",\"Street\":\"William\"}]"));
         }
 
         [Test]
@@ -399,7 +402,11 @@ namespace SnapTest.Tests
 
 
             // Test various SelectPath and ExcludePaths values
-            foreach (var jsonPath in new string[]{"$", "Name", "Address", "Address.Postcode", "Trees", "Trees[1]", "Trees[1,0]", "Trees[0,1]", "Trees[0,0]", "Trees[0,1,0]"}) {
+            foreach (var jsonPath in new string[]{
+                "$", "Name", "Address", "Address.Postcode",
+                "Trees", "Trees[1]", "Trees[1,0]", "Trees[0,1]", "Trees[0,0]", "Trees[0,1,0]",
+                "$['Name','Address']"
+            }) {
                 i = NewInputConditions(Garden.Flagstaff);
                 i.SelectPath = jsonPath;
                 yield return i;
