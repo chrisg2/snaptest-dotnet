@@ -8,18 +8,18 @@ namespace SnapTest.NUnit
     /// <summary>
     /// Helper class with properties and methods that supply a number of snapshotting-related constrains used in NUnit Asserts.
     /// </summary>
-    public class Does: global::NUnit.Framework.Does
+    public class SnapshotDoes
     {
         /// <summary>
         /// Returns a constraint that tests an object value matches a snapshot.
         /// </summary>
-        public static SnapshotConstraint MatchSnapshot(SnapshotSettingsBuilder settingsBuilder = null)
+        public static SnapshotConstraint Match(SnapshotSettingsBuilder settingsBuilder = null)
             => new SnapshotConstraint(settingsBuilder);
 
-        public static SnapshotConstraint MatchSnapshot(string testName)
-            => new SnapshotConstraint(testName);
+        public static SnapshotConstraint Match(string testName, SnapshotSettingsBuilder settingsBuilder = null)
+            => new SnapshotConstraint(testName, settingsBuilder);
 
-        public static SnapshotConstraint MatchSnapshot(Action<SnapshotSettings> settingsInitializer)
+        public static SnapshotConstraint Match(Action<SnapshotSettings> settingsInitializer)
             => new SnapshotConstraint(settingsInitializer);
     }
 
@@ -28,8 +28,8 @@ namespace SnapTest.NUnit
         public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotSettingsBuilder settingsBuilder = null)
             => expression.MatchSnapshot(() => new SnapshotConstraint(settingsBuilder));
 
-        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string testName)
-            => expression.MatchSnapshot(() => new SnapshotConstraint(testName));
+        public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string testName, SnapshotSettingsBuilder settingsBuilder = null)
+            => expression.MatchSnapshot(() => new SnapshotConstraint(testName, settingsBuilder));
 
         public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, Action<SnapshotSettings> settingsInitializer)
             => expression.MatchSnapshot(() => new SnapshotConstraint(settingsInitializer));

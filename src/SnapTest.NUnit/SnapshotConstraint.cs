@@ -13,9 +13,14 @@ namespace SnapTest.NUnit
             SettingsBuilder = settingsBuilder ?? new SnapshotSettingsBuilder();
         }
 
-        public SnapshotConstraint(string testName) : this()
+        public SnapshotConstraint(string testName, SnapshotSettingsBuilder settingsBuilder = null) : this(settingsBuilder)
         {
-            SettingsBuilder.WithSettings(_ => _.TestName = testName);
+            // Do not use WithSettings on a caller-supplied SnapshotSettingsBuilder here, as
+            // that would change the operationg of their builder which could be unexpected.
+            // Instead the testName is stored in property to be used to explicitly override the TestName
+            // in built SnapshotSettings when needed.
+
+            TestName = testName;
         }
 
         public SnapshotConstraint(Action<SnapshotSettings> settingsInitializer) : this()
@@ -23,25 +28,24 @@ namespace SnapTest.NUnit
             if (settingsInitializer == null)
                 throw new ArgumentNullException(nameof(settingsInitializer));
 
-            SettingsBuilder.WithSettings(settingsInitializer);
+            WithSettings(settingsInitializer);
         }
         #endregion
 
         #region Properties
         public SnapshotSettingsBuilder SettingsBuilder { get; }
+
+        public string TestName { get; set; }
         #endregion
 
         #region Methods
         /// <summary>
-        /// Shortcut method to call SettingsBuilder.WithSettings.
+        /// Shortcut method to call <see cref="SnapshotSettingsBuilder.WithSettings"/> on this <see cref="SnapshotConstraint"/>'s <see cref="SettingsBuilder"/>.
         /// </summary>
-        /// <remarks>
-        /// See <see cref="SnapshotSettingsBuilder.WithSettings"/> for further details.
-        /// </remarks>
         /// <param name="settingsInitializer">
         /// An action to be called to initialize settings.
         /// A <see cref="SnapshotSettings"/> object is passed as the single parameter to the action.
-        /// The action should set properties as appropriate on this object.
+        /// The action should set properties as appropriate on that object.
         /// </param>
         /// <returns>This SnapshotConstraint's <see cref="SettingsBuilder"/></returns>
         public SnapshotConstraint WithSettings(Action<SnapshotSettings> settingsInitializer)
@@ -68,6 +72,9 @@ namespace SnapTest.NUnit
                     "This error may occur if you perform a snapshot match within an async test helper child method."
                 );
             }
+
+            if (!string.IsNullOrEmpty(TestName))
+                settings.TestName = TestName;
 
             var comparer = new NUnitSnapshotComparer(this);
             settings.SnapshotComparer = comparer;

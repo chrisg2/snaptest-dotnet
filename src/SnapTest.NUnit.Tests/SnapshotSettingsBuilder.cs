@@ -10,7 +10,7 @@ namespace SnapTest.NUnit.Tests
         public void Does_MatchSnapshot_can_be_used_with_builder()
         {
             var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotExtension = ".txt");
-            Assert.That("actual output", Does.MatchSnapshot(builder));
+            Assert.That("actual output", SnapshotDoes.Match(builder));
         }
 
         [Test]
