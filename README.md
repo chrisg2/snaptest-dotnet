@@ -51,20 +51,18 @@ var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirec
 
 Any of the following special characters in the filename are replaced with `_` to avoid using filenames which are not possible to have on filesystems with both Windows and UNIX-like operating systems: `/|:*?\"<>`
 
-TIP: It is possible that the same default snapshot filename selected for multiple tests may be the same. This may be desired (for example, when multiple tests are intended to share the same snapshot). However in a situation where it is not desired, consider explicitly setting the test name to ensure the snapshot file name for each test is unique. For example:
-
-```C#
-Assert.That(actualValue, SnapshotDoes.Match(nameof(MyTestClass) + ".Overridden_test_name_that_is_unique"));
-```
+> __TIP:__ It is possible that the same default snapshot filename selected for multiple tests may be the same. This may be desired (for example, when multiple tests are intended to share the same snapshot). However in a situation where it is not desired, consider explicitly setting the test name to ensure the snapshot file name for each test is unique. For example:
+>
+> ```C#
+> Assert.That(actualValue, SnapshotDoes.Match(nameof(MyTestClass) + ".Overridden_test_name_that_is_unique"));
+> ```
 
 
 # Questions and feedback sought
 
 ## How should configuration to force snapshots to be updated or missing snapshots created be managed?
 
-Currently this is done only through setting environment variables, or properties on the `SnapshotSettings` object
-used when comparing a snapshot. What other kinds of options and approaches might be helpful to add to suit different
-styles of development practices & workflows?
+Currently this is done only through setting environment variables, or properties on the `SnapshotSettings` object used when comparing a snapshot. What other kinds of options and approaches might be helpful to add to suit different styles of development practices & workflows?
 
 
 # Things to be done
