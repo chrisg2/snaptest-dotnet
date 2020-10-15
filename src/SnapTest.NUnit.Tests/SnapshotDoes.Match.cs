@@ -1,7 +1,5 @@
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using SnapTest.NUnit;
-using System.Collections.Generic;
 
 namespace SnapTest.NUnit.Tests
 {
