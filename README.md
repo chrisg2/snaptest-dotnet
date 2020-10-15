@@ -11,70 +11,118 @@ This library has been inspired by:
 
 Treat this as experimental status. This means (amongst other things) that the interfaces and classes exposed from the SnapTest namespace are subject to change. If you are interested in using this library and the potential for changes is problematic for you then get in touch and we can discuss.
 
-# Points to document
 
-## Snapshot file contents
+## Getting Started
 
-- Strings saved verbatim with an extra `Environment.NewLine` at the end
+1. __Add SnapTest to your test project__
 
-- Guids are stored as text in the pattern `XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX` where X is a hex digit (0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F), with an `Enviornment.NewLine` at the end
+    Add the `SnapTest` and `SnapTest.NUnit` Nuget packages to your NUnit-based test project:
 
-- Other objects are serialized in JSON format, with properties ordered by name
+    ```shell
+    dotnet add package SnapTest
+    dotnet add package SnapTest.NUnit
+    ```
+
+1. __Add test assertions to compare actual output against snapshotted output__
+
+    `DoesMatch.Snapshot()` can be used as an assertion expression in your test.
+
+    Example:
+    ```C#
+    // ChristmasTests.cs
+
+    using NUnit.Framework;
+    using SnapTest.NUnit;
+
+    public class ChristmasTests
+    {
+        [Test]
+        public void Santa_lives_at_the_NorthPole()
+        {
+            Assert.That(Santa.HomeCoordinates, DoesMatch.Snapshot());
+        }
+    }
+    ```
+
+1. __Create the initial snapshot__
+
+    Run tests with the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable set to cause initial snapshot files to be created. Snapshot files are created in the `_snapshots` subdirectory under the directory containing the test source file.
+
+    After creating a snapshot file, review its contents to verify they match what you expect.
+
+    ```shell
+    # Bash:
+    SNAPTEST_CREATE_MISSING_SNAPSHOTS=yes dotnet test
+    cat _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt
+    ```
+
+    ```PowerShell
+    # PowerShell:
+    $env:SNAPTEST_CREATE_MISSING_SNAPSHOTS = "yes"
+    dotnet test
+    cat _snapshots\ChristmasTests.Santa_lives_at_the_NorthPole.txt
+    ```
+
+    The snapshot file contains a JSON representation of the actual result provided to the assertion:
+    ```json
+    {
+      "Latitude": 90.0,
+      "Longitude": 0.0
+    }
+    ```
+
+1. __Commit code and snapshot files to source control__
+
+    Commit the test source file and associated snapshot file to your version control repository. You may also configure your version control tool to ignore `*.txt.actual` files in the `_snapshots` subdirectory (these files will be created when a snapshot comparison fails).
+
+    ```shell
+    echo '*.txt.actual' >>_snapshots/.gitignore
+    git commit ChristmasTests.cs _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt _snapshots/.gitignore
+    ```
+
+1. __When a change occurs that results in different actual result...___
+
+    ... the NUnit test output will include output identifying the change:
+    ```
+    Created snapshot actual mismatched output file at /home/jonas/src/Christmas.Tests/_snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt.actual
+    ===> Tip: Review the content of mismatched output files to and use them to update snapshot files as appropriate.
+    X Santa_lives_at_the_NorthPole [93ms]
+    Error Message:
+        Expected string length 33 but was 35. Strings differ at index 29.
+    Expected: "{"Latitude":90.0,"Longitude":0.0}"
+    But was:  "{"Latitude":90.0,"Longitude":135.0}"
+    ----------------------------------------^
+
+    Stack Trace:
+        at ChristmasTests.Santa_lives_at_the_NorthPole() in /home/jonas/src/Christmas.Tests/ChristmasTests.cs:line 11
+    ```
+
+    If the change is acceptable, update the snapshot file with the new actual value:
+    ```shell
+    # Bash:
+    SNAPTEST_REFRESH=yes dotnet test --filter Santa_lives_at_the_NorthPole
+    ```
+    ```shell
+    # PowerShell:
+    $env:SNAPTEST_REFRESH = "yes"
+    dotnet test --filter Santa_lives_at_the_NorthPole
+    ```
+
+    Or simply copy the `.txt.actual` snapshot file over the `.txt` file:
+    ```shell
+    cp _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt.actual _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt
+    ```
 
 
-## Default snapshot file naming
+# Going Deeper
 
-### NUnit
-
-By default snapshot files are placed in `<Test source file directory path>/_snapshots/<Test class name>.<Test name>.txt`.
-
-The components used to construct the full snapshot file path can be individually specified as follows:
-
-```C#
-var builder = new SnapshotSettingsBuilder()
-    .WithSettings(_ => {
-        _.SnapshotDirectoryPath = @"C:\MyPath";
-        _.SnapshotExtension = ".snapshot";
-        _.MismatchedActualExtension = ".snapshot.actual"
-        _.SnapshotName = "filename"
-    });
-
-Assert.That("actual output", SnapshotDoes.Match(builder));
-```
-
-With the above settings the full path of snapshot file used by `SnapshotDoes.Match` will be `C:\MyPath\filename.snapshot`. If a snapshot comparison fails and a mismatch file is created then it will be created at `C:\MyPath.filename.snapshot.actual`.
-
-To override the directory name `_snapshots` that is appended by default to the source file directory path (that is, when the `SnapshotDirectoryPath` setting has not be explicitly set), set the `SnapshotSettings.SnapshotSubdirectory` property:
-```C#
-var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirectory = ".snapshots");
-```
-
-Any of the following special characters in the filename are replaced with `_` to avoid using filenames which are not possible to have on filesystems with both Windows and UNIX-like operating systems: `/|:*?\"<>`
-
-> __TIP:__ It is possible that the same default snapshot filename selected for multiple tests may be the same. This may be desired (for example, when multiple tests are intended to share the same snapshot). However in a situation where it is not desired, consider explicitly setting the test name to ensure the snapshot file name for each test is unique. For example:
->
-> ```C#
-> Assert.That(actualValue, SnapshotDoes.Match(nameof(MyTestClass) + ".Overridden_test_name_that_is_unique"));
-> ```
+Learn more about SnapTest in the [documentation](docs).
 
 
 # Questions and feedback sought
 
 ## How should configuration to force snapshots to be updated or missing snapshots created be managed?
 
-Currently this is done only through setting environment variables, or properties on the `SnapshotSettings` object used when comparing a snapshot. What other kinds of options and approaches might be helpful to add to suit different styles of development practices & workflows?
+Currently the `SNAPTEST_REFRESH` and `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variables are set when running tests to automatically create or update snapshot files based on actual values. Alternatively, code can explicitly set the `SnapshotSettings` `ForceSnapshotRefresh` and `CreateMissingSnapshots` properties.
 
-
-# Things to be done
-
-1. Choose a license, add copyright messages to source files
-
-1. Confirm out how to use classic NUnit "Assert(...)" NUnit coding style with snapshots
-
-1. Consider fancy diff'ing ala [Snapper](https://github.com/theramis/Snapper/blob/master/project/Snapper/Json/JsonDiffGenerator.cs)
-
-   Maybe save diffs in a file along with the mismatched actual value.
-
-1. Add SnapTest interfaces for Xunit and MSTest
-
-1. Documentation (possibly including API documentation ala DocFX)
+However these options may not suit all kinds of workflows and development practices. What other kinds of approaches for controlling this might be helpful to suit different styles of development practices & workflows?
