@@ -116,7 +116,9 @@ Treat this as experimental status. This means (amongst other things) that the in
 
 # Going Deeper
 
-Learn more about SnapTest in the [documentation](doc).
+- Learn more about SnapTest in the [documentation](doc).
+
+- Browse [examples of tests using SnapTest](examples).
 
 
 # Questions and feedback sought
