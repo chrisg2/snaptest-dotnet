@@ -17,13 +17,16 @@ namespace SnapTest
             // Remove parts of the value which are explicitly excluded in settings.ExcludedPaths
             value.RemovePaths(settings.ExcludedPaths);
 
-            // Select parts of the value which are identified by settings.SelectPath
-            var selected = value.SelectTokens(settings.SelectPath).ToArray();
+            // Select parts of the value which are identified by settings.IncludedPaths
+            if (!settings.IncludedPaths.Any())
+                return value;
+
+            var selected = settings.IncludedPaths.Select(_ => value.SelectTokens(_)).SelectMany(_ => _).ToArray();
 
             switch (selected.Length) {
                 case 0: return SnapshotValue.CreateNull();
-                case 1: return selected.First();                // SelectPatch matched exactly 1 token - explode it and return it directly
-                default: return SnapshotValue.ArrayToken(selected);  // SelectPatch matched >1 token - return them as an array
+                case 1: return selected.First();                    // IncludedPaths matched exactly 1 token - explode it and return it directly
+                default: return SnapshotValue.ArrayToken(selected); // IncludedPaths matched >1 token - return them as an array
             }
         }
     }

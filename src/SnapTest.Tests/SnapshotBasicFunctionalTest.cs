@@ -82,14 +82,13 @@ namespace SnapTest.Tests
                         (e.Parent is JProperty ? e.Parent : e).Remove();
                     }
 
-                    if (SelectPath != null) {
-                        var selected = ja.SelectTokens(SelectPath).ToArray();
-                        if (selected.Length == 0)
-                            ja = null;
-                        else if (selected.Length == 1)
-                            ja = selected.First();
-                        else
-                            ja = new JArray(selected);
+                    if (IncludedPaths.Any()) {
+                        var selected = IncludedPaths.Select(_ => ja.SelectTokens(_)).SelectMany(_ => _).ToArray();
+                        switch (selected.Length) {
+                            case 0: ja = null; break;
+                            case 1: ja = selected.First(); break;
+                            default: ja = new JArray(selected); break;
+                        }
                     }
 
                     return ja;
@@ -181,8 +180,8 @@ namespace SnapTest.Tests
                 if (IndentJson != true)
                     settings.Add($"IndentJson={IndentJson}");
 
-                if (SelectPath != null)
-                    settings.Add($"SelectPath=\"{SelectPath}\"");
+                if (IncludedPaths != null)
+                    settings.Add($"IncludedPaths=\"{IncludedPaths}\"");
 
                 if (ExcludedPaths.Any())
                     settings.Add($"ExcludedPaths=[\"{string.Join("\",\"", ExcludedPaths)}\"]");
@@ -242,52 +241,67 @@ namespace SnapTest.Tests
         }
 
         [Test]
-        public void InputConditions_SelectPath_with_array_elements_gives_expected_results()
+        public void InputConditions_IncludedPaths_with_array_elements_gives_expected_results()
         {
-            using var i = new InputConditions(Garden.Flagstaff);
-            i.IndentJson = false;
+            using (var i = new InputConditions(Garden.Flagstaff) { IndentJson = false }) {
+                i.IncludePath("Trees[1,0]");
+                Assume.That(i.ActualSerialized, Is.EqualTo("[\"Eucalyptus\",\"Elm\"]"));
+            }
 
-            i.SelectPath = "Trees[1,0]";
-            Assume.That(i.ActualSerialized, Is.EqualTo("[\"Eucalyptus\",\"Elm\"]"));
+            using (var i = new InputConditions(Garden.Flagstaff) { IndentJson = false }) {
+                i.IncludePath("Trees[0,1]");
+                Assume.That(i.ActualSerialized, Is.EqualTo("[\"Elm\",\"Eucalyptus\"]"));
+            }
 
-            i.SelectPath = "Trees[0,1]";
-            Assume.That(i.ActualSerialized, Is.EqualTo("[\"Elm\",\"Eucalyptus\"]"));
+            using (var i = new InputConditions(Garden.Flagstaff) { IndentJson = false }) {
+                i.IncludePath("Trees[0,0]");
+                Assume.That(i.ActualSerialized, Is.EqualTo("[\"Elm\",\"Elm\"]"));
+            }
 
-            i.SelectPath = "Trees[0,0]";
-            Assume.That(i.ActualSerialized, Is.EqualTo("[\"Elm\",\"Elm\"]"));
+            using (var i = new InputConditions(Garden.Flagstaff) { IndentJson = false }) {
+                i.IncludePath("$['Name','Address']");
+                Assume.That(i.ActualSerialized, Is.EqualTo("[\"Flagstaff\",{\"Postcode\":\"3000\",\"Street\":\"William\"}]"));
+            }
 
-            i.SelectPath = "$['Name','Address']";
-            Assume.That(i.ActualSerialized, Is.EqualTo("[\"Flagstaff\",{\"Postcode\":\"3000\",\"Street\":\"William\"}]"));
+            using (var i = new InputConditions(Garden.Flagstaff) { IndentJson = false }) {
+                i.IncludePath("Name");
+                i.IncludePath("Address");
+                Assume.That(i.ActualSerialized, Is.EqualTo("[\"Flagstaff\",{\"Postcode\":\"3000\",\"Street\":\"William\"}]"));
+            }
         }
 
         [Test]
         public void InputConditions_ExcludePaths_excludes_expected_fields()
         {
-            var i = new InputConditions(Garden.Flagstaff);
-            i.IndentJson = false;
+            using (var i = new InputConditions(Garden.Flagstaff)) {
+                Assume.That(i.ActualSerialized, Does.Contain("Name"));
+                Assume.That(i.ActualSerialized, Does.Contain("Street"));
 
-            Assume.That(i.ActualSerialized, Does.Contain("Name"));
-            Assume.That(i.ActualSerialized, Does.Contain("Street"));
+                i.ExcludePath("Name"); // Exclude a value
+                Assume.That(i.ActualSerialized, Does.Not.Contain("Name"));
+            }
 
-            i.ExcludedPaths.Add("Name"); // Exclude a value
-            Assume.That(i.ActualSerialized, Does.Not.Contain("Name"));
+            using (var i = new InputConditions(Garden.Flagstaff)) {
+                i.ExcludePath("Address.Street"); // Exclude a nested value
+                Assume.That(i.ActualSerialized, Does.Contain("Address"));
+                Assume.That(i.ActualSerialized, Does.Not.Contain("Street"));
+            }
 
-            i.ExcludedPaths.Clear();
-            i.ExcludedPaths.Add("Address.Street"); // Exclude a nested value
-            Assume.That(i.ActualSerialized, Does.Contain("Address"));
-            Assume.That(i.ActualSerialized, Does.Not.Contain("Street"));
+            using (var i = new InputConditions(Garden.Flagstaff)) {
+                i.ExcludePath("Address"); // Exclude an object
+                Assume.That(i.ActualSerialized, Does.Not.Contain("Address"));
+            }
 
-            i.ExcludedPaths.Clear();
-            i.ExcludedPaths.Add("Address"); // Exclude an object
-            Assume.That(i.ActualSerialized, Does.Not.Contain("Address"));
+            using (var i = new InputConditions(Garden.Flagstaff)) {
+                i.ExcludePath("Trees");
+                Assume.That(i.ActualSerialized, Does.Not.Contain("Trees"));
+            }
 
-            i.ExcludedPaths.Clear();
-            i.ExcludedPaths.Add("Trees");
-            Assume.That(i.ActualSerialized, Does.Not.Contain("Trees"));
-
-            i.ExcludedPaths.Clear();
-            i.ExcludedPaths.Add("Trees[0,1,0]"); // Exclude array elements
-            Assume.That(i.ActualSerialized, Does.Contain("\"Trees\":[\"Morton Bay Fig\"]"));
+            using (var i = new InputConditions(Garden.Flagstaff)) {
+                i.ExcludePath("Trees[0,1,0]"); // Exclude array elements
+                i.IndentJson = false;
+                Assume.That(i.ActualSerialized, Does.Contain("\"Trees\":[\"Morton Bay Fig\"]"));
+            }
         }
         #endregion
         #endregion
@@ -315,7 +329,7 @@ namespace SnapTest.Tests
             // - CreateMissingSnapshots (false)
             // - ForceSnapshotRefresh (false)
             // - IndentJson (true)
-            // - SelectPath (null)
+            // - IncludedPaths (null)
             // - ExcludedPaths (empty)
             // - SnapshotGroup (null)
 
@@ -385,95 +399,100 @@ namespace SnapTest.Tests
             yield return i;
 
 
-            #region Test cases involving SelectPath and ExcludedPaths
+            #region Test cases involving IncludedPaths and ExcludedPaths
             foreach (var actual in new object[]{null, "astring", 42, Guid.NewGuid()}) {
-                // Various SelectPaths on primitive value
-                foreach (var selectPath in new string[]{"$", "PropertyDoesNotExist"}) {
+                // Various IncludedPathss on primitive value
+                foreach (var p in new string[]{"$", "PropertyDoesNotExist"}) {
                     i = NewInputConditions(actual);
-                    i.SelectPath = selectPath;
+                    i.IncludePath(p);
                     yield return i;
                 }
 
                 // ExcludePaths on a primitive value
                 i = NewInputConditions(actual);
-                i.ExcludedPaths.Add("PropertyDoesNotExist");
+                i.ExcludePath("PropertyDoesNotExist");
                 yield return i;
             }
 
 
-            // Test various SelectPath and ExcludePaths values
+            // Test various IncludedPaths and ExcludePaths values
             foreach (var jsonPath in new string[]{
                 "$", "Name", "Address", "Address.Postcode",
                 "Trees", "Trees[1]", "Trees[1,0]", "Trees[0,1]", "Trees[0,0]", "Trees[0,1,0]",
                 "$['Name','Address']"
             }) {
                 i = NewInputConditions(Garden.Flagstaff);
-                i.SelectPath = jsonPath;
+                i.IncludePath(jsonPath);
                 yield return i;
 
                 if (jsonPath != "$") { // Can't exclude root
                     i = NewInputConditions(Garden.Flagstaff);
-                    i.ExcludedPaths.Add(jsonPath);
+                    i.ExcludePath(jsonPath);
                     yield return i;
                 }
             }
 
-            // Test SelectPath and ExcludePaths with a property name containing special characters
+            i = NewInputConditions(Garden.Flagstaff);
+            i.IncludePath("Name"); // Multiple IncludePath calls
+            i.IncludePath("Address");
+            yield return i;
+
+            // Test IncludedPaths and ExcludePaths with a property name containing special characters
             i = NewInputConditions(sampleDict);
-            i.SelectPath = $"$['{nastyPropertyName.Replace("'", "\\'")}1']";
+            i.IncludePath($"$['{nastyPropertyName.Replace("'", "\\'")}1']");
             Assume.That(i.ActualSerialized, Is.EqualTo("42"));
             yield return i;
 
             i = NewInputConditions(sampleDict);
             i.IndentJson = false;
-            i.ExcludedPaths.Add($"$['{nastyPropertyName.Replace("'", "\\'")}2']"); // Exclude property with special characters in it
+            i.ExcludePath($"$['{nastyPropertyName.Replace("'", "\\'")}2']"); // Exclude property with special characters in it
             Assume.That(i.ActualSerialized, Is.EqualTo($"{{\"{nastyPropertyName.Replace("\\", "\\\\").Replace("\"", "\\\"")}1\":42}}"));
             yield return i;
 
 
-            // Test SelectPath and ExcludedPaths set together
+            // Test IncludedPaths and ExcludedPaths set together
             i = NewInputConditions(Garden.Flagstaff);
             i.IndentJson = false;
-            i.SelectPath = "Name";
-            i.ExcludedPaths.Add("Address.Street"); // Exclude something unrelated to what is being selected
+            i.IncludePath("Name");
+            i.ExcludePath("Address.Street"); // Exclude something unrelated to what is being selected
             Assume.That(i.ActualSerialized, Is.EqualTo("Flagstaff"));
             yield return i;
 
             i = NewInputConditions(Garden.Flagstaff);
             i.IndentJson = false;
-            i.SelectPath = "Address";
-            i.ExcludedPaths.Add("Address.Postcode"); // Exclude a value within the object being selected
+            i.IncludePath("Address");
+            i.ExcludePath("Address.Postcode"); // Exclude a value within the object being selected
             Assume.That(i.ActualSerialized, Is.EqualTo("{\"Street\":\"William\"}"));
             yield return i;
 
             i = NewInputConditions(Garden.Flagstaff);
             i.IndentJson = false;
-            i.SelectPath = "Trees";
-            i.ExcludedPaths.Add("Trees[0]"); // Exclude array element (repeated)
-            i.ExcludedPaths.Add("Trees[0]");
+            i.IncludePath("Trees");
+            i.ExcludePath("Trees[0]"); // Exclude array element (repeated)
+            i.ExcludePath("Trees[0]");
             Assume.That(i.ActualSerialized, Is.EqualTo("[\"Eucalyptus\",\"Morton Bay Fig\"]"));
             yield return i;
 
             i = NewInputConditions(Garden.Flagstaff);
             i.IndentJson = false;
-            i.SelectPath = "Trees";
-            i.ExcludedPaths.Add("Trees[0]"); // Exclude array elements
-            i.ExcludedPaths.Add("Trees[1]");
+            i.IncludePath("Trees");
+            i.ExcludePath("Trees[0]"); // Exclude array elements
+            i.ExcludePath("Trees[1]");
             Assume.That(i.ActualSerialized, Is.EqualTo("[\"Morton Bay Fig\"]"));
             yield return i;
 
             i = NewInputConditions(Garden.Flagstaff);
             i.IndentJson = false;
-            i.SelectPath = "Trees";
-            i.ExcludedPaths.Add("Trees[1]"); // Exclude array elements (reverse order to previous test)
-            i.ExcludedPaths.Add("Trees[0]");
+            i.IncludePath("Trees");
+            i.ExcludePath("Trees[1]"); // Exclude array elements (reverse order to previous test)
+            i.ExcludePath("Trees[0]");
             Assume.That(i.ActualSerialized, Is.EqualTo("[\"Morton Bay Fig\"]"));
             yield return i;
 
             i = NewInputConditions(Garden.Flagstaff);
             i.IndentJson = false;
-            i.SelectPath = "Trees";
-            i.ExcludedPaths.Add("Trees[0,1]"); // Exclude array elements
+            i.IncludePath("Trees");
+            i.ExcludePath("Trees[0,1]"); // Exclude array elements
             Assume.That(i.ActualSerialized, Is.EqualTo("[\"Morton Bay Fig\"]"));
             yield return i;
             #endregion
@@ -581,7 +600,7 @@ namespace SnapTest.Tests
         public static void Snapshot_Compare_attempting_to_exclude_root_throws()
         {
             using var i = new InputConditions(Garden.Flagstaff);
-            i.ExcludedPaths.Add("$");
+            i.ExcludePath("$");
             Assert.Throws<SnapTestParseException>(() => i.PerformCompareTo());
         }
 

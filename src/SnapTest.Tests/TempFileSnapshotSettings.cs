@@ -26,8 +26,6 @@ namespace SnapTest.Tests
             // Set properties to fixed defined values for stable testing
             SnapshotGroup = null;
             IndentJson = true;
-            SelectPath = null;
-            ExcludedPaths.Clear();
             CreateMissingSnapshots = false;
             ForceSnapshotRefresh = false;
 
