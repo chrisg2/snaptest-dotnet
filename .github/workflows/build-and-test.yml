@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore src/*sln
+      run: cd src; dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore src/*sln
+      run: cd src; dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal src/*sln
+      run: cd src; dotnet test --no-restore --verbosity normal
