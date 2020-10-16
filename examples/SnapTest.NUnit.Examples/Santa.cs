@@ -1,24 +1,16 @@
 using NUnit.Framework;
 using SnapTest.NUnit;
+using System.Linq;
 
 namespace SnapTest.Examples
 {
-    public class ChristmasTests
+    public class SantaTests
     {
         [Test]
         public void Santa_lives_at_the_NorthPole()
         {
-            Assert.That(Santa.HomeLocation, SnapshotDoes.Match());
+            var santasHomeLocation = CityModel.Cities.AllCities.Where(_ => _.Landmarks.Contains("Santa's Workshop")).Select(_ => _.Location).FirstOrDefault();
+            Assert.That(santasHomeLocation, SnapshotDoes.Match());
         }
-    }
-
-    public class LatLong {
-        public float Latitude;
-        public float Longitude;
-    }
-
-    public class Santa
-    {
-        public static readonly LatLong HomeLocation = new LatLong() { Latitude = 90, Longitude = 0 };
     }
 }
