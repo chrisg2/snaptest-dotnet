@@ -26,3 +26,10 @@ jobs:
       run: cd src; dotnet build --configuration Release --no-restore
     - name: Test
       run: cd src; dotnet test --no-restore --verbosity normal
+
+    - name: Install examples dependencies
+      run: cd examples; dotnet restore
+    - name: Build examples
+      run: cd examples; dotnet build --configuration Release --no-restore
+    - name: Test examples
+      run: cd examples; dotnet test --no-restore --verbosity normal
