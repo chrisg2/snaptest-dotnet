@@ -13,4 +13,8 @@
     <PackageReference Include="SnapTest.NUnit" Version="0.0.1-alpha" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CityModel\CityModel.csproj" />
+  </ItemGroup>
+
 </Project>
