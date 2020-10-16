@@ -63,13 +63,13 @@ namespace SnapTest
         public bool IndentJson { get; set; } = true;
 
         /// <summary>
-        /// Adds a JSON Path identifying element(s) to be included from a compound object provided to be compared to a snapshot when performing a snapshot comparison.
+        /// A list of JSON Paths identifying element(s) to be included from a compound object when it is compared to a snapshot.
         /// </summary>
         ///
         /// <remarks>
         /// <para>When a compound object (that is, an object that is not a primitive type, string, or similar) is compared
-        /// to a snapshot, it is sometimes helpful to select particular elements of the object to be compared. This method can
-        /// can be called to add a JSON Path expression in this situation to select appropriate field(s).</para>
+        /// to a snapshot, it is sometimes helpful to select particular elements of the object to be compared. JSON Paths to identify such elements
+        /// can be added to this setting.</para>
         ///
         /// <para>As an example, consider the following classes:</para>
         /// <code language="c#">
@@ -87,8 +87,8 @@ namespace SnapTest
         /// }
         /// </code>
         ///
-        /// <para>Given a <c>Garden</c> object to compare to a snapshot, this method could be called with the following JSON Path
-        /// expressions to select particular elements of the object for comparison:</para>
+        /// <para>Given a <c>Garden</c> object to compare to a snapshot, the following JSON Paths could be added to <c>IncludedPaths</c>
+        /// to select particular elements of the object for comparison:</para>
         /// <list type="bullet">
         /// <item><term><c>$</c></term> <description>Selects the entire object. This gives the same result as if <c>IncludedPaths</c> is null.</description></item>
         /// <item><term><c>Name</c></term> <description>Selects just the <c>Garden.Name</c> field.</description></item>
@@ -100,87 +100,26 @@ namespace SnapTest
         ///
         /// <para>For more information about and examples of JSON Path syntax, see https://goessner.net/articles/JsonPath/.</para>
         ///
-        /// <para>If this method is not called on a <see cref="SnapshotSettings"/> object (so that <see cref="IncludedPaths"/> is empty),
-        /// the entire actual object is compared to the snapshot.</para>
+        /// <para>If the <c>IncludedPaths</c> list is empty then the entire actual object is compared to the snapshot.</para>
         ///
-        /// <para>Calling this method has no effect when comparing simple primitive or string values.</para>
+        /// <para>The value of this property is ignored when comparing simple primitive or string values to a snapshot.</para>
         /// </remarks>
-        ///
-        /// <param name="path">The JSON Path to include in the snapshot comparison.</param>
-        ///
-        /// <returns>The <see cref="SnapshotSettings"/> object the method is called on is returned to support method chaining.</returns>
-        ///
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="path"/> is null or only whitespace.
-        /// </exception>
-        ///
-        /// <seealso cref="IncludedPaths"/>
-        /// <seealso cref="ExcludePath"/>
         /// <seealso cref="ExcludedPaths"/>
-        public SnapshotSettings IncludePath(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                throw new ArgumentNullException(nameof(path));
-
-            _includedPaths.Add(path);
-            return this;
-        }
+        public IList<string> IncludedPaths { get; } = new List<string>();
 
         /// <summary>
-        /// An enumeration of JSON Paths identifying element(s) in a compound object provided to be compared to a snapshot that should be included in the
-        /// snapshot comparison.
-        /// Paths can be added to this enumeration by calling <see cref="IncludePath"/>.
-        /// </summary>
-        /// <remarks>
-        /// If this enumeration is empty then the entire actual object is compared to the snapshot.
-        /// </remarks>
-        /// <seealso cref="IncludePath"/>
-        /// <seealso cref="ExcludePath"/>
-        /// <seealso cref="ExcludedPaths"/>
-        public IEnumerable<string> IncludedPaths => _includedPaths;
-
-        /// <summary>
-        /// Adds a JSON Path identifying element(s) to be excluded from a compound object provided to be compared to a snapshot when performing a snapshot comparison.
+        /// A list of JSON Paths identifying element(s) to be excluded from a compound object when it is compared to a snapshot.
         /// </summary>
         ///
         /// <remarks>
         /// <para>When a compound object (that is, an object that is not a primitive type, string, or similar) is compared to a snapshot,
         /// it is sometimes helpful to exclude particular elements of the object from the comparison. JSON Paths to identify such elements
-        /// can be added to the the settings by calling this method.</para>
+        /// can be added to this setting.</para>
         ///
-        /// <para>The <see cref="ExcludedPaths"/> enumeration contains all paths that have been added by calling this method.</para>
-        ///
-        /// <para>See <see cref="IncludePath"/> for more information about and examples of JSON Paths.</para>
+        /// <para>See <see cref="IncludedPaths"/> for more information about and examples of JSON Paths.</para>
         /// </remarks>
-        ///
-        /// <param name="path">The JSON Path to exclude from the snapshot comparison.</param>
-        ///
-        /// <returns>The <see cref="SnapshotSettings"/> object the method is called on is returned to support method chaining.</returns>
-        ///
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="path"/> is null or only whitespace.
-        /// </exception>
-        ///
-        /// <seealso cref="IncludePath"/>
         /// <seealso cref="IncludedPaths"/>
-        /// <seealso cref="ExcludedPaths"/>
-        public SnapshotSettings ExcludePath(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                throw new ArgumentNullException(nameof(path));
-
-            _excludedPaths.Add(path);
-            return this;
-        }
-
-        /// <summary>
-        /// An enumeration of JSON Paths identifying element(s) in a compound object provided to be compared to a snapshot that should be excluded from the comparison.
-        /// Paths can be added to this enumeration by calling <see cref="ExcludePath"/>.
-        /// </summary>
-        /// <seealso cref="ExcludePath"/>
-        /// <seealso cref="IncludePath"/>
-        /// <seealso cref="IncludedPaths"/>
-        public IEnumerable<string> ExcludedPaths => _excludedPaths;
+        public IList<string> ExcludedPaths { get; } = new List<string>();
         #endregion
 
         #region Settings related to snapshot files
