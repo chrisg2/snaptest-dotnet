@@ -13,10 +13,23 @@
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
             },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build all examples",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "${workspaceFolder}/examples/SnapTest.Examples.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
             "presentation": {
                 "reveal": "silent"
             },
