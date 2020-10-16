@@ -1,0 +1,19 @@
+{
+  "Cities_have_not_moved": [
+    {
+      "Latitude": 90.0,
+      "Longitude": 0.0
+    },
+    "North Pole",
+    {
+      "Latitude": -33.8688,
+      "Longitude": 151.2093
+    },
+    "Sydney"
+  ],
+  "No_landmarks_have_been_added_or_lost": [
+    "Santa's Workshop",
+    "Sydney Harbour Bridge",
+    "Sydney Opera House"
+  ]
+}

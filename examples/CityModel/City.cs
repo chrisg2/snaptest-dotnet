@@ -13,14 +13,14 @@ namespace CityModel
 
     public class Cities
     {
-        public static readonly City Sydney = new City() {
+        private static readonly City Sydney = new City() {
             Name = "Sydney",
             Location = new Location(-33.8688, 151.2093),
             TimeZone = new TimeZone("(UTC+10:00) GMT+10:00", 10*60),
             Landmarks = new string[]{ "Sydney Harbour Bridge", "Sydney Opera House" }
         };
 
-        public static readonly City NorthPole = new City() {
+        private static readonly City NorthPole = new City() {
             Name = "North Pole",
             Location = new Location(90.0, 0.0),
             TimeZone = null,
