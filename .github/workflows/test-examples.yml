@@ -23,9 +23,8 @@ jobs:
     - name: Install dependencies
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/chrisg2/index.json -n github -u chrisg2 -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
-        cd examples
-        dotnet restore
+        dotnet restore examples/*sln
     - name: Build
-      run: cd examples; dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore examples/*sln
     - name: Test
-      run: cd examples; dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --verbosity normal examples/*sln
