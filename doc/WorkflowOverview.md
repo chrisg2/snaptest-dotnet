@@ -1,20 +1,10 @@
-# snaptest-dotnet
+# Workflow for writing and running snapshot-based tests
 
-![Build and Test](https://github.com/chrisg2/snaptest-dotnet/workflows/Build%20and%20Test/badge.svg) ![Test Examples](https://github.com/chrisg2/snaptest-dotnet/workflows/Test%20Examples/badge.svg)
+Snapshot-based testing is a technique where expected output from running tests is stored in snapshot files. When tests are run, the actual output produced is compared to the expected output that has been previously saved.
 
-This is snaptest-dotnet, a tool to enable effective snapshot testing with .NET Core and .NET Framework.
+Here is an overview of a typical workflow for developing and running snapshot-based tests using SnapTest. This example assumes you are using [NUnit](https://nunit.org/) - similar workflows apply to other test frameworks.
 
-This library has been inspired by:
-- [Jest snapshot testing](https://jestjs.io/docs/en/snapshot-testing)
-- [Snapshooter](https://github.com/SwissLife-OSS/snapshooter)
-- [Snapper](https://theramis.github.io/Snapper/)
-
-Treat this as experimental status. This means (amongst other things) that the interfaces and classes exposed from the SnapTest namespace are subject to change. If you are interested in using this library and the potential for changes is problematic for you then get in touch and we can discuss.
-
-
-## Getting Started
-
-<!-- This content is duplicated in docs/WorkflowOverview.md. Try to keep the two renditions in sync! -->
+<!-- This content is duplicated in the root README.md. Try to keep the two renditions in sync! -->
 
 1. __Add SnapTest to your test project__
 
@@ -115,19 +105,3 @@ Treat this as experimental status. This means (amongst other things) that the in
     ```shell
     cp _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt.actual _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt
     ```
-
-
-# Going Deeper
-
-- Learn more about SnapTest in the [documentation](doc/README.md).
-
-- Browse [examples of tests using SnapTest](examples).
-
-
-# Questions and feedback sought
-
-## How should configuration to force snapshots to be updated or missing snapshots created be managed?
-
-Currently the `SNAPTEST_REFRESH` and `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variables are set when running tests to automatically create or update snapshot files based on actual values. Alternatively, code can explicitly set the `SnapshotSettings` `ForceSnapshotRefresh` and `CreateMissingSnapshots` properties.
-
-However these options may not suit all kinds of workflows and development practices. What other kinds of approaches for controlling this might be helpful to suit different styles of development practices & workflows?

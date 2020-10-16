@@ -1,34 +1,68 @@
-# Default snapshot file naming
+# Snapshot file naming
 
-## NUnit
+The paths of snapshot files are determined according to the following properties specified in a `SnapTest.SnapshotSettings` object:
+- Snapshot file paths are derived from combining `SnapshotDirectoryPath`, `SnapshotName` and `SnapshotExtension`.
+- Mismatched actual file paths are derived from combining `SnapshotDirectoryPath`, `SnapshotName`, `SnapshotGroup` and `MismatchedActualExtension`.
 
-By default snapshot files are placed in `<Test source file directory path>/_snapshots/<Test class name>.<Test name>.txt`.
+The default extensions used are:
+- `SnapshotExtension` = `.txt`
+- `MismatchedActualExtension` = `.txt.actual`
 
-The components used to construct the full snapshot file path can be individually specified as follows:
+Defaults for the other path-related settings are generally determined by the SnapTest package for the particular unit testing framework in use.
+
+
+## Snapshot file naming with NUnit tests
+
+### Default snapshot file location and naming
+
+Snapshot files are placed (by default) in `<Test source file directory>/_snapshots/<Test class name>.<Test name>.txt`.
+
+### Overriding default details
+
+The components used to construct the snapshot file path can be individually overridden by calling the `WithSettings` method on a `SnapshotSettingsBuilder` or `SnapshotConstraint`. For example:
 
 ```C#
-var builder = new SnapshotSettingsBuilder()
-    .WithSettings(_ => {
-        _.SnapshotDirectoryPath = @"C:\MyPath";
-        _.SnapshotExtension = ".snapshot";
-        _.MismatchedActualExtension = ".snapshot.actual"
-        _.SnapshotName = "filename"
-    });
+var builder = new SnapshotSettingsBuilder().WithSettings(_ => {
+    _.SnapshotDirectoryPath = @"C:\MyPath";
+    _.SnapshotName = "MySnapshot";
+    _.SnapshotExtension = ".snapshot";
+    _.MismatchedActualExtension = ".snapshot.actual";
+});
 
 Assert.That("actual output", SnapshotDoes.Match(builder));
 ```
 
-With the above settings the full path of snapshot file used by `SnapshotDoes.Match` will be `C:\MyPath\filename.snapshot`. If a snapshot comparison fails and a mismatch file is created then it will be created at `C:\MyPath.filename.snapshot.actual`.
+These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a snapshot comparison fails and a mismatched actual file is created then it will be created at `C:\MyPath\MySnapshot.snapshot.actual`.
 
-To override the directory name `_snapshots` that is appended by default to the source file directory path (that is, when the `SnapshotDirectoryPath` setting has not be explicitly set), set the `SnapshotSettings.SnapshotSubdirectory` property:
+To determine the snapshot directory based on the test source file directory but with another subdirectory name instead of `_snapshots`, set the `SnapshotSubdirectory` setting (and do _not_ explicitly set `SnapshotDirectoryPath`):
+
 ```C#
-var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirectory = ".snapshots");
+var builder = new SnapshotSettingsBuilder().WithSettings(
+    _ => _.SnapshotSubdirectory = ".snapshots"
+);
 ```
 
-Any of the following special characters in the filename are replaced with `_` to avoid using filenames which are not possible to have on filesystems with both Windows and UNIX-like operating systems: `/|:*?\"<>`
-
-> __TIP:__ It is possible that the same default snapshot filename selected for multiple tests may be the same. This may be desired (for example, when multiple tests are intended to share the same snapshot). However in a situation where it is not desired, consider explicitly setting the test name to ensure the snapshot file name for each test is unique. For example:
+> __TIP:__ It is possible that the snapshot filename selected for multiple tests may be the same. This may be desired (for example, when multiple tests are intended to share the same snapshot). However in a situation where it is not desired, consider overriding the default test name to ensure the snapshot file name for each test is unique. For example:
 >
 > ```C#
-> Assert.That(actualValue, SnapshotDoes.Match(nameof(MyTestClass) + ".Overridden_test_name_that_is_unique"));
+> Assert.That(actualValue,
+>     SnapshotDoes.Match(nameof(MyTestClass) + ".Overridden_test_name_that_is_unique")
+> );
 > ```
+
+
+### Special characters
+
+Any of the following special characters that would otherwise appear in a snapshot filename are replaced with `_` to avoid filenames which are not possible to have on filesystems used with either Windows or UNIX-like operating systems: `/|:*?\"<>`
+
+
+### Automatically determining test source file directories
+
+Unless `SnapshotDirectoryPath` is explicitly set in a `SnapshotSettings` object, the snapshot directory is automatically determined based on the directory that contains the source file for the test being executed.
+
+This directory is identified from information in the call stack at the time a `SnaphotSettings` object is built. This will generally work without a problem, but there are a few situations where this directory cannot be automatically determined. For example:
+- If the call stack leading to a `SnapshotSettings` object being built does not contain a method that has an attribute applied that identifies it as an NUnit test.
+- If the test assembly is compiled without debugging information.
+- In certain situations where async methods are used.
+
+If this occurs a `SnapTestException` is thrown with a message that explains the situation. The `SnapshotDirectoryPath` can be explicitly set in the test code to help avoid such a failure.
