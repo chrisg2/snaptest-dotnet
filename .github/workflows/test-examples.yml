@@ -28,3 +28,5 @@ jobs:
       run: dotnet build --configuration Release --no-restore examples/*sln
     - name: Test
       run: dotnet test --no-restore --verbosity normal examples/*sln
+    - name: Test SnapTest.Examples
+      run: dotnet run --configuration Release --no-build --verbosity normal --project examples/SnapTest.Examples/*csproj
