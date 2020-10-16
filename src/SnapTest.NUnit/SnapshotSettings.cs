@@ -60,11 +60,8 @@ namespace SnapTest.NUnit
             if (string.IsNullOrWhiteSpace(s.SnapshotGroup))
                 s.SnapshotGroup = s.DeriveSnapshotGroupFromTestContext();
 
-            if (string.IsNullOrWhiteSpace(s.SnapshotDirectoryPath)) {
-                var d = GetSnapshotDirectoryPathFromStackTrace();
-                if (!string.IsNullOrEmpty(d))
-                    s.SnapshotDirectoryPath = Path.Combine(d, s.SnapshotSubdirectory ?? string.Empty);
-            }
+            if (string.IsNullOrWhiteSpace(s.SnapshotDirectoryPath))
+                s.SnapshotDirectoryPath = Path.Combine(GetSnapshotDirectoryPathFromStackTrace(), s.SnapshotSubdirectory ?? string.Empty);
 
             return s;
         }
@@ -91,14 +88,28 @@ namespace SnapTest.NUnit
             => DefaultSnapshotGroupFromNUnitTestName ? TestContext.CurrentContext.Test.Name : null;
 
         private static string GetSnapshotDirectoryPathFromStackTrace()
-            => (
+        {
+            var d = (
                 from frame in new StackTrace(1, true).GetFrames()
                 let method = frame.GetMethod()
                 where method != null
                 let syncMethod = (IsAsyncMethod(method) ? FindAsynchMethodBase(method) : method)
                 where IsTestMethod(syncMethod)
                 select Path.GetDirectoryName(frame.GetFileName())
-            ).FirstOrDefault() ?? string.Empty;
+            ).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(d)) {
+                throw new SnapTestException(
+                    "The directory to hold snapshot files could not be determined from the current stack trace. " +
+                    "You may need to explicitly specify a snapshot directory using the SnapshotConstraint's SettingsBuilder." +
+                    "For example: constraint.WithSettings(s => s.SnapshotDirectoryPath = \"...\"); Alternatively, verify that " +
+                    "that the stack trace includes a method marked with one of the NUnit test method attributes such as [Test], [TestCase] etc. " +
+                    "This error may occur if you have built your test assembly without debugging information, " +
+                    "or perform a snapshot match within an async test helper child method."
+                );
+            }
+            return d;
+        }
 
         private static bool IsTestMethod(MethodBase method)
             =>  method.GetCustomAttributes<TestAttribute>().Any()

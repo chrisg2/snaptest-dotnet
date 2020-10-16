@@ -87,6 +87,11 @@ namespace SnapTest.NUnit
         /// An action to be called to initialize <see cref="SnapshotSettings"/> property values when a new settings object
         /// is created by this <see cref="SnapshotConstraint"/>.
         /// </param>
+        /// <remarks>
+        /// Be aware: If a <see cref="SnapshotSettingsBuilder"/> was specified as a parameter when the
+        /// <see cref="SnapshotConstraint"/> was constructed then calling this method will cause that
+        /// <see cref="SnapshotSettingsBuilder"/> to be modified.
+        /// </remarks>
         /// <returns>This <see cref="SnapshotConstraint"/>.</returns>
         public SnapshotConstraint WithSettings(Action<SnapshotSettings> settingsInitializer)
         {
@@ -97,16 +102,6 @@ namespace SnapTest.NUnit
         private SnapshotSettings BuildSettings()
         {
             var settings = SettingsBuilder.Build();
-
-            if (string.IsNullOrEmpty(settings.SnapshotDirectoryPath)) {
-                throw new SnapTestException(
-                    "The directory to hold snapshot files could not be determined from the current stack trace. " +
-                    "You may need to explicitly specify a snapshot directory using the SnapshotConstraint's SettingsBuilder." +
-                    "For example: constraint.WithSettings(s => s.SnapshotDirectoryPath = \"...\"); Alternatively, verify that " +
-                    "that the stack trace includes a method marked with one of the NUnit test method attributes such as [Test], [TestCase] etc. " +
-                    "This error may occur if you have built your test assembly without debugging information, or perform a snapshot match within an async test helper child method."
-                );
-            }
 
             if (!string.IsNullOrEmpty(SnapshotName))
                 settings.SnapshotName = SnapshotName;
