@@ -29,17 +29,19 @@ Treat this as experimental status. This means (amongst other things) that the in
 
     Example:
     ```C#
-    // ChristmasTests.cs
+    // SantaTests.cs
 
     using NUnit.Framework;
     using SnapTest.NUnit;
+    using System.Linq;
 
-    public class ChristmasTests
+    public class SantaTests
     {
         [Test]
         public void Santa_lives_at_the_NorthPole()
         {
-            Assert.That(Santa.HomeCoordinates, DoesMatch.Snapshot());
+            var santasHomeLocation = CityModel.Cities.AllCities.Where(_ => _.Landmarks.Contains("Santa's Workshop")).Select(_ => _.Location).FirstOrDefault();
+            Assert.That(santasHomeLocation, SnapshotDoes.Match());
         }
     }
     ```
@@ -53,14 +55,14 @@ Treat this as experimental status. This means (amongst other things) that the in
     ```shell
     # Bash:
     SNAPTEST_CREATE_MISSING_SNAPSHOTS=yes dotnet test
-    cat _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt
+    cat _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt
     ```
 
     ```PowerShell
     # PowerShell:
     $env:SNAPTEST_CREATE_MISSING_SNAPSHOTS = "yes"
     dotnet test
-    cat _snapshots\ChristmasTests.Santa_lives_at_the_NorthPole.txt
+    cat _snapshots\SantaTests.Santa_lives_at_the_NorthPole.txt
     ```
 
     The snapshot file contains a JSON representation of the actual result provided to the assertion:
@@ -77,14 +79,14 @@ Treat this as experimental status. This means (amongst other things) that the in
 
     ```shell
     echo '*.txt.actual' >>_snapshots/.gitignore
-    git commit ChristmasTests.cs _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt _snapshots/.gitignore
+    git commit SantaTests.cs _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt _snapshots/.gitignore
     ```
 
 1. __When a change occurs that results in different actual result...___
 
     ... the NUnit test output will include output identifying the change:
     ```
-    Created snapshot actual mismatched output file at /home/jonas/src/Christmas.Tests/_snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt.actual
+    Created snapshot actual mismatched output file at /home/jonas/src/Santa.Tests/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt.actual
     ===> Tip: Review the content of mismatched output files to and use them to update snapshot files as appropriate.
     X Santa_lives_at_the_NorthPole [93ms]
     Error Message:
@@ -94,7 +96,7 @@ Treat this as experimental status. This means (amongst other things) that the in
     ----------------------------------------^
 
     Stack Trace:
-        at ChristmasTests.Santa_lives_at_the_NorthPole() in /home/jonas/src/Christmas.Tests/ChristmasTests.cs:line 11
+        at SantaTests.Santa_lives_at_the_NorthPole() in /home/jonas/src/Santa.Tests/SantaTests.cs:line 13
     ```
 
     If the change is acceptable, update the snapshot file with the new actual value:
@@ -110,7 +112,7 @@ Treat this as experimental status. This means (amongst other things) that the in
 
     Or simply copy the `.txt.actual` snapshot file over the `.txt` file:
     ```shell
-    cp _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt.actual _snapshots/ChristmasTests.Santa_lives_at_the_NorthPole.txt
+    cp _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt.actual _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt
     ```
 
 
