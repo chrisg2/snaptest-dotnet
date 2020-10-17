@@ -14,7 +14,7 @@ Key steps to use this method are:
 
 1. Ensure the snapshotted value is stored in the file `{SnapshotDirectory}/{SnapshotName}{SnapshotExtension}` as specified in the settings. (The default `SnapshotExtension` is `.txt`.)
 
-1. Call `Snapshot.Compare(actual, settings)` to compare the `actual` value to the snapshotted value identified according to the details in `settings`.
+1. Call `Snapshot.CompareTo(actual, settings)` to compare the `actual` value to the snapshotted value identified according to the details in `settings`.
 
 Here is an example (from https://github.com/chrisg2/snaptest-dotnet/tree/main/examples/SnapTest.Examples/Santa.cs):
 
