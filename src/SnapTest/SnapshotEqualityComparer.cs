@@ -18,6 +18,7 @@ namespace SnapTest
         /// </remarks>
         protected SnapshotEqualityComparer() { }
 
+        /// <inheritdoc/>
         public virtual bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue)
             => snapshottedValue != null && SnapshotValue.DeepEquals(actualValue, snapshottedValue);
 
