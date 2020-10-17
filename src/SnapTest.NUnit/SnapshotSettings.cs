@@ -49,8 +49,10 @@ namespace SnapTest.NUnit
         {
             var s = new SnapshotSettings() { MessageWriter = new NUnitMessageWriter() };
 
-            foreach (var initializer in settingsInitializers)
-                initializer(s);
+            if (settingsInitializers != null) {
+                foreach (var initializer in settingsInitializers)
+                    initializer(s);
+            }
 
             // Set various properties that have not otherwise already been set to calculated default values.
 
@@ -73,7 +75,7 @@ namespace SnapTest.NUnit
 
             if (tc.Test == null || tc.Test.Name == null || tc.Test.ClassName == null) {
                 throw new SnapTestException(
-                    "SnapshotName can only be dynamically determined when accessed from while an NUnit test method is executing. " +
+                    "SnapshotName can only be dynamically determined when accessed while an NUnit test method is executing. " +
                     "To access SnapshotName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
                 );
             }
