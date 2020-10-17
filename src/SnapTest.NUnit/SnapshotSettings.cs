@@ -11,7 +11,7 @@ namespace SnapTest.NUnit
 {
     /// <summary>
     /// Settings used to control how snapshot processing is performed within the context of an NUnit test.
-    /// Instancse of the <c>SnapshotSettings</c> class are typically constructed using a <see cref="SnapshotSettingsBuilder"/>.
+    /// Instances of the <c>SnapshotSettings</c> class are typically constructed using a <see cref="SnapshotSettingsBuilder"/>.
     /// </summary>
     public class SnapshotSettings: SnapTest.SnapshotSettings
     {
