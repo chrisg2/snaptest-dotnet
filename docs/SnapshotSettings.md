@@ -56,7 +56,7 @@ For example:
 ```C#
 var localities = Model.Localities.All.OrderBy(_ => _.Name);
 
-var builder = new SnapshotSettingsBuilder();
+var builder = SnapshotSettings.GetBuilder();
 builder.WithSettings(_ => _.IncludedPaths.Add("$..['Name','Coordinates']"));
 builder.WithSettings(_ => _.DefaultSnapshotGroupKeyFromNUnitTestName = true);
 

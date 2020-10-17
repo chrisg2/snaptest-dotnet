@@ -64,7 +64,7 @@ namespace SnapTest.NUnit.Tests
         #region Exercise different interfaces for configuring snapshot settings
         [Test]
         public void SnapshotSubdirectory_can_be_set_through_SettingsBuilder()
-            => Assert.That("a value", SnapshotDoes.Match(new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots")));
+            => Assert.That("a value", SnapshotDoes.Match(SnapshotSettings.GetBuilder().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots")));
 
         [Test]
         public void SnapshotSubdirectory_can_be_set_through_WithSettings()
@@ -76,7 +76,7 @@ namespace SnapTest.NUnit.Tests
 
         [Test]
         public void SnapshotSubdirectory_can_be_set_through_SettingsBuilder_on_ConstraintExpression()
-            => Assert.That("a value", Is.False.Or.MatchSnapshot(new SnapshotSettingsBuilder().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots")));
+            => Assert.That("a value", Is.False.Or.MatchSnapshot(SnapshotSettings.GetBuilder().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots")));
 
         [Test]
         public void SnapshotSubdirectory_can_be_set_through_MatchSnapshot_on_ConstraintExpression()

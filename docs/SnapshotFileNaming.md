@@ -22,7 +22,7 @@ Snapshot files are placed (by default) in `<Test source file directory>/_snapsho
 The components used to construct the snapshot file path can be individually overridden by calling the `WithSettings` method on a `SnapshotSettingsBuilder` or `SnapshotConstraint`. For example:
 
 ```C#
-var builder = new SnapshotSettingsBuilder().WithSettings(_ => {
+var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
     _.SnapshotDirectoryPath = @"C:\MyPath";
     _.SnapshotName = "MySnapshot";
     _.SnapshotExtension = ".snapshot";
@@ -37,7 +37,7 @@ These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a 
 To determine the snapshot directory based on the test source file directory but with another subdirectory name instead of `_snapshots`, set the `SnapshotSubdirectory` setting (and do _not_ explicitly set `SnapshotDirectoryPath`):
 
 ```C#
-var builder = new SnapshotSettingsBuilder().WithSettings(
+var builder = SnapshotSettings.GetBuilder().WithSettings(
     _ => _.SnapshotSubdirectory = ".snapshots"
 );
 ```

@@ -11,7 +11,8 @@ namespace SnapTest.NUnit
 {
     /// <summary>
     /// Settings used to control how snapshot processing is performed within the context of an NUnit test.
-    /// Instances of the <c>SnapshotSettings</c> class are typically constructed using a <see cref="SnapshotSettingsBuilder"/>.
+    /// Instances of the <c>SnapshotSettings</c> class are typically constructed using a <see cref="SnapshotSettingsBuilder"/>
+    /// obtained by calling <see cref="GetBuilder"/>.
     /// </summary>
     public class SnapshotSettings: SnapTest.SnapshotSettings
     {
@@ -26,10 +27,14 @@ namespace SnapTest.NUnit
         #region Properties
         /// <summary>
         /// Subdirectory name under the directory containing the NUnit test source file to store snapshot files in. Defaults to <c>"_snapshots"</c>.
-        /// This value is appended to the <c>SnapshotDirectoryPath</c> when <see cref="SnapshotSettingsBuilder.Build"/> determines
-        /// the default snapshot directory path to use. If <c>SnapshotDirectoryPath</c> has otherwise been explicitly set then
-        /// the value of this property is ignored.
         /// </summary>
+        /// <remarks>
+        /// <para>If <see cref="SnapTest.SnapshotSettings.SnapshotDirectoryPath"/> is not explicitly set when a <see cref="SnapshotSettings"/> object is built,
+        /// then <c>SnapshotDirectoryPath</c> defaults to the directory containing the test source file is combined with the
+        /// <c>SnapshotSubdirectory</c>.</para>
+        ///
+        /// <para>The value of this property is not used if <c>SnapshotDirectoryPath</c> is explicitly set.</para>
+        /// </remarks>
         public string SnapshotSubdirectory { get; set; } = "_snapshots";
 
         /// <summary>
@@ -42,10 +47,17 @@ namespace SnapTest.NUnit
 
         #region Methods
         /// <summary>
+        /// TODO: Document
+        /// </summary>
+        /// <returns></returns>
+        public static SnapshotSettingsBuilder GetBuilder()
+            => new SnapshotSettingsBuilder(Build);
+
+        /// <summary>
         /// Create a new <see cref="SnapshotSettings"/> object, invoke initialization actions for it, and
         /// apply default settings.
         /// </summary>
-        internal static SnapshotSettings Build(IEnumerable<Action<SnapshotSettings>> settingsInitializers)
+        private static SnapshotSettings Build(IEnumerable<Action<SnapshotSettings>> settingsInitializers)
         {
             var s = new SnapshotSettings() { MessageWriter = new NUnitMessageWriter() };
 
@@ -80,8 +92,7 @@ namespace SnapTest.NUnit
                 );
             }
 
-            var classNameParts = tc.Test.ClassName.Split('.');
-            var className = classNameParts[classNameParts.Length - 1];
+            var className = tc.Test.ClassName.Split('.').LastOrDefault();
 
             return DefaultSnapshotGroupKeyFromNUnitTestName ? className : $"{className}.{tc.Test.Name}";
         }

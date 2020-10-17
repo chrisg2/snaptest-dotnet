@@ -11,7 +11,7 @@ namespace SnapTest.NUnit.Examples
         {
             var sydney = Model.Localities.All.Where(c => c.Name == "Sydney").FirstOrDefault();
 
-            var builder = new SnapshotSettingsBuilder().WithSettings(_ => {
+            var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
                 // Include only the TimeZone field in the snapshot
                 _.IncludedPaths.Add("TimeZone");
                 // Exclude the current time from the snapshot as it changes from moment to moment

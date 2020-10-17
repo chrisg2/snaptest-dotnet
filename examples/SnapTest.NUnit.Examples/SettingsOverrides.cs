@@ -17,7 +17,7 @@ namespace SnapTest.NUnit.Examples
             // also be created for an individual test if it did not need to be shared across tests.
 
             // Store snapshots in a snapshot group file named .snapshots/SettingsOverrides.json
-            commonBuilder = new SnapshotSettingsBuilder().WithSettings(_ => {
+            commonBuilder = SnapshotSettings.GetBuilder().WithSettings(_ => {
                 _.SnapshotName = "SettingsOverrides";
                 _.DefaultSnapshotGroupKeyFromNUnitTestName = true;
                 _.MismatchedActualExtension = ".actual.json";

@@ -65,7 +65,7 @@ private SnapshotSettingsBuilder commonBuilder;
 public void SetUp()
 {
     // Store snapshots in a snapshot group file named .snapshots/SettingsOverrides.json
-    commonBuilder = new SnapshotSettingsBuilder().WithSettings(_ => {
+    commonBuilder = SnapshotSettings.GetBuilder().WithSettings(_ => {
         _.SnapshotName = "SettingsOverrides";
         _.DefaultSnapshotGroupKeyFromNUnitTestName = true;
         _.MismatchedActualExtension = ".actual.json";

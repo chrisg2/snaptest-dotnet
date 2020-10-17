@@ -19,7 +19,7 @@ namespace SnapTest.NUnit
         /// to perform a snapshot comparison. This value (if supplied) is used to initialize <see cref="SettingsBuilder"/>.</param>
         public SnapshotConstraint(SnapshotSettingsBuilder settingsBuilder = null)
         {
-            SettingsBuilder = settingsBuilder ?? new SnapshotSettingsBuilder();
+            SettingsBuilder = settingsBuilder ?? SnapshotSettings.GetBuilder();
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace SnapTest.NUnit
         /// </summary>
         /// <remarks>
         /// If this property is null then the snapshot name determined by the <see cref="SettingsBuilder"/> is used. The default snapshot name
-        /// from <see cref="SnapshotSettingsBuilder"/> is determined from details in NUnit's <see cref="TestContext.CurrentContext"/> object:
+        /// from <see cref="SettingsBuilder"/> is determined from details in NUnit's <see cref="TestContext.CurrentContext"/> object:
         /// <list type="bullet">
         /// <item>If the <see cref="SnapshotSettings.DefaultSnapshotGroupKeyFromNUnitTestName"/> setting being used for the snapshot comparison is false (the default),
         /// the snapshot name defaults to <c>{ClassName}.{TestName}</c>.</item>
