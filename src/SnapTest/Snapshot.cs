@@ -32,7 +32,7 @@ namespace SnapTest
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));
 
-            bool snapshottedValueIsSimpleString = (settings.SnapshotGroup == null && (actual is string || actual is Guid));
+            bool snapshottedValueIsSimpleString = (settings.SnapshotGroupKey == null && (actual is string || actual is Guid));
             var (snapshottedValue, completeSnapshotGroup) = GetSnapshottedValue(settings, snapshottedValueIsSimpleString);
 
             var actualSnapshotValue = ActualSnapshotValue(actual, settings);

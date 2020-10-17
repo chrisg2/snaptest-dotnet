@@ -57,8 +57,8 @@ namespace SnapTest.Tests
 
                     try {
                         var sn = JToken.Parse(ExpectedSnapshotFileContents);
-                        if (SnapshotGroup != null)
-                            sn = (sn as JObject).Property(SnapshotGroup)?.Value;
+                        if (SnapshotGroupKey != null)
+                            sn = (sn as JObject).Property(SnapshotGroupKey)?.Value;
 
                         return JToken.DeepEquals(sn, ActualJson);
                     }
@@ -111,7 +111,7 @@ namespace SnapTest.Tests
                     if (!ForceSnapshotRefresh && !CreateMissingSnapshots)
                         return SnapshotFileContents;
 
-                    if (SnapshotGroup == null) {
+                    if (SnapshotGroupKey == null) {
                         if (!ForceSnapshotRefresh && SnapshotFileContents != null)
                             return SnapshotFileContents;
 
@@ -122,14 +122,14 @@ namespace SnapTest.Tests
                     JObject ja;
                     if (SnapshotFileContents == null) {
                         ja = new JObject();
-                        ja.Add(SnapshotGroup, ActualJson);
+                        ja.Add(SnapshotGroupKey, ActualJson);
                     } else {
                         ja = JObject.Parse(SnapshotFileContents);
-                        var jp = ja.Property(SnapshotGroup);
+                        var jp = ja.Property(SnapshotGroupKey);
                         if (ForceSnapshotRefresh && jp != null)
                             jp.Value.Replace(ActualJson);
                         else if (ForceSnapshotRefresh || (CreateMissingSnapshots && jp == null))
-                            ja.Add(SnapshotGroup, ActualJson);
+                            ja.Add(SnapshotGroupKey, ActualJson);
                         else
                             return SnapshotFileContents; // No change to snapshot file contents expected
                     }
@@ -143,11 +143,11 @@ namespace SnapTest.Tests
                     if (ExpectedCompareToResult)
                         return null;
 
-                    if (SnapshotGroup == null)
+                    if (SnapshotGroupKey == null)
                         return ActualSerialized + Environment.NewLine;
 
                     var ja = new JObject();
-                    ja.Add(SnapshotGroup, ActualJson);
+                    ja.Add(SnapshotGroupKey, ActualJson);
                     return Serialize(ja) + Environment.NewLine;
                 }
             }
@@ -174,8 +174,8 @@ namespace SnapTest.Tests
                 settings.Add($"SnapshotFileContents={JsonConvert.SerializeObject(SnapshotFileContents, Formatting.None)}");
 
                 // Output any non-default option values
-                if (SnapshotGroup != null)
-                    settings.Add($"SnapshotGroup=\"{SnapshotGroup}\"");
+                if (SnapshotGroupKey != null)
+                    settings.Add($"SnapshotGroupKey=\"{SnapshotGroupKey}\"");
 
                 if (IndentJson != true)
                     settings.Add($"IndentJson={IndentJson}");
@@ -320,7 +320,7 @@ namespace SnapTest.Tests
             // - IndentJson (true)
             // - IncludedPaths (null)
             // - ExcludedPaths (empty)
-            // - SnapshotGroup (null)
+            // - SnapshotGroupKey (null)
 
             // Construct a sample dictionary with property names containing special characters
             var sampleDict = new Dictionary<string, int>();
@@ -489,7 +489,7 @@ namespace SnapTest.Tests
             #region Grouping tests
             // Check that simple grouping works
             i = NewInputConditions("value");
-            i.SnapshotGroup = "group";
+            i.SnapshotGroupKey = "group";
             i.ForceSnapshotRefresh = true;
             i.IndentJson = false;
             Assume.That(i.ExpectedCompareToResult, Is.True);
@@ -498,7 +498,7 @@ namespace SnapTest.Tests
             yield return i;
 
             i = NewInputConditions("value");
-            i.SnapshotGroup = "group";
+            i.SnapshotGroupKey = "group";
             i.CreateMissingSnapshots = true;
             i.IndentJson = false;
             Assume.That(i.ExpectedCompareToResult, Is.True);
@@ -507,7 +507,7 @@ namespace SnapTest.Tests
             yield return i;
 
             i = NewInputConditions("value");
-            i.SnapshotGroup = "group";
+            i.SnapshotGroupKey = "group";
             i.ForceSnapshotRefresh = true;
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42}";
@@ -517,7 +517,7 @@ namespace SnapTest.Tests
             yield return i;
 
             i = NewInputConditions("value");
-            i.SnapshotGroup = "group";
+            i.SnapshotGroupKey = "group";
             i.CreateMissingSnapshots = true;
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42}";
@@ -527,7 +527,7 @@ namespace SnapTest.Tests
             yield return i;
 
             i = NewInputConditions("value");
-            i.SnapshotGroup = "group";
+            i.SnapshotGroupKey = "group";
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42}" + Environment.NewLine;
             Assume.That(i.ExpectedCompareToResult, Is.False);
@@ -536,7 +536,7 @@ namespace SnapTest.Tests
             yield return i;
 
             i = NewInputConditions("value");
-            i.SnapshotGroup = "group";
+            i.SnapshotGroupKey = "group";
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42,\"group\":\"value\"}" + Environment.NewLine;
             Assume.That(i.ExpectedCompareToResult, Is.True);
@@ -605,7 +605,7 @@ namespace SnapTest.Tests
         [TestCase("")]
         [TestCase(" ")]
         [TestCase("\n")]
-        public static void SnapshotSettings_SnapshotGroup_must_contain_non_whitespace_character(string snapshotGroup)
-            => Assert.Throws<ArgumentOutOfRangeException>(() => new SnapshotSettings() { SnapshotGroup = snapshotGroup });
+        public static void SnapshotSettings_SnapshotGroupKey_must_contain_non_whitespace_character(string snapshotGroupKey)
+            => Assert.Throws<ArgumentOutOfRangeException>(() => new SnapshotSettings() { SnapshotGroupKey = snapshotGroupKey });
     }
 }

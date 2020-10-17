@@ -67,13 +67,13 @@ Mismatched actual files typically have an extension of `.txt.actual`. The source
 
 ### Mismatched actual files and snapshot groups
 
-With [snapshot groups](SnapshotGroups.md) it is possible to store a group of snapshotted values in a single snapshot file. Each snapshotted value is identified by a unique key.
+[Snapshot groups](SnapshotGroups.md) are a mechanism to store a group of snapshotted values in a single snapshot file. Each snapshotted value is identified by a unique key, known as the "snapshot group key".
 
-While the snapshotted values are stored in a single group file when using snapshot groups, a separate mismatched actual file is created for each snapshot comparison that fails. The mismatched actual file names include the unique key identifying the snapshot within the group.
+While the snapshotted values are stored in a single group file when using snapshot groups, a separate mismatched actual file is created for each snapshot comparison that fails. The mismatched actual file names include the snapshot group key identifying the snapshot within the group.
 
 For example, consider a situation where 2 snapshot matches are performed with the following settings:
 - Both snapshots use a `SnapshotName` of `MyShapshot`
-- The snapshots use `SnapshotGroup` values of `A` and `B` respectively
+- The snapshots use `SnapshotGroupKey` values of `A` and `B` respectively
 
 The snapshot file `MySnapshot.txt` will contain a JSON representation of the expected values:
 

@@ -90,27 +90,27 @@ namespace SnapTest.NUnit.Tests
         }
 
         [Test]
-        public void SnapshotGroup_with_DefaultSnapshotGroupFromNUnitTestName_set_defaults_to_NUnit_TestName()
+        public void SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromNUnitTestName_set_defaults_to_NUnit_TestName()
         {
-            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupFromNUnitTestName = true);
-            Assert.That(builder.Build().SnapshotGroup, Is.EqualTo(TestContext.CurrentContext.Test.Name));
+            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromNUnitTestName = true);
+            Assert.That(builder.Build().SnapshotGroupKey, Is.EqualTo(TestContext.CurrentContext.Test.Name));
         }
 
         [Test]
-        public void SnapshotGroup_with_DefaultSnapshotGroupFromNUnitTestName_set_takes_explicitly_set_value()
+        public void SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromNUnitTestName_set_takes_explicitly_set_value()
         {
             var builder = new SnapshotSettingsBuilder().WithSettings(_ => {
-                _.DefaultSnapshotGroupFromNUnitTestName = true;
-                _.SnapshotGroup = "explicit";
+                _.DefaultSnapshotGroupKeyFromNUnitTestName = true;
+                _.SnapshotGroupKey = "explicit";
             });
 
-            Assert.That(builder.Build().SnapshotGroup, Is.EqualTo("explicit"));
+            Assert.That(builder.Build().SnapshotGroupKey, Is.EqualTo("explicit"));
         }
 
         [Test]
-        public void SnapshotName_with_DefaultSnapshotGroupFromNUnitTestName_set_is_fixture_class_name()
+        public void SnapshotName_with_DefaultSnapshotGroupKeyFromNUnitTestName_set_is_fixture_class_name()
         {
-            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupFromNUnitTestName = true);
+            var builder = new SnapshotSettingsBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromNUnitTestName = true);
             Assert.That(builder.Build().SnapshotName, Is.EqualTo(nameof(SnapshotSettingsBuilderTest)));
         }
         #endregion

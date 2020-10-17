@@ -24,7 +24,7 @@ namespace SnapTest.Tests
             SnapshotExtension = Path.GetExtension(SnapshotFileName);
 
             // Set properties to fixed defined values for stable testing
-            SnapshotGroup = null;
+            SnapshotGroupKey = null;
             IndentJson = true;
             CreateMissingSnapshots = false;
             ForceSnapshotRefresh = false;

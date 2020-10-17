@@ -71,7 +71,7 @@ namespace SnapTest.NUnit
         /// If this property is null then the snapshot name determined by the <see cref="SettingsBuilder"/> is used. The default snapshot name
         /// from <see cref="SnapshotSettingsBuilder"/> is determined from details in NUnit's <see cref="TestContext.CurrentContext"/> object:
         /// <list type="bullet">
-        /// <item>If the <see cref="SnapshotSettings.DefaultSnapshotGroupFromNUnitTestName"/> setting being used for the snapshot comparison is false (the default),
+        /// <item>If the <see cref="SnapshotSettings.DefaultSnapshotGroupKeyFromNUnitTestName"/> setting being used for the snapshot comparison is false (the default),
         /// the snapshot name defaults to <c>{ClassName}.{TestName}</c>.</item>
         /// <item>Otherwise, the snapshot name defaults to <c>{ClassName}</c> (and the snapshot group defaults to <c>{TestName}</c>).</item>
         /// </list>

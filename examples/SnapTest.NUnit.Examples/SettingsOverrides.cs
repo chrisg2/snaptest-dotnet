@@ -19,7 +19,7 @@ namespace SnapTest.NUnit.Examples
             // Store snapshots in a snapshot group file named .snapshots/SettingsOverrides.json
             commonBuilder = new SnapshotSettingsBuilder().WithSettings(_ => {
                 _.SnapshotName = "SettingsOverrides";
-                _.DefaultSnapshotGroupFromNUnitTestName = true;
+                _.DefaultSnapshotGroupKeyFromNUnitTestName = true;
                 _.MismatchedActualExtension = ".actual.json";
                 _.SnapshotExtension = ".json";
                 _.SnapshotSubdirectory = ".snapshots";

@@ -17,7 +17,7 @@ namespace SnapTest
             string snapshotFilePath = settings.SnapshotFilePath;
 
             // If snapshot file exists, and snapshot from that file will be used in further processing...
-            if (File.Exists(snapshotFilePath) && (!settings.ForceSnapshotRefresh || settings.SnapshotGroup != null)) {
+            if (File.Exists(snapshotFilePath) && (!settings.ForceSnapshotRefresh || settings.SnapshotGroupKey != null)) {
                 var fileContents = File.ReadAllText(snapshotFilePath);
                 if (readAsString) {
                     // Trim a trailing Environment.NewLine
@@ -65,13 +65,13 @@ namespace SnapTest
         {
             var snapshot = ReadSnapshotFromFile(settings, readAsString);
 
-            if (settings.SnapshotGroup == null || snapshot == null)
+            if (settings.SnapshotGroupKey == null || snapshot == null)
                 return (snapshot, snapshot);
 
             if (!snapshot.IsObject)
                 throw new SnapTestParseException($"File does not contain JSON object representing a snapshot group: {settings.SnapshotFilePath}");
 
-            return (snapshot.PropertyValue(settings.SnapshotGroup), snapshot);
+            return (snapshot.PropertyValue(settings.SnapshotGroupKey), snapshot);
         }
 
         private static void WriteSnapshotIfRequired(bool comparisonResult, SnapshotValue actualValue, SnapshotValue snapshottedValue, SnapshotValue completeSnapshot, SnapshotSettings settings)
@@ -105,18 +105,18 @@ namespace SnapTest
 
             if (fileToWrite != null) {
                 SnapshotValue snapshotValueToWrite;
-                if (settings.SnapshotGroup == null) {
+                if (settings.SnapshotGroupKey == null) {
                     snapshotValueToWrite = actualValue;
                 } else if (fileToWrite == mismatchFilePath) {
                     snapshotValueToWrite = SnapshotValue.CreateObject();
-                    snapshotValueToWrite.Add(settings.SnapshotGroup, actualValue);
+                    snapshotValueToWrite.Add(settings.SnapshotGroupKey, actualValue);
                 }
                 else {
                     snapshotValueToWrite = (completeSnapshot != null && completeSnapshot.IsObject) ? completeSnapshot : SnapshotValue.CreateObject();
                     if (snapshottedValue != null)
                         snapshottedValue.Replace(actualValue);
                     else
-                        snapshotValueToWrite.Add(settings.SnapshotGroup, actualValue);
+                        snapshotValueToWrite.Add(settings.SnapshotGroupKey, actualValue);
                 }
 
                 WriteValueToFile(Serialize(snapshotValueToWrite, settings), fileToWrite);

@@ -34,10 +34,10 @@ namespace SnapTest.NUnit
 
         /// <summary>
         /// Flag indicating whether to use the NUnit test name (taken from <c><see cref="TestContext.CurrentContext"/>.Test.TestName</c>)
-        /// as the default <c>SnapshotGroup</c>. If <c>SnapshotGroup</c> has otherwise been set to a non-null value then the value
+        /// as the default <c>SnapshotGroupKey</c>. If <c>SnapshotGroupKey</c> has otherwise been set to a non-null value then the value
         /// of this property is ignored.
         /// </summary>
-        public bool DefaultSnapshotGroupFromNUnitTestName { get; set; } = false;
+        public bool DefaultSnapshotGroupKeyFromNUnitTestName { get; set; } = false;
         #endregion
 
         #region Methods
@@ -57,8 +57,8 @@ namespace SnapTest.NUnit
             if (string.IsNullOrWhiteSpace(s.SnapshotName))
                 s.SnapshotName = s.DeriveSnapshotNameFromTestContext();
 
-            if (string.IsNullOrWhiteSpace(s.SnapshotGroup))
-                s.SnapshotGroup = s.DeriveSnapshotGroupFromTestContext();
+            if (string.IsNullOrWhiteSpace(s.SnapshotGroupKey))
+                s.SnapshotGroupKey = s.DeriveSnapshotGroupKeyFromTestContext();
 
             if (string.IsNullOrWhiteSpace(s.SnapshotDirectoryPath))
                 s.SnapshotDirectoryPath = Path.Combine(GetSnapshotDirectoryPathFromStackTrace(), s.SnapshotSubdirectory ?? string.Empty);
@@ -81,11 +81,11 @@ namespace SnapTest.NUnit
             var classNameParts = tc.Test.ClassName.Split('.');
             var className = classNameParts[classNameParts.Length - 1];
 
-            return DefaultSnapshotGroupFromNUnitTestName ? className : $"{className}.{tc.Test.Name}";
+            return DefaultSnapshotGroupKeyFromNUnitTestName ? className : $"{className}.{tc.Test.Name}";
         }
 
-        private string DeriveSnapshotGroupFromTestContext()
-            => DefaultSnapshotGroupFromNUnitTestName ? TestContext.CurrentContext.Test.Name : null;
+        private string DeriveSnapshotGroupKeyFromTestContext()
+            => DefaultSnapshotGroupKeyFromNUnitTestName ? TestContext.CurrentContext.Test.Name : null;
 
         private static string GetSnapshotDirectoryPathFromStackTrace()
         {

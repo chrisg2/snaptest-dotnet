@@ -13,7 +13,7 @@ namespace SnapTest
     public class SnapshotSettings
     {
         #region Internal fields
-        private string _snapshotGroup;
+        private string _snapshotGroupKey;
         private readonly List<string> _includedPaths = new List<string>();
         private readonly List<string> _excludedPaths = new List<string>();
         #endregion
@@ -29,28 +29,28 @@ namespace SnapTest
         /// A key used to identify the particular snapshot to use out of a group of snapshots identified by <see cref="SnapshotName"/>.
         /// </summary>
         /// <remarks>
-        /// <para>Normally a single snapshot file stores a single snapshotted value. However if <c>SnapshotGroup</c> is set to a non-null
+        /// <para>Normally a single snapshot file stores a single snapshotted value. However if <c>SnapshotGroupKey</c> is set to a non-null
         /// value then the snapshot file can contain multiple snapshot values in JSON format, each one identified by a different key.
-        /// <c>SnapshotGroup</c> is set to a non-null value to identify the key to use for a particular snapshot operation.</para>
+        /// <c>SnapshotGroupKey</c> is set to a non-null value to identify the key to use for a particular snapshot operation.</para>
         ///
         /// <para>Snapshot groups make working with mismatched actual snapshot files somewhat more complicated: when a mismatch occurs,
         /// a separate mismatch file is created for each snapshot group. It is up to you to manually merge the relevant
         /// expected values from each mismatch actual snapshot file into the master snapshot file.</para>
         ///
-        /// <para>Whitespace is trimmed from the start and end of any value supplied when <c>SnapshotGroup</c> is set.</para>
+        /// <para>Whitespace is trimmed from the start and end of any value supplied when <c>SnapshotGroupKey</c> is set.</para>
         /// </remarks>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown if an attempt is made to set <c>SnapshotGroup</c> to a non-null value that does not contain any non-whitespace characters.
+        /// Thrown if an attempt is made to set <c>SnapshotGroupKey</c> to a non-null value that does not contain any non-whitespace characters.
         /// </exception>
-        public string SnapshotGroup {
+        public string SnapshotGroupKey {
             get {
-                return _snapshotGroup;
+                return _snapshotGroupKey;
             }
             set {
                 if (value != null && string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentOutOfRangeException(nameof(value), "SnapshotGroup must either be null, or contain at least one non-whitespace character");
+                    throw new ArgumentOutOfRangeException(nameof(value), "SnapshotGroupKey must either be null, or contain at least one non-whitespace character");
 
-                _snapshotGroup = value?.Trim();
+                _snapshotGroupKey = value?.Trim();
             }
         }
         #endregion
@@ -208,14 +208,14 @@ namespace SnapTest
 
         /// <summary>
         /// Gets the file path of the mismatched actual snapshot file, which is determined based on the values of the <see cref="SnapshotDirectoryPath"/>,
-        /// <see cref="SnapshotGroup"/>, <see cref="SnapshotName"/> and <see cref="MismatchedActualExtension"/> properties.
+        /// <see cref="SnapshotGroupKey"/>, <see cref="SnapshotName"/> and <see cref="MismatchedActualExtension"/> properties.
         /// </summary>
         /// <remarks>
-        /// Any characters in <see cref="SnapshotName"/>, <see cref="SnapshotGroup"/> or <see cref="MismatchedActualExtension"/> which are generally
+        /// Any characters in <see cref="SnapshotName"/>, <see cref="SnapshotGroupKey"/> or <see cref="MismatchedActualExtension"/> which are generally
         /// not allowed to be used in filenames on either Windows or common UNIX-like filesystems are replaced with <c>"_"</c>.
         /// </remarks>
         public string MismatchedActualFilePath
-            => GetSnapshotFilePathWithExtension(SnapshotName + (SnapshotGroup == null ? string.Empty : ("." + SnapshotGroup)), MismatchedActualExtension);
+            => GetSnapshotFilePathWithExtension(SnapshotName + (SnapshotGroupKey == null ? string.Empty : ("." + SnapshotGroupKey)), MismatchedActualExtension);
         #endregion
 
         #region Properties providing interfaces to help control snapshot behaviors

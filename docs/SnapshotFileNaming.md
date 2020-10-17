@@ -2,7 +2,7 @@
 
 The paths of snapshot files are determined according to the following properties specified in a `SnapTest.SnapshotSettings` object:
 - Snapshot file paths are derived from combining `SnapshotDirectoryPath`, `SnapshotName` and `SnapshotExtension`.
-- Mismatched actual file paths are derived from combining `SnapshotDirectoryPath`, `SnapshotName`, `SnapshotGroup` and `MismatchedActualExtension`.
+- Mismatched actual file paths are derived from combining `SnapshotDirectoryPath`, `SnapshotName`, `SnapshotGroupKey` and `MismatchedActualExtension`.
 
 The default extensions used are:
 - `SnapshotExtension` = `.txt`

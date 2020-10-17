@@ -9,7 +9,7 @@ The following settings are defined in the `SnapTest.SnapshotSettings` class:
 Setting|Description|Default
 ---|---|---
 `SnapshotName`|The name of the snapshot. Used as the basename of the snapshot filename.|`null` (*)
-`SnapshotGroup`|A key used to identify the particular snapshot to use out of a group of snapshots identified by `SnapshotName`. See [Snapshot Groups](SnapshotGroups.md) for more information.|`null` (*)
+`SnapshotGroupKey`|A key used to identify the particular snapshot to use out of a group of snapshots identified by `SnapshotName`. See [Snapshot Groups](SnapshotGroups.md) for more information.|`null` (*)
 `IncludedPaths`|A list of JSON Paths identifying element(s) to be included from a compound object when it is compared to a snapshot. See [Filtering Values](Filtering.md) for more information.|None
 `ExcludedPaths`|A list of JSON Paths identifying element(s) to be excluded from a compound object when it is compared to a snapshot. See [Filtering Values](Filtering.md) for more information.|None
 `CreateMissingSnapshots`|Flag indicating whether missing snapshots should be created based on actual values provided when a snapshot is compared.|`true` if the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable is not empty; `false` otherwise
@@ -30,14 +30,14 @@ The `SnapTest.NUnit.SnapshotSettings` class is derived from `SnapTest.SnapshotSe
 Setting|Description|Default
 ---|---|---
 `SnapshotSubdirectory`|Subdirectory name under the directory containing the NUnit test source file to store snapshot files in.<br/><br/>This value is appended to the `SnapshotDirectoryPath` when `SnapshotSettingsBuilder.Build` determines the default snapshot directory path to use. If `SnapshotDirectoryPath` has otherwise been explicitly set then this setting is ignored.|`_snapshots`
-`DefaultSnapshotGroupFromNUnitTestName`|Flag indicating whether to use the NUnit test name (taken from the NUnit Framework `TestContext.CurrentContext.Test.TestName` value) as the default `SnapshotGroup`.<br/><br/>If `SnapshotGroup` has otherwise been set to a non-null value then the value of this setting is ignored.|`false`
+`DefaultSnapshotGroupKeyFromNUnitTestName`|Flag indicating whether to use the NUnit test name (taken from the NUnit Framework `TestContext.CurrentContext.Test.TestName` value) as the default `SnapshotGroupKey`.<br/><br/>If `SnapshotGroupKey` has otherwise been set to a non-null value then the value of this setting is ignored.|`false`
 
 In addition, defaults for following settings from the `SnapTest.SnapshotSettings` are overridden by `SnapTest.NUnit.SnapshotSettings`:
 
 Setting|Default
 ---|---
-`SnapshotName`|Set based on the NUnit `TestContext.Current.Test.ClassName` and `Name` properties.<br/><br/><list><li>If `DefaultSnapshotGroupFromNUnitTestName` is `false` (the default), `SnapshotName` defaults to _ClassName_._TestName_, where _ClassName_ is the text after the last "." of `Test.ClassName`, and _TestName_ is `Test.Name`.</li><li>Otherwise the `SnapshotName` defaults to _ClassName_.</li></list>
-`SnapshotGroup`|If `DefaultSnapshotGroupFromNUnitTestName` is `false` (the default), `SnapshotGroup` is not set by default.<br/><br/>Otherwise it defaults to the NUnit `TestContext.CurrentContext.Test.Name` property value.
+`SnapshotName`|Set based on the NUnit `TestContext.Current.Test.ClassName` and `Name` properties.<br/><br/><list><li>If `DefaultSnapshotGroupKeyFromNUnitTestName` is `false` (the default), `SnapshotName` defaults to _ClassName_._TestName_, where _ClassName_ is the text after the last "." of `Test.ClassName`, and _TestName_ is `Test.Name`.</li><li>Otherwise the `SnapshotName` defaults to _ClassName_.</li></list>
+`SnapshotGroupKey`|If `DefaultSnapshotGroupKeyFromNUnitTestName` is `false` (the default), `SnapshotGroupKey` is not set by default.<br/><br/>Otherwise it defaults to the NUnit `TestContext.CurrentContext.Test.Name` property value.
 `SnapshotDirectoryPath`|The directory that contains the source file for the test being executed, with `SnapshotSubdirectory` appended.
 `SnapshotComparer`|An instance of an internal class implementating the `ISnapshotComparer` interface that generates an NUnit `ConstraintResult` recording the result of the comparison.
 `MessageWriter`|An instance of an internal class that uses the NUnit `TestContext.Progress.WriteLine` method to emit informational messages.
@@ -58,7 +58,7 @@ var cities = CityModel.Cities.AllCities.OrderBy(_ => _.Name);
 
 var builder = new SnapshotSettingsBuilder();
 builder.WithSettings(_ => _.IncludedPaths.Add("$..['Name','Location']"));
-builder.WithSettings(_ => _.DefaultSnapshotGroupFromNUnitTestName = true);
+builder.WithSettings(_ => _.DefaultSnapshotGroupKeyFromNUnitTestName = true);
 
 Assert.That(cities, SnapshotDoes.Match(builder));
 ```

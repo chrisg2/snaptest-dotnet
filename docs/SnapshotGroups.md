@@ -2,7 +2,7 @@
 
 > _TODO: Documentation to be written_
 
-Snapshot groups can be used to store a group of snapshotted values in a single snapshot file. Each snapshotted value is identified by a unique key.
+Snapshot groups are a mechanism to store a group of snapshotted values in a single snapshot file. Each snapshotted value is identified by a unique key, known as the "snapshot group key".
 
 
 ## To be noted
