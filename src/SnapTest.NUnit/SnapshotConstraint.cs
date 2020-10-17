@@ -124,7 +124,7 @@ namespace SnapTest.NUnit
         public override ConstraintResult ApplyTo<TActual>(TActual actual)
         {
             var settings = BuildSettings();
-            var comparer = new NUnitSnapshotComparer(this, settings);
+            var comparer = new NUnitSnapshotEqualityComparer(this, settings);
             settings.SnapshotComparer = comparer;
 
             bool result = Snapshot.CompareTo(actual, settings);

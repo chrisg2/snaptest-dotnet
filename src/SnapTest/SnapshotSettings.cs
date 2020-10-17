@@ -220,10 +220,10 @@ namespace SnapTest
 
         #region Properties providing interfaces to help control snapshot behaviors
         /// <summary>
-        /// An object impementing the <see cref="ISnapshotComparer"/> interface to be used for comparing an actual value to a snapshotted value.
-        /// If this property is not explicitly set when performing a snapshot comparison, the default <see cref="SnapshotComparer.Default"/> is used.
+        /// An object impementing the <see cref="ISnapshotEqualityComparer"/> interface to be used for comparing an actual value to a snapshotted value.
+        /// If this property is not explicitly set when performing a snapshot comparison, the default <see cref="SnapshotEqualityComparer.Default"/> is used.
         /// </summary>
-        public ISnapshotComparer SnapshotComparer { get; set; }
+        public ISnapshotEqualityComparer SnapshotComparer { get; set; }
 
         /// <summary>
         /// An object impementing the <see cref="IMessageWriter"/> interface to be used for emitting informational messages during snapshot processing.

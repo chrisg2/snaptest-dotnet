@@ -18,7 +18,7 @@ Setting|Description|Default
 `SnapshotDirectoryPath`|Path to the directory in which snapshot files are stored. If not set, the current working directory is used.|`null` (*)
 `SnapshotExtension`|The extension to append as a suffix to snapshot filenames, including a ".".|`.txt`
 `MismatchedActualExtension`|The extension to append as a suffix to mismatched actual snapshot filenames, including a ".".|`.txt.actual`
-`SnapshotComparer`|An object impementing the `ISnapshotComparer` interface to be used for comparing an actual value to a snapshotted value.|`SnapshotComparer.Default`
+`SnapshotComparer`|An object impementing the `ISnapshotEqualityComparer` interface to be used for comparing an actual value to a snapshotted value.|`SnapshotComparer.Default`
 `MessageWriter`|An object impementing the `IMessageWriter` interface to be used for emitting informational messages during snapshot processing.|`null` (*)
 
 Defaults for some settings marked with (*) may be overridden in snapshot settings classes defined by SnapTest modules for different test frameworks.
@@ -39,8 +39,8 @@ Setting|Default
 `SnapshotName`|Set based on the NUnit `TestContext.Current.Test.ClassName` and `Name` properties.<br/><br/><list><li>If `DefaultSnapshotGroupKeyFromNUnitTestName` is `false` (the default), `SnapshotName` defaults to _ClassName_._TestName_, where _ClassName_ is the text after the last "." of `Test.ClassName`, and _TestName_ is `Test.Name`.</li><li>Otherwise the `SnapshotName` defaults to _ClassName_.</li></list>
 `SnapshotGroupKey`|If `DefaultSnapshotGroupKeyFromNUnitTestName` is `false` (the default), `SnapshotGroupKey` is not set by default.<br/><br/>Otherwise it defaults to the NUnit `TestContext.CurrentContext.Test.Name` property value.
 `SnapshotDirectoryPath`|The directory that contains the source file for the test being executed, with `SnapshotSubdirectory` appended.
-`SnapshotComparer`|An instance of an internal class implementating the `ISnapshotComparer` interface that generates an NUnit `ConstraintResult` recording the result of the comparison.
-`MessageWriter`|An instance of an internal class that uses the NUnit `TestContext.Progress.WriteLine` method to emit informational messages.
+`SnapshotComparer`|An instance of an internal `SnapTest.NUnit` class implementating the `ISnapshotEqualityComparer` interface that generates an NUnit `ConstraintResult` recording the result of the comparison.
+`MessageWriter`|An instance of an internal `SnaptTest.NUnit` class that uses the NUnit `TestContext.Progress.WriteLine` method to emit informational messages.
 
 
 ### Building SnapTest.NUnit.SnapshotSettings instances
