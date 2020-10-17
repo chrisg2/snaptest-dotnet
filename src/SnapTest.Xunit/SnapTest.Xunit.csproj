@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>SnapTest.Xunit</PackageId>
+    <Version>0.0.1-alpha</Version>
+    <Authors>chrisg2</Authors>
+    <RepositoryUrl>https://github.com/chrisg2/snaptest-dotnet</RepositoryUrl>
+    <PackageDescription>This is snaptest-dotnet, a tool to enable effective snapshot testing with .NET Core and .NET Framework.</PackageDescription>
+
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsTestProject>false</IsTestProject>
+
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SnapTest\SnapTest.csproj" />
+  </ItemGroup>
+
+</Project>

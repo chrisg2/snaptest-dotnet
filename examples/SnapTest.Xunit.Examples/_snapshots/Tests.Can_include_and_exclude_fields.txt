@@ -1,0 +1,4 @@
+{
+  "BaseUTCOffsetMinutes": 600,
+  "DisplayName": "(UTC+10:00) GMT+10:00"
+}

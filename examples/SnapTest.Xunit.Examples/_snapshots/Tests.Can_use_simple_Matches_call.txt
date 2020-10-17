@@ -1,0 +1,4 @@
+{
+  "Latitude": 90.0,
+  "Longitude": 0.0
+}

@@ -1,0 +1,9 @@
+{
+  "Can_be_used_with_settings_builder": {
+    "item1": 42,
+    "item2": [
+      "elem1",
+      "elem2"
+    ]
+  }
+}
