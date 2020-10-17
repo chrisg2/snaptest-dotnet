@@ -6,7 +6,7 @@ Snapshot files are text files. The specific details of the value stored in a sna
 
 - Guids are stored as text in the pattern `XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX` where X is a hex digit (0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F), with an `Enviornment.NewLine` at the end
 
-- Other objects are serialized in JSON format, with properties ordered by name.
+- Other objects are serialized in JSON format. Properties are generally ordered by name when SnapTest saves a value to a snapshot file, although in keeping with regular JSON semantics the order that properties appear is not important for the purposes of comparing actual values to snapshotted values.
 
 
 ## Line endings

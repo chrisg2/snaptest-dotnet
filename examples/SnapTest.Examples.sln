@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnapTest.NUnit.Examples", "SnapTest.NUnit.Examples\SnapTest.NUnit.Examples.csproj", "{02953EE5-93EE-422B-A56B-3747F991C909}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityModel", "CityModel\CityModel.csproj", "{0146310F-3192-4A0F-9B1F-33BFA76B9998}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{0146310F-3192-4A0F-9B1F-33BFA76B9998}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnapTest.Examples", "SnapTest.Examples\SnapTest.Examples.csproj", "{D6EE31C0-C35C-4E6D-9A9B-03A208B82B5A}"
 EndProject

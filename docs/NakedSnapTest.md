@@ -16,26 +16,28 @@ Key steps to use this method are:
 
 1. Call `Snapshot.CompareTo(actual, settings)` to compare the `actual` value to the snapshotted value identified according to the details in `settings`.
 
-Here is an example (from https://github.com/chrisg2/snaptest-dotnet/tree/main/examples/SnapTest.Examples/Santa.cs):
+Here is an example (from https://github.com/chrisg2/snaptest-dotnet/tree/main/examples/SnapTest.Examples/UseNakedSnapshot.cs):
 
 ```C#
-public static bool Santa_lives_at_the_NorthPole()
+public static bool UseNakedSnapshot()
 {
-    // Somewhat contrived, but for the sake of example we will
+    var snapshotName = nameof(UseNakedSnapshot);
+
+    // Somewhat contrived, but for the sake of example we
     // create a snapshot file to be compared.
-    var snapshotFile = FabricateSnapshotFile(nameof(Santa_lives_at_the_NorthPole));
+    var snapshotFile = FabricateSnapshotFile(snapshotName);
 
     try {
         // Obtain a value to be compared to the snapshot
         var santasHomeLocation
-            = CityModel.Cities.AllCities
+            = Model.Localities.All
                 .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
-                .Select(_ => _.Location)
+                .Select(_ => _.Coordinates)
                 .FirstOrDefault();
 
         // Configure settings for the snapshot
         var settings = new SnapshotSettings() {
-            SnapshotName = nameof(Santa_lives_at_the_NorthPole),
+            SnapshotName = nameof(UseNakedSnapshot),
             SnapshotDirectoryPath = Path.GetDirectoryName(snapshotFile),
             MessageWriter = new MessageWriter(),
             IndentJson = false

@@ -31,7 +31,7 @@ Here is an overview of a typical workflow for developing and running snapshot-ba
         [Test]
         public void Santa_lives_at_the_NorthPole()
         {
-            var santasHomeLocation = CityModel.Cities.AllCities.Where(_ => _.Landmarks.Contains("Santa's Workshop")).Select(_ => _.Location).FirstOrDefault();
+            var santasHomeLocation = Model.Localities.All.Where(_ => _.Landmarks.Contains("Santa's Workshop")).Select(_ => _.Coordinates).FirstOrDefault();
             Assert.That(santasHomeLocation, SnapshotDoes.Match());
         }
     }
@@ -75,7 +75,7 @@ Here is an overview of a typical workflow for developing and running snapshot-ba
 
 1. __When a change occurs that results in different actual result...___
 
-    ... the NUnit test output will include output identifying the change:
+    ... the NUnit test output will indicate the change:
     ```
     Created snapshot actual mismatched output file at /home/jonas/src/Santa.Tests/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt.actual
     ===> Tip: Review the content of mismatched output files to and use them to update snapshot files as appropriate.

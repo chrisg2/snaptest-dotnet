@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SnapTest.NUnit.Examples
 {
-    public class SettingsOverridesTests
+    public partial class Tests
     {
         private SnapshotSettingsBuilder commonBuilder;
 
@@ -27,39 +27,40 @@ namespace SnapTest.NUnit.Examples
         }
 
         [Test]
-        public void No_landmarks_have_been_added_or_lost()
+        public void SnapshotDoesMatch_can_accept_builder()
         {
-            var landmarks = CityModel.Cities.AllCities.Select(_ => _.Landmarks).SelectMany(_ => _).OrderBy(_ => _);
+            var landmarks = Model.Localities.All.Select(_ => _.Landmarks).SelectMany(_ => _).OrderBy(_ => _);
 
             // Overide default settings by providing a SnapshotSettingsBuilder when calling SnapshotDoes.Match
             Assert.That(landmarks, SnapshotDoes.Match(commonBuilder));
         }
 
+
         [Test]
-        public void Cities_have_not_moved()
+        public void WithSettings_can_be_called_on_SnapshotConstraint()
         {
-            var cities = CityModel.Cities.AllCities.OrderBy(_ => _.Name);
+            var localities = Model.Localities.All.OrderBy(_ => _.Name);
 
             // Settings can also be overridden by calling SnapshotConstraint.WithSettings
-            Assert.That(cities, SnapshotDoes.Match(commonBuilder).WithSettings(_ =>
-                _.IncludedPaths.Add("$..['Name','Location']")));
+            Assert.That(localities, SnapshotDoes.Match(commonBuilder).WithSettings(_ =>
+                _.IncludedPaths.Add("$..['Name','Coordinates']")));
         }
 
         [Test]
-        public void First_city_name_has_not_moved()
+        public void SnapshotDoesMatch_can_accept_name_and_builder()
         {
-            var firstCityName = CityModel.Cities.AllCities.OrderBy(_ => _.Name).FirstOrDefault()?.Name;
+            var firstLocalityName = Model.Localities.All.OrderBy(_ => _.Name).FirstOrDefault()?.Name;
 
             // The snapshot name defaults to the NUnit test name, but can be explicitly overridden when calling SnapshotDoes.Match
-            Assert.That(firstCityName, SnapshotDoes.Match("First city name", commonBuilder));
+            Assert.That(firstLocalityName, SnapshotDoes.Match("SampleSnapshotName", commonBuilder));
         }
 
         [Test]
-        public void City_snapshot_json_can_be_flattened()
+        public void SnapshotDoesMatch_can_accept_settings_initializer_action()
         {
             // An action taking a SnapshotSettings parameter can be passed to Match
             // to be called when settings are initialized.
-            Assert.That(CityModel.Cities.AllCities, SnapshotDoes.Match(_ => {
+            Assert.That(Model.Localities.All, SnapshotDoes.Match(_ => {
                 _.IndentJson = false;
                 _.ExcludedPaths.Add("$..TimeZone.CurrentTime");
             }));

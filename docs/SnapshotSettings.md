@@ -54,11 +54,11 @@ This is commonly done for you when you call `SnapshotDoes.Match()`, but you can 
 For example:
 
 ```C#
-var cities = CityModel.Cities.AllCities.OrderBy(_ => _.Name);
+var localities = Model.Localities.All.OrderBy(_ => _.Name);
 
 var builder = new SnapshotSettingsBuilder();
-builder.WithSettings(_ => _.IncludedPaths.Add("$..['Name','Location']"));
+builder.WithSettings(_ => _.IncludedPaths.Add("$..['Name','Coordinates']"));
 builder.WithSettings(_ => _.DefaultSnapshotGroupKeyFromNUnitTestName = true);
 
-Assert.That(cities, SnapshotDoes.Match(builder));
+Assert.That(localities, SnapshotDoes.Match(builder));
 ```

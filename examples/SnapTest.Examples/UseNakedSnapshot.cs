@@ -5,26 +5,29 @@ using System.Linq;
 
 namespace SnapTest.Examples
 {
-    public class SantaTests
+    public class NakedSnapshotExample
     {
         /// <summary>
-        /// Illustrates naked use of SnapTest.Snapshot.CompareTo without a test framework:<br/>
-        /// 1. Create and initialize a SnapshotSettings<br/>
-        /// 2. Call Snapshot.CompareTo()
+        /// Illustrates naked use of SnapTest.Snapshot.CompareTo without a test framework:
+        /// <list type="number">
+        /// <item>Create and initialize a SnapshotSettings</item>
+        /// <item>Call Snapshot.CompareTo()</item>
+        /// </list>
         /// </summary>
-        public static bool Santa_lives_at_the_NorthPole()
+        public static bool UseNakedSnapshot()
         {
-            var snapshotFile = FabricateSnapshotFile(nameof(Santa_lives_at_the_NorthPole));
+            var snapshotName = nameof(UseNakedSnapshot);
+            var snapshotFile = FabricateSnapshotFile(snapshotName);
 
             try {
                 var santasHomeLocation
-                    = CityModel.Cities.AllCities
+                    = Model.Localities.All
                         .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
-                        .Select(_ => _.Location)
+                        .Select(_ => _.Coordinates)
                         .FirstOrDefault();
 
                 var settings = new SnapshotSettings() {
-                    SnapshotName = nameof(Santa_lives_at_the_NorthPole),
+                    SnapshotName = snapshotName,
                     SnapshotDirectoryPath = Path.GetDirectoryName(snapshotFile),
                     MessageWriter = new MessageWriter(),
                     IndentJson = false

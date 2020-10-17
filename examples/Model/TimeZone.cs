@@ -1,6 +1,6 @@
 using System;
 
-namespace CityModel
+namespace Model
 {
     public class TimeZone
     {

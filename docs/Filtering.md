@@ -8,9 +8,9 @@ Use the `IncludedPaths` and `ExcludedPaths` settings to specify JSON Paths ident
 
 ```C#
 [Test]
-public void Sydney_time_zone_is_correct()
+public void Can_include_and_exclude_fields()
 {
-    var sydney = CityModel.Cities.AllCities.Where(c => c.Name == "Sydney").FirstOrDefault();
+    var sydney = Model.Localities.All.Where(c => c.Name == "Sydney").FirstOrDefault();
 
     var builder = new SnapshotSettingsBuilder().WithSettings(_ => {
         // Include only the TimeZone field in the snapshot

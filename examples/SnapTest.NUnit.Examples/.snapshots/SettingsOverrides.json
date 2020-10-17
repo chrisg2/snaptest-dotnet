@@ -1,5 +1,5 @@
 {
-  "Cities_have_not_moved": [
+  "WithSettings_can_be_called_on_SnapshotConstraint": [
     {
       "Latitude": 90.0,
       "Longitude": 0.0
@@ -11,7 +11,7 @@
     },
     "Sydney"
   ],
-  "No_landmarks_have_been_added_or_lost": [
+  "SnapshotDoesMatch_can_accept_builder": [
     "Santa's Workshop",
     "Sydney Harbour Bridge",
     "Sydney Opera House"

@@ -12,9 +12,9 @@ Run tests with the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable set 
 For example:
 
 ```shell
-jonas@DTP001:~/src/snaptest-dotnet/examples$ SNAPTEST_CREATE_MISSING_SNAPSHOTS=yes dotnet test --filter Santa_lives_at_the_NorthPole
+jonas@DTP001:~/src/snaptest-dotnet/examples$ SNAPTEST_CREATE_MISSING_SNAPSHOTS=yes dotnet test --filter Can_use_simple_Assert_constraint
 [...]
-Created or refreshed snapshot file at /home/jonas/src/snaptest-dotnet/examples/SnapTest.NUnit.Examples/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt
+Created or refreshed snapshot file at /home/jonas/src/snaptest-dotnet/examples/SnapTest.NUnit.Examples/_snapshots/Tests.Can_use_simple_Assert_constraint.txt
 ===> Tip: Review the content of created and refreshed snapshot files to ensure they reflect expected output.
 
 Test Run Successful.
@@ -22,7 +22,7 @@ Total tests: 1
      Passed: 1
  Total time: 0.3542 Seconds
 
-jonas@dtp001:~/src/snaptest-dotnet/examples$ cat SnapTest.NUnit.Examples/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt
+jonas@dtp001:~/src/snaptest-dotnet/examples$ cat SnapTest.NUnit.Examples/_snapshots/Tests.Can_use_simple_Assert_constraint.txt
 {
   "Latitude": 90.0,
   "Longitude": 0.0
@@ -39,9 +39,9 @@ For example:
 ```shell
 jonas@DTP001:~/src/snaptest-dotnet/examples$ SNAPTEST_REFRESH=yes dotnet test
 [...]
-Created or refreshed snapshot file at /home/jonas/src/snaptest-dotnet/examples/SnapTest.NUnit.Examples/_snapshots/IncludeExcludeTests.Sydney_time_zone_is_correct.txt
+Created or refreshed snapshot file at /home/jonas/src/snaptest-dotnet/examples/SnapTest.NUnit.Examples/_snapshots/Tests.Can_include_and_exclude_fields.txt
 ===> Tip: Review the content of created and refreshed snapshot files to ensure they reflect expected output.
-Created or refreshed snapshot file at /home/jonas/src/snaptest-dotnet/examples/SnapTest.NUnit.Examples/_snapshots/SantaTests.Santa_has_no_time_zone.txt
+Created or refreshed snapshot file at /home/jonas/src/snaptest-dotnet/examples/SnapTest.NUnit.Examples/_snapshots/Tests.Can_use_constraint_expression.txt
 [...]
 
 Test Run Successful.

@@ -15,12 +15,12 @@ The most common pattern for comparing an actual value to a snapshotted value in 
 
 ```C#
 [Test]
-public void Santa_lives_at_the_NorthPole()
+public void Can_use_simple_Assert_constraint()
 {
     var santasHomeLocation
-        = CityModel.Cities.AllCities
+        = Model.Localities.All
             .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
-            .Select(_ => _.Location)
+            .Select(_ => _.Coordinates)
             .FirstOrDefault();
 
     Assert.That(santasHomeLocation, SnapshotDoes.Match());
@@ -34,10 +34,10 @@ The `MatchSnapshot()` extension method can be used to perform a snapshot compari
 
 ```C#
 [Test]
-public void Santa_has_no_time_zone()
+public void Can_use_constraint_expression()
 {
     var santasTimeZone
-        = CityModel.Cities.AllCities
+        = Model.Localities.All
             .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
             .Select(_ => _.TimeZone)
             .FirstOrDefault();
@@ -75,9 +75,9 @@ public void SetUp()
 }
 
 [Test]
-public void No_landmarks_have_been_added_or_lost()
+public void SnapshotDoesMatch_can_accept_builder()
 {
-    var landmarks = CityModel.Cities.AllCities.Select(_ => _.Landmarks).SelectMany(_ => _).OrderBy(_ => _);
+    var landmarks = Model.Localities.All.Select(_ => _.Landmarks).SelectMany(_ => _).OrderBy(_ => _);
 
     Assert.That(landmarks, SnapshotDoes.Match(commonBuilder));
 }
@@ -92,12 +92,12 @@ For example:
 
 ```C#
 [Test]
-public void Cities_have_not_moved()
+public void WithSettings_can_be_called_on_SnapshotConstraint()
 {
-    var cities = CityModel.Cities.AllCities.OrderBy(_ => _.Name);
+    var localities = Model.Localities.All.OrderBy(_ => _.Name);
 
-    Assert.That(cities, SnapshotDoes.Match(commonBuilder).WithSettings(_ =>
-        _.IncludedPaths.Add("$..['Name','Location']")
+    Assert.That(localities, SnapshotDoes.Match(commonBuilder).WithSettings(_ =>
+        _.IncludedPaths.Add("$..['Name','Coordinates']")
     ));
 }
 ```
@@ -109,17 +109,17 @@ The snapshot name (which is used to determine the snapshot file name) defaults t
 
 ```C#
 [Test]
-public void First_city_name_has_not_moved()
+public void SnapshotDoesMatch_can_accept_name()
 {
-    var firstCityName = CityModel.Cities.AllCities.OrderBy(_ => _.Name).FirstOrDefault()?.Name;
+    var firstLocalityName = Model.Localities.All.OrderBy(_ => _.Name).FirstOrDefault()?.Name;
 
-    Assert.That(firstCityName, SnapshotDoes.Match("First city name"));
+    Assert.That(firstLocalityName, SnapshotDoes.Match("SampleSnapshotName"));
 }
 ```
 
 This style of calling gives the same result as setting `TestName` in the settings builder (which tends to be more verbose for simple scenarios):
 
 ```C#
-Assert.That(firstCityName, SnapshotDoes.Match().WithSettings(_ =>
-    _.TestName = "First city name"));
+Assert.That(firstLocalityName, SnapshotDoes.Match().WithSettings(_ =>
+    _.TestName = "SampleSnapshotName"));
 ```

@@ -1,1 +1,0 @@
-[{"Landmarks":["Santa's Workshop"],"Location":{"Latitude":90.0,"Longitude":0.0},"Name":"North Pole","TimeZone":null},{"Landmarks":["Sydney Harbour Bridge","Sydney Opera House"],"Location":{"Latitude":-33.8688,"Longitude":151.2093},"Name":"Sydney","TimeZone":{"BaseUTCOffsetMinutes":600,"DisplayName":"(UTC+10:00) GMT+10:00"}}]
