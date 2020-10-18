@@ -4,7 +4,7 @@ using Xunit.Sdk;
 namespace SnapTest.Xunit
 {
     /// <summary>
-    /// <see cref="ISnapshotEqualityComparer"/> implementation that performs a snapshot comparison within the context of an xUnit.net test.
+    /// <see cref="ISnapshotEqualityComparer"/> implementation that performs a snapshot value comparison within the context of an xUnit.net test.
     /// </summary>
     internal class XunitSnapshotEqualityComparer : SnapshotEqualityComparer
     {

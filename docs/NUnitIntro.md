@@ -2,16 +2,16 @@
 
 The `SnapTest.NUnit` package provides the following key classes in the `SnapTest.NUnit` namespace for writing snapshot-based tests with [NUnit](https://nunit.org):
 
-- `SnapshotConstraint`: NUnit `Constraint` that compares an actual value against an expected value that is stored in a snapshot file.
+- `SnapshotConstraint`: NUnit `Constraint` that matches an actual value against an expected value that is stored in a snapshot file.
 - `SnapshotSettings`: Settings that control how snapshot processing is performed.
 - `SnapshotDoes`: Helper class with properties and methods that supply a number of snapshotting-related constraints used in NUnit constraint-based assertions.
 
 Here are some examples of snapshot-based tests illustrating typical uses of these classes.
 
 
-## Basic test comparing an actual value to a snapshotted value
+## Basic test matching an actual value against a snapshotted value
 
-The most common pattern for comparing an actual value to a snapshotted value in an NUnit test simply calls `Assert.That(actualValue, SnapshotDoes.Match())`. For example:
+The most common pattern for matching an actual value again a snapshotted value in an NUnit test simply calls `Assert.That(actualValue, SnapshotDoes.Match())`. For example:
 
 ```C#
 [Test]
@@ -30,7 +30,7 @@ public void Can_use_simple_Assert_constraint()
 
 ## NUnit constraint expressions can match snapshots using `MatchSnapshot()`
 
-The `MatchSnapshot()` extension method can be used to perform a snapshot comparison in an NUnit constraint expression. For example:
+The `MatchSnapshot()` extension method can be used to perform a snapshot match in an NUnit constraint expression. For example:
 
 ```C#
 [Test]

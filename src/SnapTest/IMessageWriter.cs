@@ -10,7 +10,7 @@ namespace SnapTest
         /// </summary>
         /// <remarks>
         /// An IMessageWriter can be specified for snapshot processing in the <see cref="SnapshotSettings.MessageWriter"/> property
-        /// of the SnapshotSettings object passed to <see cref="Snapshot.CompareTo"/>.
+        /// of the SnapshotSettings object passed to <see cref="Snapshot.MatchTo"/>.
         /// No message writer is configured by default, and as such any messages are simply discarded.
         /// </remarks>
         /// <param name="message">The text of the message to be written.</param>

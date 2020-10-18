@@ -1,6 +1,6 @@
 # Snapshot settings
 
-The behavior of snapshot comparisons is controlled through a `SnapshotSettings` object that may be provided when a comparison is performed.
+The behavior of snapshot match operations is controlled through a `SnapshotSettings` object that may be provided when a match is performed.
 
 ## General settings
 
@@ -10,20 +10,20 @@ Setting|Description|Default
 ---|---|---
 `SnapshotName`|The name of the snapshot. Used as the basename of the snapshot filename.|`null` (*)
 `SnapshotGroupKey`|A key used to identify the particular snapshot to use out of a group of snapshots identified by `SnapshotName`. See [Snapshot Groups](SnapshotGroups.md) for more information.|`null` (*)
-`IncludedPaths`|A list of JSON Paths identifying element(s) to be included from a compound object when it is compared to a snapshot. See [Filtering Values](Filtering.md) for more information.|None
-`ExcludedPaths`|A list of JSON Paths identifying element(s) to be excluded from a compound object when it is compared to a snapshot. See [Filtering Values](Filtering.md) for more information.|None
-`CreateMissingSnapshots`|Flag indicating whether missing snapshots should be created based on actual values provided when a snapshot is compared.|`true` if the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable is not empty; `false` otherwise
-`ForceSnapshotRefresh`|Flag indicating whether snapshot files should be forcibly refreshed to reflect actual values provided for snapshot comparisons.|`true` if the `SNAPTEST_REFRESH` environment variable is not empty; `false` otherwise
+`IncludedPaths`|A list of JSON Paths identifying element(s) to be included from a compound object when it is matched against a snapshot. See [Filtering Values](Filtering.md) for more information.|None
+`ExcludedPaths`|A list of JSON Paths identifying element(s) to be excluded from a compound object when it is matched against a snapshot. See [Filtering Values](Filtering.md) for more information.|None
+`CreateMissingSnapshots`|Flag indicating whether missing snapshot files should be created based on actual values provided when a snapshot is matched.|`true` if the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable is not empty; `false` otherwise
+`ForceSnapshotRefresh`|Flag indicating whether snapshot files should be forcibly refreshed to reflect actual values provided for snapshot matches.|`true` if the `SNAPTEST_REFRESH` environment variable is not empty; `false` otherwise
 `IndentJson`|Flag used to control whether serialized JSON for an actual value saved to a snapshot file when either `ForceSnapshotRefresh` or `CreateMissingSnapshots` are `true` has new lines and indentation (`true`, which is the default), or has no indentation and appears on a single line (`false`).|`true`
 `SnapshotDirectoryPath`|Path to the directory in which snapshot files are stored. If not set, the current working directory is used.|`null` (*)
-`SnapshotExtension`|The extension to append as a suffix to snapshot filenames, including a ".".|`.txt`
-`MismatchedActualExtension`|The extension to append as a suffix to mismatched actual snapshot filenames, including a ".".|`.txt.actual`
+`SnapshotExtension`|The extension to append as a suffix to snapshot filenames, including a leading ".".|`.txt`
+`MismatchedActualExtension`|The extension to append as a suffix to mismatched actual filenames, including a leading ".".|`.txt.actual`
 `SnapshotComparer`|An object impementing the `ISnapshotEqualityComparer` interface to be used for comparing an actual value to a snapshotted value.|`SnapshotComparer.Default`
 `MessageWriter`|An object impementing the `IMessageWriter` interface to be used for emitting informational messages during snapshot processing.|`null` (*)
 
 Defaults for some settings marked with (*) may be overridden in snapshot settings classes defined by SnapTest modules for different test frameworks.
 
-The following further settings are defined in the `SnapTest.SnapshotTestFrameworkSettingsBase` class that is derived from `SnapTest.SnapshotSettings` to be used for snapshot settings when snapshot comparisons are performed fro the context of tests run by various test frameworks such as NUnit and xUnit.net:
+The following further settings are defined in the `SnapTest.SnapshotTestFrameworkSettingsBase` class that is derived from `SnapTest.SnapshotSettings`. These settings are used when snapshot match operations are performed from the context of tests run by various test frameworks such as NUnit and xUnit.net.
 
 Setting|Description|Default
 ---|---|---
@@ -39,7 +39,7 @@ Setting|Default
 
 ## NUnit settings
 
-The `SnapTest.NUnit.SnapshotSettings` class is derived from `SnapTest.SnapshotTestFrameworkSettingsBase` (and so inherits all settings from that base class), and provides capabilities for defaulting settings values as appropriate for performing snapshot comparisons from within the context of running NUnit tests.
+The `SnapTest.NUnit.SnapshotSettings` class is derived from `SnapTest.SnapshotTestFrameworkSettingsBase` (and so inherits all settings from that base class), and provides capabilities for defaulting settings values as appropriate for performing snapshot match operations from within the context of running NUnit tests.
 
 Defaults for following settings from the base class are overridden by `SnapTest.NUnit.SnapshotSettings` when a settings object is created using a builder obtained from `SnapshotSettings.GetBuilder()`:
 

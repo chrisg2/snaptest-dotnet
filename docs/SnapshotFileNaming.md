@@ -32,7 +32,7 @@ var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
 Assert.That("actual output", SnapshotDoes.Match(builder));
 ```
 
-These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a snapshot comparison fails and a mismatched actual file is created then it will be created at `C:\MyPath\MySnapshot.snapshot.actual`.
+These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a snapshot match fails and a mismatched actual file is created then it will be created at `C:\MyPath\MySnapshot.snapshot.actual`.
 
 To determine the snapshot directory based on the test source file directory but with another subdirectory name instead of `_snapshots`, set the `SnapshotSubdirectory` setting (and do _not_ explicitly set `SnapshotDirectoryPath`):
 

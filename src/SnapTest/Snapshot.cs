@@ -3,7 +3,7 @@
 namespace SnapTest
 {
     /// <summary>
-    /// Core class providing methods to compare an actual value against a snapshotted value.
+    /// Core class providing methods to match an actual value against a snapshotted value.
     /// </summary>
     public static partial class Snapshot
     {
@@ -12,22 +12,22 @@ namespace SnapTest
         /// Compares an actual value to the value stored in a snapshot.
         /// </summary>
         /// <remarks>
-        /// A snapshot file and mismatch file may be created or updated based on the values of
+        /// A snapshot file and mismatched actual file may be created or updated based on the values of
         /// <see cref="SnapshotSettings.ForceSnapshotRefresh"/> and <see cref="SnapshotSettings.CreateMissingSnapshots"/>,
         /// whether or not a snapshot currently exists, and whether the actual value matches the snapshot (if it exists). In the
-        /// case that these settings result in the snapshot being created or updated, the comparison result is true despite
-        /// what value the snapshot currently shows.
+        /// case that these settings result in the snapshot file being created or updated, the match result is true regardless
+        /// what value the snapshot file currently shows.
         /// </remarks>
-        /// <param name="actual">Actual value to be compared.</param>
+        /// <param name="actual">Actual value to be matched.</param>
         /// <param name="settings">Settings controlling the details of how and where the snapshot is stored and updated.</param>
-        /// <returns>true if the actual value matches the snapshot, otherwise false.</returns>
+        /// <returns>true if the actual value matches the snapshotted value, otherwise false.</returns>
         /// <exception cref="SnapTestParseException">
         /// Thrown if:
-        /// - A snapshot file contains content that is not valid JSON.
+        /// - A snapshot file contains content that is not valid JSON when JSON content is expected.
         /// - A snapshot file contains JSON that is not an object when an object is expected.
-        /// - A value in settings.ExcludedPaths results in the entire actual value being excluded from snapshotting.
+        /// - A value in <c>settings.ExcludedPaths</c> results in the entire actual value being excluded from snapshotting.
         /// </exception>
-        public static bool CompareTo(object actual, SnapshotSettings settings)
+        public static bool MatchTo(object actual, SnapshotSettings settings)
         {
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));

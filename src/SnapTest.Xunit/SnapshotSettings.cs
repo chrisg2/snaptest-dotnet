@@ -30,7 +30,7 @@ namespace SnapTest.Xunit
         #region Methods
         /// <summary>
         /// Creates a new <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> that can be used to create and initialize <see cref="SnapshotSettings"/> objects
-        /// as needed when a snapshot comparison is performed.
+        /// as needed when a snapshot match operation is performed.
         /// </summary>
         public static SnapshotSettingsBuilder<SnapshotSettings> GetBuilder()
             => new SnapshotSettingsBuilder<SnapshotSettings>(Build);

@@ -11,7 +11,7 @@ namespace SnapTest
     /// <remarks>
     ///
     /// <para>An instance of the <c>SnapshotSettings</c> class may be provided as a parameter when calling</para>
-    /// <see cref="Snapshot.CompareTo"/>.
+    /// <see cref="Snapshot.MatchTo"/>.
     /// </remarks>
     public class SnapshotSettings
     {
@@ -36,10 +36,6 @@ namespace SnapTest
         /// value then the snapshot file can contain multiple snapshot values in JSON format, each one identified by a different key.
         /// <c>SnapshotGroupKey</c> is set to a non-null value to identify the key to use for a particular snapshot operation.</para>
         ///
-        /// <para>Snapshot groups make working with mismatched actual snapshot files somewhat more complicated: when a mismatch occurs,
-        /// a separate mismatch file is created for each snapshot group. It is up to you to manually merge the relevant
-        /// expected values from each mismatch actual snapshot file into the master snapshot file.</para>
-        ///
         /// <para>Whitespace is trimmed from the start and end of any value supplied when <c>SnapshotGroupKey</c> is set.</para>
         /// </remarks>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -60,12 +56,12 @@ namespace SnapTest
 
         #region Settings related to Json serialization of values
         /// <summary>
-        /// A list of JSON Paths identifying element(s) to be included from a compound object when it is compared to a snapshot.
+        /// A list of JSON Paths identifying element(s) to be included from a compound object when it is compared to a snapshotted value.
         /// </summary>
         ///
         /// <remarks>
-        /// <para>When a compound object (that is, an object that is not a primitive type, string, or similar) is compared
-        /// to a snapshot, it is sometimes helpful to select particular elements of the object to be compared. JSON Paths to identify such elements
+        /// <para>When a compound object (that is, an object that is <em>not</em> a primitive type, string, or similar) is compared
+        /// to a snapshotted value, it is sometimes helpful to select particular elements of the object to be compared. JSON Paths to identify such elements
         /// can be added to this setting.</para>
         ///
         /// <para>As an example, consider the following classes:</para>
@@ -84,7 +80,7 @@ namespace SnapTest
         /// }
         /// </code>
         ///
-        /// <para>Given a <c>Garden</c> object to compare to a snapshot, the following JSON Paths could be added to <c>IncludedPaths</c>
+        /// <para>Given a <c>Garden</c> object to match against a snapshot, the following JSON Paths could be added to <c>IncludedPaths</c>
         /// to select particular elements of the object for comparison:</para>
         /// <list type="bullet">
         /// <item><term><c>$</c></term> <description>Selects the entire object. This gives the same result as if <c>IncludedPaths</c> is null.</description></item>
@@ -97,9 +93,9 @@ namespace SnapTest
         ///
         /// <para>For more information about and examples of JSON Path syntax, see https://goessner.net/articles/JsonPath/.</para>
         ///
-        /// <para>If the <c>IncludedPaths</c> list is empty then the entire actual object is compared to the snapshot.</para>
+        /// <para>If the <c>IncludedPaths</c> list is empty then the entire actual object is compared to the snapshot value.</para>
         ///
-        /// <para>The value of this property is ignored when comparing simple primitive or string values to a snapshot.</para>
+        /// <para>The value of this property is ignored when matching simple primitive or string values again a snapshot.</para>
         /// </remarks>
         /// <seealso cref="ExcludedPaths"/>
         public IList<string> IncludedPaths { get; } = new List<string>();
@@ -109,7 +105,7 @@ namespace SnapTest
         /// </summary>
         ///
         /// <remarks>
-        /// <para>When a compound object (that is, an object that is not a primitive type, string, or similar) is compared to a snapshot,
+        /// <para>When a compound object (that is, an object that is <em>not</em> a primitive type, string, or similar) is compared to a snapshot,
         /// it is sometimes helpful to exclude particular elements of the object from the comparison. JSON Paths to identify such elements
         /// can be added to this setting.</para>
         ///
@@ -122,7 +118,7 @@ namespace SnapTest
         #region Settings related to snapshot files
         /// <summary>
         /// Name of an environment variable that can be set to cause missing snapshots to be created based on actual values provided
-        /// when a snapshot is compared. The <see cref="CreateMissingSnapshots"/> property defaults to true if this environment
+        /// when a snapshot match operation is performed. The <see cref="CreateMissingSnapshots"/> property defaults to true if this environment
         /// variable is set to any non-empty value.
         /// </summary>
         /// <seealso cref="CreateMissingSnapshots"/>
@@ -131,7 +127,7 @@ namespace SnapTest
 
         /// <summary>
         /// Flag indicating whether missing snapshots should be created based on actual values provided
-        /// when a snapshot is compared. Defaults to to true if environment variable identified by
+        /// when a snapshot match operation is performed. Defaults to to true if environment variable identified by
         /// <see cref="CreateMissingSnapshotsEnvironmentVariableName"/> is set to any non-empty value;
         /// otherwise defaults to false.
         /// </summary>
@@ -141,7 +137,7 @@ namespace SnapTest
 
         /// <summary>
         /// Name of an environment variable that can be set to cause snapshot files to be forcibly refreshed to reflect actual values provided
-        /// for snapshot comparisons. The <see cref="ForceSnapshotRefresh"/> property defaults to true if this environment
+        /// for snapshot matches. The <see cref="ForceSnapshotRefresh"/> property defaults to true if this environment
         /// variable is set to any non-empty value.
         /// </summary>
         /// <seealso cref="CreateMissingSnapshotsEnvironmentVariableName"/>
@@ -150,7 +146,7 @@ namespace SnapTest
 
         /// <summary>
         /// Flag indicating whether snapshot files should be forcibly refreshed to reflect actual values provided
-        /// for snapshot comparisons. Defaults to to true if environment variable identified by
+        /// for snapshot matches. Defaults to to true if environment variable identified by
         /// <see cref="RefreshSnapshotsEnvironmentVariableName"/> is set to any non-empty value;
         /// otherwise defaults to false.
         /// </summary>
@@ -181,7 +177,7 @@ namespace SnapTest
         public string SnapshotExtension { get; set; } = ".txt";
 
         /// <summary>
-        /// The extension to append as a suffix to mismatched actual snapshot filenames, including a ".". Default value is ".txt.actual".
+        /// The extension to append as a suffix to mismatched actual filenames, including a ".". Default value is ".txt.actual".
         /// </summary>
         /// <seealso cref="SnapshotDirectoryPath"/>
         /// <seealso cref="MismatchedActualFilePath"/>
@@ -210,7 +206,7 @@ namespace SnapTest
             => GetSnapshotFilePathWithExtension(SnapshotName, SnapshotExtension);
 
         /// <summary>
-        /// Gets the file path of the mismatched actual snapshot file, which is determined based on the values of the <see cref="SnapshotDirectoryPath"/>,
+        /// Gets the file path of the mismatched actual file, which is determined based on the values of the <see cref="SnapshotDirectoryPath"/>,
         /// <see cref="SnapshotGroupKey"/>, <see cref="SnapshotName"/> and <see cref="MismatchedActualExtension"/> properties.
         /// </summary>
         /// <remarks>
@@ -224,13 +220,13 @@ namespace SnapTest
         #region Properties providing interfaces to help control snapshot behaviors
         /// <summary>
         /// An object impementing the <see cref="ISnapshotEqualityComparer"/> interface to be used for comparing an actual value to a snapshotted value.
-        /// If this property is not explicitly set when performing a snapshot comparison, the default <see cref="SnapshotEqualityComparer.Default"/> is used.
+        /// If this property is not explicitly set when performing a snapshot match operation, the default <see cref="SnapshotEqualityComparer.Default"/> is used.
         /// </summary>
         public ISnapshotEqualityComparer SnapshotComparer { get; set; }
 
         /// <summary>
         /// An object impementing the <see cref="IMessageWriter"/> interface to be used for emitting informational messages during snapshot processing.
-        /// If this property is not explicitly set when performing a snapshot comparison, information messages are not emitted.
+        /// If this property is not explicitly set when performing a snapshot match operation, information messages are not emitted.
         /// </summary>
         public IMessageWriter MessageWriter { get; set; }
         #endregion

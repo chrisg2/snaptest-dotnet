@@ -8,10 +8,10 @@ namespace SnapTest.Examples
     public class NakedSnapshotExample
     {
         /// <summary>
-        /// Illustrates naked use of SnapTest.Snapshot.CompareTo without a test framework:
+        /// Illustrates naked use of SnapTest.Snapshot.MatchTo without a test framework:
         /// <list type="number">
         /// <item>Create and initialize a SnapshotSettings</item>
-        /// <item>Call Snapshot.CompareTo()</item>
+        /// <item>Call Snapshot.MatchTo()</item>
         /// </list>
         /// </summary>
         public static bool UseNakedSnapshot()
@@ -33,7 +33,7 @@ namespace SnapTest.Examples
                     IndentJson = false
                 };
 
-                var result = Snapshot.CompareTo(santasHomeLocation, settings);
+                var result = Snapshot.MatchTo(santasHomeLocation, settings);
 
                 if (result)
                     Console.WriteLine("Santa's home location is correct");

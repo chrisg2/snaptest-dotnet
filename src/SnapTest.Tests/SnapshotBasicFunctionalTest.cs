@@ -24,8 +24,8 @@ namespace SnapTest.Tests
             /// <summary>
             ///
             /// </summary>
-            /// <param name="actual">Actual value to be compared to the snapshot.</param>
-            /// <param name="snapshotFileContents"></param>
+            /// <param name="actual">Actual value to be matched against the snapshot.</param>
+            /// <param name="snapshotFileContents">Contents to be written to the snapshot file before performing the snapshot match operation.</param>
             public InputConditions(object actual, string snapshotFileContents = null)
             {
                 Actual = actual;
@@ -35,7 +35,7 @@ namespace SnapTest.Tests
 
             #region Properties
             /// <summary>
-            /// Raw actual value to be compared to the snapshot.
+            /// Raw actual value to be matched against the snapshot.
             /// </summary>
             public object Actual;
 
@@ -46,8 +46,8 @@ namespace SnapTest.Tests
             /// <value></value>
             public string SnapshotFileContents;
 
-            #region Properties to get expected observable outcomes from calling Snapshot.CompareTo
-            public bool ExpectedCompareToResult {
+            #region Properties to get expected observable outcomes from calling Snapshot.MatchTo
+            public bool ExpectedMatchToResult {
                 get {
                     if (ForceSnapshotRefresh
                         || (CreateMissingSnapshots && SnapshotFileContents == null)
@@ -140,7 +140,7 @@ namespace SnapTest.Tests
 
             public string ExpectedMismatchFileContents {
                 get {
-                    if (ExpectedCompareToResult)
+                    if (ExpectedMatchToResult)
                         return null;
 
                     if (SnapshotGroupKey == null)
@@ -155,7 +155,7 @@ namespace SnapTest.Tests
             #endregion
 
             #region Methods
-            public bool PerformCompareTo()
+            public bool PerformMatchTo()
             {
                 EnsureSnapshotFilesAreDeleted();
 
@@ -163,7 +163,7 @@ namespace SnapTest.Tests
                 if (SnapshotFileContents != null)
                     File.WriteAllText(SnapshotFilePath, SnapshotFileContents);
 
-                return Snapshot.CompareTo(Actual, this);
+                return Snapshot.MatchTo(Actual, this);
             }
 
             public override string ToString()
@@ -353,7 +353,7 @@ namespace SnapTest.Tests
                             i.ForceSnapshotRefresh = forceSnapshotRefresh;
                             i.CreateMissingSnapshots = creatingMissingSnapshots;
                             i.SnapshotFileContents = snFile;
-                            Assume.That(i.ExpectedCompareToResult, Is.EqualTo(forceSnapshotRefresh || (creatingMissingSnapshots && snFile == null)));
+                            Assume.That(i.ExpectedMatchToResult, Is.EqualTo(forceSnapshotRefresh || (creatingMissingSnapshots && snFile == null)));
                             yield return i;
                         }
 
@@ -361,7 +361,7 @@ namespace SnapTest.Tests
                         i.ForceSnapshotRefresh = forceSnapshotRefresh;
                         i.CreateMissingSnapshots = creatingMissingSnapshots;
                         i.SnapshotFileContents = i.ActualSerialized + Environment.NewLine;
-                        Assume.That(i.ExpectedCompareToResult, Is.True);
+                        Assume.That(i.ExpectedMatchToResult, Is.True);
                         yield return i;
                     }
                 }
@@ -376,15 +376,15 @@ namespace SnapTest.Tests
             }
 
 
-            // Check that ordering of properties in Json is not important for comparisons
+            // Check that ordering of properties in Json is not important for matching
             i = NewInputConditions(new {a = 1, b = 2});
             i.SnapshotFileContents = "{\"b\":2,\"a\":1}"+Environment.NewLine;
-            Assume.That(i.ExpectedCompareToResult, Is.True); // Verify that ordering is not important in logic used by InputConditions
+            Assume.That(i.ExpectedMatchToResult, Is.True); // Verify that ordering is not important in logic used by InputConditions
             yield return i;
 
             i = NewInputConditions(new {a = 1, b = 2});
             i.SnapshotFileContents = "{\"a\":1,\"b\":2}"+Environment.NewLine;
-            Assume.That(i.ExpectedCompareToResult, Is.True); // Verify that ordering is not important in logic used by InputConditions
+            Assume.That(i.ExpectedMatchToResult, Is.True); // Verify that ordering is not important in logic used by InputConditions
             yield return i;
 
 
@@ -492,7 +492,7 @@ namespace SnapTest.Tests
             i.SnapshotGroupKey = "group";
             i.ForceSnapshotRefresh = true;
             i.IndentJson = false;
-            Assume.That(i.ExpectedCompareToResult, Is.True);
+            Assume.That(i.ExpectedMatchToResult, Is.True);
             Assume.That(i.ExpectedSnapshotFileContents, Is.EqualTo("{\"group\":\"value\"}" + Environment.NewLine));
             Assume.That(i.ExpectedMismatchFileContents, Is.Null);
             yield return i;
@@ -501,7 +501,7 @@ namespace SnapTest.Tests
             i.SnapshotGroupKey = "group";
             i.CreateMissingSnapshots = true;
             i.IndentJson = false;
-            Assume.That(i.ExpectedCompareToResult, Is.True);
+            Assume.That(i.ExpectedMatchToResult, Is.True);
             Assume.That(i.ExpectedSnapshotFileContents, Is.EqualTo("{\"group\":\"value\"}" + Environment.NewLine));
             Assume.That(i.ExpectedMismatchFileContents, Is.Null);
             yield return i;
@@ -511,7 +511,7 @@ namespace SnapTest.Tests
             i.ForceSnapshotRefresh = true;
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42}";
-            Assume.That(i.ExpectedCompareToResult, Is.True);
+            Assume.That(i.ExpectedMatchToResult, Is.True);
             Assume.That(i.ExpectedSnapshotFileContents, Is.EqualTo("{\"another\":42,\"group\":\"value\"}" + Environment.NewLine));
             Assume.That(i.ExpectedMismatchFileContents, Is.Null);
             yield return i;
@@ -521,7 +521,7 @@ namespace SnapTest.Tests
             i.CreateMissingSnapshots = true;
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42}";
-            Assume.That(i.ExpectedCompareToResult, Is.True);
+            Assume.That(i.ExpectedMatchToResult, Is.True);
             Assume.That(i.ExpectedSnapshotFileContents, Is.EqualTo("{\"another\":42,\"group\":\"value\"}" + Environment.NewLine));
             Assume.That(i.ExpectedMismatchFileContents, Is.Null);
             yield return i;
@@ -530,7 +530,7 @@ namespace SnapTest.Tests
             i.SnapshotGroupKey = "group";
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42}" + Environment.NewLine;
-            Assume.That(i.ExpectedCompareToResult, Is.False);
+            Assume.That(i.ExpectedMatchToResult, Is.False);
             Assume.That(i.ExpectedSnapshotFileContents, Is.EqualTo("{\"another\":42}" + Environment.NewLine));
             Assume.That(i.ExpectedMismatchFileContents, Is.EqualTo("{\"group\":\"value\"}" + Environment.NewLine));
             yield return i;
@@ -539,7 +539,7 @@ namespace SnapTest.Tests
             i.SnapshotGroupKey = "group";
             i.IndentJson = false;
             i.SnapshotFileContents = "{\"another\":42,\"group\":\"value\"}" + Environment.NewLine;
-            Assume.That(i.ExpectedCompareToResult, Is.True);
+            Assume.That(i.ExpectedMatchToResult, Is.True);
             Assume.That(i.ExpectedSnapshotFileContents, Is.EqualTo("{\"another\":42,\"group\":\"value\"}" + Environment.NewLine));
             Assume.That(i.ExpectedMismatchFileContents, Is.Null);
             yield return i;
@@ -548,15 +548,15 @@ namespace SnapTest.Tests
         #endregion
 
         [TestCaseSource(nameof(SnapshotTestCases))]
-        public static void Snapshot_CompareTo_gives_expected_result(InputConditions inputConditions)
+        public static void Snapshot_MatchTo_gives_expected_result(InputConditions inputConditions)
         {
-            Assert.That(inputConditions.PerformCompareTo(), Is.EqualTo(inputConditions.ExpectedCompareToResult));
+            Assert.That(inputConditions.PerformMatchTo(), Is.EqualTo(inputConditions.ExpectedMatchToResult));
         }
 
         [TestCaseSource(nameof(SnapshotTestCases))]
-        public static void Snapshot_CompareTo_creates_expected_snapshot_file(InputConditions inputConditions)
+        public static void Snapshot_MatchTo_creates_expected_snapshot_file(InputConditions inputConditions)
         {
-            inputConditions.PerformCompareTo();
+            inputConditions.PerformMatchTo();
 
             var c = inputConditions.ExpectedSnapshotFileContents;
             if (c == null) {
@@ -568,9 +568,9 @@ namespace SnapTest.Tests
         }
 
         [TestCaseSource(nameof(SnapshotTestCases))]
-        public static void Snapshot_CompareTo_creates_expected_mismatch_file(InputConditions inputConditions)
+        public static void Snapshot_MatchTo_creates_expected_mismatch_file(InputConditions inputConditions)
         {
-            inputConditions.PerformCompareTo();
+            inputConditions.PerformMatchTo();
 
             var c = inputConditions.ExpectedMismatchFileContents;
             if (c == null) {
@@ -582,15 +582,15 @@ namespace SnapTest.Tests
         }
 
         [Test]
-        public static void Snapshot_CompareTo_throws_ArgmentNullException_with_null_options()
-            => Assert.Throws<ArgumentNullException>(() => Snapshot.CompareTo("actual", null));
+        public static void Snapshot_MatchTo_throws_ArgmentNullException_with_null_options()
+            => Assert.Throws<ArgumentNullException>(() => Snapshot.MatchTo("actual", null));
 
         [Test]
         public static void Snapshot_Compare_attempting_to_exclude_root_throws()
         {
             using var i = new InputConditions(Garden.Flagstaff);
             i.ExcludedPaths.Add("$");
-            Assert.Throws<SnapTestParseException>(() => i.PerformCompareTo());
+            Assert.Throws<SnapTestParseException>(() => i.PerformMatchTo());
         }
 
         [TestCase("")]
@@ -599,7 +599,7 @@ namespace SnapTest.Tests
         public static void Snapshot_Compare_with_non_json_snapshot_file_throws(string contents)
         {
             using var i = new InputConditions(null) { SnapshotFileContents = contents };
-            Assert.Throws<SnapTestParseException>(() => i.PerformCompareTo());
+            Assert.Throws<SnapTestParseException>(() => i.PerformMatchTo());
         }
 
         [TestCase("")]

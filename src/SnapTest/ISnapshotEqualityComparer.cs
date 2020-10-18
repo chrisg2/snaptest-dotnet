@@ -10,7 +10,7 @@ namespace SnapTest
         /// </summary>
         /// <remarks>
         /// An <see cref="ISnapshotEqualityComparer"/> can be specified for snapshot processing in the <see cref="SnapshotSettings.SnapshotComparer"/> property
-        /// of the <see cref="SnapshotSettings"/> object passed to <see cref="Snapshot.CompareTo"/>.
+        /// of the <see cref="SnapshotSettings"/> object passed to <see cref="Snapshot.MatchTo"/>.
         ///
         /// If no comparer is explicitly configured (the default), <see cref="SnapshotEqualityComparer.Default"/> is used for comparison.
         /// This default comparer performs a deep equality comparison of <paramref name="actualValue"/> and <paramref name="snapshottedValue"/>.

@@ -22,7 +22,7 @@ namespace SnapTest.NUnit
         /// or a default <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> (if not supplied).
         /// </summary>
         /// <param name="settingsBuilder">A builder to create a <see cref="SnapshotSettings"/> object when needed
-        /// to perform a snapshot comparison. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
+        /// to perform a snapshot match operation. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
         public static SnapshotConstraint Match(SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder = null)
             => new SnapshotConstraint(settingsBuilder);
 
@@ -32,7 +32,7 @@ namespace SnapTest.NUnit
         /// </summary>
         /// <param name="snapshotName">The name of the snapshot, used to initialize the returned <see cref="SnapshotConstraint.SnapshotName"/>.</param>
         /// <param name="settingsBuilder">A builder to create a <see cref="SnapshotSettings"/> object when needed
-        /// to perform a snapshot comparison. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
+        /// to perform a snapshot match operation. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
         public static SnapshotConstraint Match(string snapshotName, SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder = null)
             => new SnapshotConstraint(snapshotName, settingsBuilder);
 
@@ -58,7 +58,7 @@ namespace SnapTest.NUnit
         /// </summary>
         /// <param name="expression">The NUnit <see cref="ConstraintExpression"/> to append the newly created <see cref="SnapshotConstraint"/> to.</param>
         /// <param name="settingsBuilder">A builder to create a <see cref="SnapshotSettings"/> object when needed
-        /// to perform a snapshot comparison. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
+        /// to perform a snapshot match operation. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
         public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder = null)
             => expression.MatchSnapshot(() => new SnapshotConstraint(settingsBuilder));
 
@@ -70,7 +70,7 @@ namespace SnapTest.NUnit
         /// <param name="expression">The NUnit <see cref="ConstraintExpression"/> to append the newly created <see cref="SnapshotConstraint"/> to.</param>
         /// <param name="snapshotName">The name of the snapshot, used to initialize the returned <see cref="SnapshotConstraint.SnapshotName"/>.</param>
         /// <param name="settingsBuilder">A builder to create a <see cref="SnapshotSettings"/> object when needed
-        /// to perform a snapshot comparison. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
+        /// to perform a snapshot match operation. This value (if supplied) is used to initialize the returned <see cref="SnapshotConstraint.SettingsBuilder"/>.</param>
         public static SnapshotConstraint MatchSnapshot(this ConstraintExpression expression, string snapshotName, SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder = null)
             => expression.MatchSnapshot(() => new SnapshotConstraint(snapshotName, settingsBuilder));
 

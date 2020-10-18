@@ -127,7 +127,7 @@ namespace SnapTest.NUnit
             var comparer = new NUnitSnapshotEqualityComparer(this, settings);
             settings.SnapshotComparer = comparer;
 
-            bool result = Snapshot.CompareTo(actual, settings);
+            bool result = Snapshot.MatchTo(actual, settings);
 
             return comparer.ConstraintResult ?? new ConstraintResult(this, actual, result);
         }

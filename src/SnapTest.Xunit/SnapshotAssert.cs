@@ -10,7 +10,7 @@
             if (!string.IsNullOrEmpty(snapshotName))
                 settings.SnapshotName = snapshotName;
 
-            Snapshot.CompareTo(actual, settings); // XunitSnapshotEqualityComparer throws an appropriate exception if comparison fails
+            Snapshot.MatchTo(actual, settings); // XunitSnapshotEqualityComparer throws an appropriate exception if match fails
         }
 
         public static void Matches(object actual, SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder)

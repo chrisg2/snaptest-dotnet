@@ -24,7 +24,7 @@ Treat this as experimental status. This means (amongst other things) that the in
     dotnet add package SnapTest.NUnit
     ```
 
-1. __Add test assertions to compare actual output against snapshotted output__
+1. __Add test assertions to match actual output against snapshotted output__
 
     `DoesMatch.Snapshot()` can be used as an assertion expression in your test.
 
@@ -76,7 +76,9 @@ Treat this as experimental status. This means (amongst other things) that the in
 
 1. __Commit code and snapshot files to source control__
 
-    Commit the test source file and associated snapshot file to your version control repository. You may also configure your version control tool to ignore `*.txt.actual` files in the `_snapshots` subdirectory (these files will be created when a snapshot comparison fails).
+    Commit the test source file and associated snapshot file to your version control repository.
+
+    It is also good practice to configure your version control tool to ignore `*.txt.actual` files in the `_snapshots` subdirectory (these files will be created when a snapshot match fails).
 
     ```shell
     echo '*.txt.actual' >>_snapshots/.gitignore
@@ -87,8 +89,8 @@ Treat this as experimental status. This means (amongst other things) that the in
 
     ... the NUnit test output will indicate the change:
     ```
-    Created snapshot actual mismatched output file at /home/jonas/src/Santa.Tests/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt.actual
-    ===> Tip: Review the content of mismatched output files to and use them to update snapshot files as appropriate.
+    Created mismatched actual file at /home/jonas/src/Santa.Tests/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt.actual
+    ===> Tip: Review the content of mismatched actual files and use them to update snapshot files as appropriate.
     X Santa_lives_at_the_NorthPole [93ms]
     Error Message:
         Expected string length 33 but was 35. Strings differ at index 29.

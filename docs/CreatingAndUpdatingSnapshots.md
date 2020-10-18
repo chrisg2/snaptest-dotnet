@@ -2,12 +2,12 @@
 
 SnapTest is able to automatically create snapshots which are missing, or refresh existing snapshots based on the actual results. The following sections describe how this is managed.
 
-> __TIP__: If a snapshot is refreshed or created when running a test, the snapshot comparison is deemed to pass.
+> __TIP__: If a snapshot is refreshed or created when running a test, the snapshot match is deemed to pass.
 
 
 ## Automatically creating missing snapshots
 
-Run tests with the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable set to any non-blank value to automatically create any snapshots that are missing. Snapshots will be created with the actual values which are passed in to the snapshot comparison operations that are performed by the test run.
+Run tests with the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable set to any non-blank value to automatically create any snapshots that are missing. Snapshots will be created with the actual values which are passed in to the snapshot match operations that are performed by the test run.
 
 For example:
 
@@ -32,7 +32,7 @@ jonas@dtp001:~/src/snaptest-dotnet/examples$ cat SnapTest.NUnit.Examples/_snapsh
 
 ## Automatically refresh all snapshots to reflect actual values
 
-Run tests with the `SNAPTEST_REFRESH` environment variable set to any non-blank value to force all snapshots to be refreshed to reflect the actual value passed in to snapshot comparisons performed by the test run.
+Run tests with the `SNAPTEST_REFRESH` environment variable set to any non-blank value to force all snapshots to be refreshed to reflect the actual value passed in to snapshot matches performed by the test run.
 
 For example:
 
@@ -55,11 +55,13 @@ Total tests: 7
 
 ## Mismatched actual files
 
-If a snapshot comparison fails, a "mismatched actual" file is created containing the actual value used in the comparison. This output may be helpful to investigate a failing test, or to manually update the snapshot if it is out of date.
+If a snapshot match fails, a "mismatched actual" file is created containing the actual value used in the match operation. This file may be helpful to investigate a failing test, or to manually update the snapshot file if it is out of date.
 
-If a snapshot comparison succeeds, any existing mismatched actual file for the snapshot is deleted. This generally means that mismatched actual files will only remain on the filesystem when the last run of a test failed, and/or when a test/snapshot name has changed during development.
+If a snapshot match succeeds, any existing mismatched actual file for the snapshot is deleted. This generally means that mismatched actual files will only remain on the filesystem under one of the following conditions:
+1. The last run of a test failed, or
+1. A snapshot name has changed during development.
 
-Mismatched actual files typically have an extension of `.txt.actual`. The source control system should be configured to ignore these files. For example, add a line like the following to the top level `.gitignore` file:
+Mismatched actual files have default extension of `.txt.actual`. It is good practice to configure the source control system to ignore these files. For example, add a line like the following to the top level `.gitignore` file:
 
 ```
 **/_snapshots/*.txt.actual
@@ -69,13 +71,13 @@ Mismatched actual files typically have an extension of `.txt.actual`. The source
 
 [Snapshot groups](SnapshotGroups.md) are a mechanism to store a group of snapshotted values in a single snapshot file. Each snapshotted value is identified by a unique key, known as the "snapshot group key".
 
-While the snapshotted values are stored in a single group file when using snapshot groups, a separate mismatched actual file is created for each snapshot comparison that fails. The mismatched actual file names include the snapshot group key identifying the snapshot within the group.
+While the snapshotted values are stored in a single group file when using snapshot groups, a separate mismatched actual file is created for each snapshot match operation that fails. The name of the mismatched actual file includes the snapshot group key identifying the snapshot within the group.
 
 For example, consider a situation where 2 snapshot matches are performed with the following settings:
 - Both snapshots use a `SnapshotName` of `MyShapshot`
 - The snapshots use `SnapshotGroupKey` values of `A` and `B` respectively
 
-The snapshot file `MySnapshot.txt` will contain a JSON representation of the expected values:
+The snapshot file `MySnapshot.txt` will contain a JSON representation of the expected values for both groups:
 
 ```json
 {
@@ -84,7 +86,7 @@ The snapshot file `MySnapshot.txt` will contain a JSON representation of the exp
 }
 ```
 
-If the comparisons performed by both snapshots fail, the following mismatched actual files will be created:
+If the matches performed against both snapshots fail, the following mismatched actual files will be created showing the actual values provided to the match operations:
 
 1. `MySnapshot.A.txt.actual`:
     ```json
@@ -100,8 +102,12 @@ If the comparisons performed by both snapshots fail, the following mismatched ac
     }
     ```
 
-If the mismatched actual outputs are correct, possible steps to appropriately update the snapshot file include:
+If the contents of the mismatched actual files are correct, examples of possible approaches to update the snapshot file include:
 
 1. Edit the `MySnapshot.txt` file and make updates to reflect the correct details based on the details in the `.txt.actual` files; OR
 
 1. Edit the `MySnapshot.txt` file and _delete_ the keys to be updated, then re-run the tests with the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable set.
+
+1. Re-run the the specific tests with the `SNAPSHOT_REFRESH` environment variable set.
+
+1. Edit the code of the specific tests to (temporarily) set the `SnapshotSettings.ForceSnapshotRefresh` setting to true, run the test, then revert the test code change.

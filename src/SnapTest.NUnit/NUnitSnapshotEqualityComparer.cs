@@ -4,7 +4,7 @@ using NUnit.Framework.Constraints;
 namespace SnapTest.NUnit
 {
     /// <summary>
-    /// <see cref="ISnapshotEqualityComparer"/> implementation that performs a snapshot comparison within the context of an NUnit test.
+    /// <see cref="ISnapshotEqualityComparer"/> implementation that performs a snapshot value comparison within the context of an NUnit test.
     /// </summary>
     internal class NUnitSnapshotEqualityComparer : SnapshotEqualityComparer
     {

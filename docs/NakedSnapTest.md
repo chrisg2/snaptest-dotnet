@@ -2,7 +2,7 @@
 
 While it is typical to use SnapTest with a testing framework such as NUnit, SnapTest can quite happily be used in a naked form without any such framework.
 
-The primary entry point to compare an actual value with a snapshotted value is the `bool SnapTest.Snapshot.CompareTo(object actual, SnapshotSettings settings)` static method.
+The primary entry point to match an actual value against a snapshotted value is the `bool SnapTest.Snapshot.MatchTo(object actual, SnapshotSettings settings)` static method.
 
 Key steps to use this method are:
 
@@ -14,7 +14,7 @@ Key steps to use this method are:
 
 1. Ensure the snapshotted value is stored in the file `{SnapshotDirectory}/{SnapshotName}{SnapshotExtension}` as specified in the settings. (The default `SnapshotExtension` is `.txt`.)
 
-1. Call `Snapshot.CompareTo(actual, settings)` to compare the `actual` value to the snapshotted value identified according to the details in `settings`.
+1. Call `Snapshot.MatchTo(actual, settings)` to match the `actual` value to the snapshotted value identified according to the details in `settings`.
 
 Here is an example (from https://github.com/chrisg2/snaptest-dotnet/tree/main/examples/SnapTest.Examples/UseNakedSnapshot.cs):
 
@@ -24,11 +24,11 @@ public static bool UseNakedSnapshot()
     var snapshotName = nameof(UseNakedSnapshot);
 
     // Somewhat contrived, but for the sake of example we
-    // create a snapshot file to be compared.
+    // create a snapshot file to be matched.
     var snapshotFile = FabricateSnapshotFile(snapshotName);
 
     try {
-        // Obtain a value to be compared to the snapshot
+        // Determine a value to be matched to the snapshot
         var santasHomeLocation
             = Model.Localities.All
                 .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
@@ -44,7 +44,7 @@ public static bool UseNakedSnapshot()
         };
 
         // Compare the actual value to the snapshotted value
-        var result = Snapshot.CompareTo(santasHomeLocation, settings);
+        var result = Snapshot.MatchTo(santasHomeLocation, settings);
 
         if (result)
             Console.WriteLine("Santa's home location is correct");
