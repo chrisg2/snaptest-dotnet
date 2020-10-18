@@ -7,6 +7,7 @@ namespace SnapTest.Xunit
     /// </summary>
     internal class XunitMessageWriter: IMessageWriter
     {
+        /// <inheritdoc/>
         public void Write(string message) => Console.WriteLine(message);
     }
 }

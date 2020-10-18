@@ -1,10 +1,5 @@
-﻿using System;
-//using System.Collections.Generic;
-//using System.Diagnostics;
-//using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-//using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace SnapTest.Xunit
@@ -13,35 +8,35 @@ namespace SnapTest.Xunit
     /// Settings used to control how snapshot processing is performed within the context of an xUnit.net test.
     /// </summary>
     /// <remarks>
-    /// Instances of this class are typically obtained by first creating a <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/>
-    /// by calling <see cref="GetBuilder"/>, configuring the builder to set settings as appropriate, and then calling the builder's
-    /// <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;.Build"/> method.
+    /// Instances of this class are typically obtained by calling <see cref="GetBuilder"/> to get a
+    /// <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/>, configuring the builder to set settings values as
+    /// appropriate, and then calling the builder's <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;.Build"/> method.
     /// </remarks>
     public class SnapshotSettings: SnapshotTestFrameworkSettingsBase
     {
         #region Constructors
         /// <summary>
-        /// This default constructor is private to avoid directly creating new objects.
-        /// Use <see cref="Build"/> to create and initialize <see cref="SnapshotSettings"/> objects.
+        /// This default constructor is private to avoid other code directly creating new objects.
         /// </summary>
-        private SnapshotSettings() { }
+        /// <remarks>
+        /// Use <see cref="GetBuilder"/> to get a builder that can be used to create <see cref="SnapshotSettings"/> objects.
+        /// </remarks>
+        private SnapshotSettings()
+        {
+            MessageWriter = new XunitMessageWriter();
+        }
         #endregion
 
         #region Methods
         /// <summary>
-        /// Creates a new <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> that can be used to create and initialize <see cref="SnapshotSettings"/> objects
-        /// as needed when a snapshot match operation is performed.
+        /// Creates a new <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> that can be used to create
+        /// and initialize <see cref="SnapshotSettings"/> objects as needed when a snapshot match operation is performed.
         /// </summary>
         public static SnapshotSettingsBuilder<SnapshotSettings> GetBuilder()
-            => new SnapshotSettingsBuilder<SnapshotSettings>(Build);
+            => new SnapshotSettingsBuilder<SnapshotSettings>(() => new SnapshotSettings());
 
-        /// <summary>
-        /// Create a new <see cref="SnapshotSettings"/> object for snapshot operations with the xUnit.net testing framework.
-        /// </summary>
-        private static SnapshotSettings Build()
-            => new SnapshotSettings() { MessageWriter = new XunitMessageWriter() };
-
-        #region Private helper methods
+        #region Base class method overrides
+        /// <inheritdoc/>
         protected override string DeriveSnapshotNameFromTestContext()
         {
             var method = FindTestMethodInStackTrace().Item1;
@@ -50,9 +45,11 @@ namespace SnapTest.Xunit
             return DefaultSnapshotGroupKeyFromTestName ? className : $"{className}.{method.Name}";
         }
 
+        /// <inheritdoc/>
         protected override string DeriveSnapshotGroupKeyFromTestContext()
             => FindTestMethodInStackTrace().Item1.Name;
 
+        /// <inheritdoc/>
         protected override bool IsTestMethod(MethodBase method)
             =>  method.GetCustomAttributes<FactAttribute>().Any()
                 || method.GetCustomAttributes<TheoryAttribute>().Any()

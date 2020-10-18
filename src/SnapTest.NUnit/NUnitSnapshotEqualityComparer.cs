@@ -8,16 +8,27 @@ namespace SnapTest.NUnit
     /// </summary>
     internal class NUnitSnapshotEqualityComparer : SnapshotEqualityComparer
     {
+        #region Fields
         public ConstraintResult ConstraintResult;
         private readonly IConstraint constraint;
         private readonly SnapshotSettings settings;
+        #endregion
 
-        public NUnitSnapshotEqualityComparer(IConstraint constraint, SnapshotSettings settings)
+        #region Constructors
+        /// <summary>
+        /// Constructor that initializes an <see cref="NUnitSnapshotEqualityComparer"/> to work with the specified
+        /// <see cref="IConstraint"/> and <see cref="SnapshotSettings"/>.
+        /// </summary>
+        /// <param name="constraint">The NUnit constraint the comparer is to be used with.</param>
+        /// <param name="settings">The snapshot settings the comparer is to be used with.</param>
+        internal NUnitSnapshotEqualityComparer(IConstraint constraint, SnapshotSettings settings)
         {
             this.constraint = constraint;
             this.settings = settings;
         }
+        #endregion
 
+        #region Method overrides
         /// <summary>
         /// Compares an actual value to a snapshotted value. Details from the result of the comparison
         /// are stored in <see cref="ConstraintResult"/> for later access by <see cref="SnapshotConstraint.ApplyTo"/>.
@@ -37,5 +48,6 @@ namespace SnapTest.NUnit
 
             return ConstraintResult.Status == ConstraintStatus.Success;
         }
+        #endregion
     }
 }

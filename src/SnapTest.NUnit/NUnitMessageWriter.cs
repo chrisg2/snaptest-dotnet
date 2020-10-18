@@ -7,6 +7,7 @@ namespace SnapTest.NUnit
     /// </summary>
     internal class NUnitMessageWriter: IMessageWriter
     {
+        /// <inheritdoc/>
         public void Write(string message) => TestContext.Progress.WriteLine(message);
     }
 }
