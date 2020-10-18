@@ -37,14 +37,16 @@ namespace SnapTest
 
             var actualSnapshotValue = ActualSnapshotValue(actual, settings);
 
-            bool comparisonResult =
-                settings.ForceSnapshotRefresh
-                || (settings.CreateMissingSnapshots && snapshottedValue == null)
-                || (settings.SnapshotComparer ?? SnapshotEqualityComparer.Default).Equals(actualSnapshotValue, snapshottedValue);
-
-            WriteSnapshotIfRequired(comparisonResult, actualSnapshotValue, snapshottedValue, completeSnapshotGroup, settings);
-
-            return comparisonResult;
+            bool comparisonResult = false;
+            try {
+                return comparisonResult =
+                    settings.ForceSnapshotRefresh
+                    || (settings.CreateMissingSnapshots && snapshottedValue == null)
+                    || (settings.SnapshotComparer ?? SnapshotEqualityComparer.Default).Equals(actualSnapshotValue, snapshottedValue);
+            }
+            finally {
+                WriteSnapshotIfRequired(comparisonResult, actualSnapshotValue, snapshottedValue, completeSnapshotGroup, settings);
+            }
         }
         #endregion
 
