@@ -1,3 +1,6 @@
+using Xunit;
+using Xunit.Sdk;
+
 namespace SnapTest.Xunit
 {
     /// <summary>
@@ -5,10 +8,19 @@ namespace SnapTest.Xunit
     /// </summary>
     internal class XunitSnapshotEqualityComparer : SnapshotEqualityComparer
     {
-        // TODO: Work out if this class is actually needed to do anything more than the base SnapshotEqualityComparer class
-
         /// <inheritdoc/>
         public override bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue)
-            => base.Equals(actualValue, snapshottedValue);
+        {
+            if (!base.Equals(actualValue, snapshottedValue)) {
+                var snapshottedValueSerialized = snapshottedValue.Serialize(false);
+                var actualValueSerialized = actualValue.Serialize(false);
+
+                Assert.Equal(snapshottedValueSerialized, actualValueSerialized);
+
+                throw new EqualException(snapshottedValueSerialized, actualValueSerialized); // Just in case Assert.Equal didn't throw...
+            }
+
+            return true;
+        }
     }
 }

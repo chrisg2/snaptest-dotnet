@@ -1,6 +1,4 @@
-﻿using Xunit.Sdk;
-
-namespace SnapTest.Xunit
+﻿namespace SnapTest.Xunit
 {
     public static class SnapshotAssert
     {
@@ -12,12 +10,7 @@ namespace SnapTest.Xunit
             if (!string.IsNullOrEmpty(snapshotName))
                 settings.SnapshotName = snapshotName;
 
-            var result = Snapshot.CompareTo(actual, settings);
-
-            // TODO: Work out how to transparently pass back details of a comparison failure
-
-            if (!result)
-                throw new EqualException("Snapshotted value", actual);
+            Snapshot.CompareTo(actual, settings); // XunitSnapshotEqualityComparer throws an appropriate exception if comparison fails
         }
 
         public static void Matches(object actual, SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder)
