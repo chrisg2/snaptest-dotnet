@@ -37,7 +37,7 @@ namespace SnapTest.NUnit
 
         #region Base class method overrides
         /// <inheritdoc/>
-        protected override string DeriveSnapshotNameFromTestContext()
+        protected override string DeriveSnapshotNameFromTestContext(MethodBase _)
         {
             var tc = TestContext.CurrentContext;
 
@@ -50,7 +50,7 @@ namespace SnapTest.NUnit
         }
 
         /// <inheritdoc/>
-        protected override string DeriveSnapshotGroupKeyFromTestContext()
+        protected override string DeriveSnapshotGroupKeyFromTestContext(MethodBase _)
             => TestContext.CurrentContext.Test.Name;
 
         /// <inheritdoc/>

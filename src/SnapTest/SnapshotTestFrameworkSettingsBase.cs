@@ -37,12 +37,12 @@ namespace SnapTest
         /// <inheritdoc/>
         public override void ApplyDefaults()
         {
-            // TODO: Call FindTestMethodInStackTrace() *once* and pass result in to the following steps
+            var testMethodInfo = FindTestMethodInStackTrace();
 
             // Set various properties that have not otherwise already been set to calculated default values.
 
             if (string.IsNullOrWhiteSpace(SnapshotName)) {
-                SnapshotName = DeriveSnapshotNameFromTestContext() ??
+                SnapshotName = DeriveSnapshotNameFromTestContext(testMethodInfo.Item1) ??
                     throw new SnapTestException(
                         "SnapshotName can only be dynamically determined when accessed while an NUnit test method is executing. " +
                         "To access SnapshotName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
@@ -50,10 +50,10 @@ namespace SnapTest
             }
 
             if (string.IsNullOrWhiteSpace(SnapshotGroupKey) && DefaultSnapshotGroupKeyFromTestName)
-                SnapshotGroupKey = DeriveSnapshotGroupKeyFromTestContext();
+                SnapshotGroupKey = DeriveSnapshotGroupKeyFromTestContext(testMethodInfo.Item1);
 
             if (string.IsNullOrWhiteSpace(SnapshotDirectoryPath)) {
-                var d = Path.GetDirectoryName(FindTestMethodInStackTrace().Item2.GetFileName()) ??
+                var d = Path.GetDirectoryName(testMethodInfo.Item2.GetFileName()) ??
                     throw new SnapTestException(
                         "The directory to hold snapshot files could not be determined from the current stack trace. " +
                         "Verify that the stack trace includes a method that is identified as a test method by the test framework, " +
@@ -66,11 +66,15 @@ namespace SnapTest
             }
         }
 
-        protected abstract string DeriveSnapshotNameFromTestContext();
+        protected abstract string DeriveSnapshotNameFromTestContext(MethodBase testMethod);
 
-        protected abstract string DeriveSnapshotGroupKeyFromTestContext();
+        protected abstract string DeriveSnapshotGroupKeyFromTestContext(MethodBase testMethod);
 
-        protected virtual (MethodBase, StackFrame) FindTestMethodInStackTrace()
+        protected abstract bool IsTestMethod(MethodBase method);
+        #endregion
+
+        #region Private helper methods
+        private (MethodBase, StackFrame) FindTestMethodInStackTrace()
             => (
                 from frame in new StackTrace(1, true).GetFrames()
                 let m = frame.GetMethod()
@@ -80,10 +84,6 @@ namespace SnapTest
                 select (syncMethod, frame)
             ).FirstOrDefault();
 
-        protected abstract bool IsTestMethod(MethodBase method);
-        #endregion
-
-        #region Private helper methods
         private static bool IsAsyncMethod(MemberInfo method)
             => typeof(IAsyncStateMachine).IsAssignableFrom(method.DeclaringType);
 

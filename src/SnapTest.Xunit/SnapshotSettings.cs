@@ -37,17 +37,16 @@ namespace SnapTest.Xunit
 
         #region Base class method overrides
         /// <inheritdoc/>
-        protected override string DeriveSnapshotNameFromTestContext()
+        protected override string DeriveSnapshotNameFromTestContext(MethodBase testMethod)
         {
-            var method = FindTestMethodInStackTrace().Item1;
-            var className = method.ReflectedType.Name;
+            var className = testMethod.ReflectedType.Name;
 
-            return DefaultSnapshotGroupKeyFromTestName ? className : $"{className}.{method.Name}";
+            return DefaultSnapshotGroupKeyFromTestName ? className : $"{className}.{testMethod.Name}";
         }
 
         /// <inheritdoc/>
-        protected override string DeriveSnapshotGroupKeyFromTestContext()
-            => FindTestMethodInStackTrace().Item1.Name;
+        protected override string DeriveSnapshotGroupKeyFromTestContext(MethodBase testMethod)
+            => testMethod.Name;
 
         /// <inheritdoc/>
         protected override bool IsTestMethod(MethodBase method)
