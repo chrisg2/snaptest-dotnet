@@ -4,8 +4,6 @@ using System.IO;
 
 namespace SnapTest.NUnit.Tests
 {
-    // TODO: Move appropriate tests from SnapTest.NUnit.Tests to SnapTest.Tests
-
     public class SnapshotSettingsBuilderTest
     {
         [Test]
