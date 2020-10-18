@@ -13,25 +13,25 @@ namespace SnapTest.NUnit
         #region Constructors
         /// <summary>
         /// Construct a <see cref="SnapshotConstraint"/> that will use settings from <paramref name="settingsBuilder"/> (if supplied),
-        /// or a default <see cref="SnapshotSettingsBuilder"/> (if not supplied).
+        /// or a default <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> (if not supplied).
         /// </summary>
         /// <param name="settingsBuilder">A builder to create a <see cref="SnapshotSettings"/> object when needed
         /// to perform a snapshot comparison. This value (if supplied) is used to initialize <see cref="SettingsBuilder"/>.</param>
-        public SnapshotConstraint(SnapshotSettingsBuilder settingsBuilder = null)
+        public SnapshotConstraint(SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder = null)
         {
             SettingsBuilder = settingsBuilder ?? SnapshotSettings.GetBuilder();
         }
 
         /// <summary>
         /// Construct a <see cref="SnapshotConstraint"/> that will use the specified snapshot name, along with settings from
-        /// <paramref name="settingsBuilder"/> (if supplied) or a default <see cref="SnapshotSettingsBuilder"/> (if not supplied).
+        /// <paramref name="settingsBuilder"/> (if supplied) or a default <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> (if not supplied).
         /// </summary>
         /// <param name="snapshotName">The name of the snapshot, used to initialize <see cref="SnapshotName"/>.</param>
         /// <param name="settingsBuilder">A builder to create a <see cref="SnapshotSettings"/> object when needed
         /// to perform a snapshot comparison. This value (if supplied) is used to initialize <see cref="SettingsBuilder"/>.</param>
-        public SnapshotConstraint(string snapshotName, SnapshotSettingsBuilder settingsBuilder = null) : this(settingsBuilder)
+        public SnapshotConstraint(string snapshotName, SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder = null) : this(settingsBuilder)
         {
-            // Do not use WithSettings on a caller-supplied SnapshotSettingsBuilder here, as
+            // Do not use WithSettings on a caller-supplied SnapshotSettingsBuilder<SnapshotSettings> here, as
             // that would change the operationg of the caller's builder which could be unexpected.
             // Instead the snapshotName is stored in property to be used to explicitly override the SnapshotName
             // in built SnapshotSettings when needed.
@@ -59,10 +59,10 @@ namespace SnapTest.NUnit
 
         #region Properties
         /// <summary>
-        /// The <see cref="SnapshotSettingsBuilder"/> used by this <see cref="SnapshotConstraint"/> to create <see cref="SnapshotSettings"/>
+        /// The <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> used by this <see cref="SnapshotConstraint"/> to create <see cref="SnapshotSettings"/>
         /// objects as needed to perform snapshot comparisons or other operations.
         /// </summary>
-        public SnapshotSettingsBuilder SettingsBuilder { get; }
+        public SnapshotSettingsBuilder<SnapshotSettings> SettingsBuilder { get; }
 
         /// <summary>
         /// The snapshot name to use when this <see cref="SnapshotConstraint"/> performs a comparison.
@@ -71,7 +71,7 @@ namespace SnapTest.NUnit
         /// If this property is null then the snapshot name determined by the <see cref="SettingsBuilder"/> is used. The default snapshot name
         /// from <see cref="SettingsBuilder"/> is determined from details in NUnit's <see cref="TestContext.CurrentContext"/> object:
         /// <list type="bullet">
-        /// <item>If the <see cref="SnapshotSettings.DefaultSnapshotGroupKeyFromNUnitTestName"/> setting being used for the snapshot comparison is false (the default),
+        /// <item>If the <see cref="SnapshotTestFrameworkSettingsBase.DefaultSnapshotGroupKeyFromTestName"/> setting being used for the snapshot comparison is false (the default),
         /// the snapshot name defaults to <c>{ClassName}.{TestName}</c>.</item>
         /// <item>Otherwise, the snapshot name defaults to <c>{ClassName}</c> (and the snapshot group defaults to <c>{TestName}</c>).</item>
         /// </list>
@@ -81,16 +81,16 @@ namespace SnapTest.NUnit
 
         #region Methods
         /// <summary>
-        /// Shortcut method to call <see cref="SnapshotSettingsBuilder.WithSettings"/> on <see cref="SettingsBuilder"/>.
+        /// Shortcut method to call <see cref="SnapshotSettingsBuilder<SnapshotSettings>.WithSettings"/> on <see cref="SettingsBuilder"/>.
         /// </summary>
         /// <param name="settingsInitializer">
         /// An action to be called to initialize <see cref="SnapshotSettings"/> property values when a new settings object
         /// is created by this <see cref="SnapshotConstraint"/>.
         /// </param>
         /// <remarks>
-        /// Be aware: If a <see cref="SnapshotSettingsBuilder"/> was specified as a parameter when the
+        /// Be aware: If a <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> was specified as a parameter when the
         /// <see cref="SnapshotConstraint"/> was constructed then calling this method will cause that
-        /// <see cref="SnapshotSettingsBuilder"/> to be modified.
+        /// <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> to be modified.
         /// </remarks>
         /// <returns>This <see cref="SnapshotConstraint"/>.</returns>
         public SnapshotConstraint WithSettings(Action<SnapshotSettings> settingsInitializer)

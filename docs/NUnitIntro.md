@@ -3,7 +3,7 @@
 The `SnapTest.NUnit` package provides the following key classes in the `SnapTest.NUnit` namespace for writing snapshot-based tests with [NUnit](https://nunit.org):
 
 - `SnapshotConstraint`: NUnit `Constraint` that compares an actual value against an expected value that is stored in a snapshot file.
-- `SnapshotSettings` which can be constructed by the an instance of `SnapshotSettingsBuilder`: Settings that control how snapshot processing is performed.
+- `SnapshotSettings`: Settings that control how snapshot processing is performed.
 - `SnapshotDoes`: Helper class with properties and methods that supply a number of snapshotting-related constraints used in NUnit constraint-based assertions.
 
 Here are some examples of snapshot-based tests illustrating typical uses of these classes.
@@ -56,10 +56,10 @@ Details on how a snapshot is stored or matched are controlled by [snapshot setti
 
 Construct a `SnapshotSettingsBuilder` to configure settings as desired. The builder can be passed as a parameter to 'SnapshotDoes.Match(builder)' to be used when performing a snapshot match.
 
-The following example illustrates a builder being configured in a test fixture set up method so that the same settings can be used across multiple tests. The `SnapshotSettingsBuilder` could alternately be created in an individual test method if it did not need to be shared across tests.
+The following example illustrates a builder being configured in a test fixture set up method so that the same settings can be used across multiple tests. `SnapshotSettings.GetBuilder()` could alternately be called in an individual test method if the builder did not need to be shared across tests.
 
 ```C#
-private SnapshotSettingsBuilder commonBuilder;
+private SnapshotSettingsBuilder<SnapshotSettings> commonBuilder;
 
 [SetUp]
 public void SetUp()
@@ -67,7 +67,7 @@ public void SetUp()
     // Store snapshots in a snapshot group file named .snapshots/SettingsOverrides.json
     commonBuilder = SnapshotSettings.GetBuilder().WithSettings(_ => {
         _.SnapshotName = "SettingsOverrides";
-        _.DefaultSnapshotGroupKeyFromNUnitTestName = true;
+        _.DefaultSnapshotGroupKeyFromTestName = true;
         _.MismatchedActualExtension = ".actual.json";
         _.SnapshotExtension = ".json";
         _.SnapshotSubdirectory = ".snapshots";

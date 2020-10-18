@@ -11,9 +11,10 @@ namespace SnapTest.Xunit.Tests
         protected static readonly object Value2 = "simple string value {\n}";
         protected static readonly string Value2SnapshotName = "Value2Snapshot";
 
-        protected SnapshotSettingsBuilder GetBuilderUsingSnapshotGroup()
+        protected SnapshotSettingsBuilder<SnapshotSettings> GetBuilderUsingSnapshotGroup()
             => SnapshotSettings.GetBuilder().WithSettings(_ => {
-                _.DefaultSnapshotGroupKeyFromXunitTestMethod = true;
+                _.DefaultSnapshotGroupKeyFromTestName = true;
             });
     }
 }
+

@@ -7,9 +7,12 @@ namespace SnapTest
 {
     /// <summary>
     /// Settings used to control how snapshot processing is performed.
-    /// An instance of the <c>SnapshotSettings</c> class may be provided as a parameter when calling
-    /// <see cref="Snapshot.CompareTo"/>.
     /// </summary>
+    /// <remarks>
+    ///
+    /// <para>An instance of the <c>SnapshotSettings</c> class may be provided as a parameter when calling</para>
+    /// <see cref="Snapshot.CompareTo"/>.
+    /// </remarks>
     public class SnapshotSettings
     {
         #region Internal fields
@@ -230,6 +233,16 @@ namespace SnapTest
         /// If this property is not explicitly set when performing a snapshot comparison, information messages are not emitted.
         /// </summary>
         public IMessageWriter MessageWriter { get; set; }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Apply default settings to this settings object.
+        /// </summary>
+        public virtual void ApplyDefaults()
+        {
+            // Empty
+        }
         #endregion
     }
 }

@@ -92,17 +92,17 @@ namespace SnapTest.NUnit.Tests
         }
 
         [Test]
-        public void SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromNUnitTestName_set_defaults_to_NUnit_TestName()
+        public void SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromTestName_set_defaults_to_NUnit_TestName()
         {
-            var builder = SnapshotSettings.GetBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromNUnitTestName = true);
+            var builder = SnapshotSettings.GetBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromTestName = true);
             Assert.That(builder.Build().SnapshotGroupKey, Is.EqualTo(TestContext.CurrentContext.Test.Name));
         }
 
         [Test]
-        public void SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromNUnitTestName_set_takes_explicitly_set_value()
+        public void SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromTestName_set_takes_explicitly_set_value()
         {
             var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
-                _.DefaultSnapshotGroupKeyFromNUnitTestName = true;
+                _.DefaultSnapshotGroupKeyFromTestName = true;
                 _.SnapshotGroupKey = "explicit";
             });
 
@@ -110,9 +110,9 @@ namespace SnapTest.NUnit.Tests
         }
 
         [Test]
-        public void SnapshotName_with_DefaultSnapshotGroupKeyFromNUnitTestName_set_is_fixture_class_name()
+        public void SnapshotName_with_DefaultSnapshotGroupKeyFromTestName_set_is_fixture_class_name()
         {
-            var builder = SnapshotSettings.GetBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromNUnitTestName = true);
+            var builder = SnapshotSettings.GetBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromTestName = true);
             Assert.That(builder.Build().SnapshotName, Is.EqualTo(nameof(SnapshotSettingsBuilderTest)));
         }
         #endregion

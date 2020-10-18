@@ -6,14 +6,14 @@ namespace SnapTest.Xunit.Examples
 {
     public partial class Tests
     {
-        private SnapshotSettingsBuilder GetSettingsBuilder()
+        private SnapshotSettingsBuilder<SnapshotSettings> GetSettingsBuilder()
         {
             // Construct a SnapshotSettingsBuilder to provide common settings shared by all tests in this fixture.
             // The settings store snapshots in a snapshot group file named .snapshots/SettingsOverrides.json
 
             return SnapshotSettings.GetBuilder().WithSettings(_ => {
                 _.SnapshotName = "SettingsOverrides";
-                _.DefaultSnapshotGroupKeyFromXunitTestMethod = true;
+                _.DefaultSnapshotGroupKeyFromTestName = true;
                 _.MismatchedActualExtension = ".actual.json";
                 _.SnapshotExtension = ".json";
                 _.SnapshotSubdirectory = ".snapshots";

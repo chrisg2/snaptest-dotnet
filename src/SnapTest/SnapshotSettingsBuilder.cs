@@ -11,7 +11,7 @@ namespace SnapTest
     /// </summary>
     public class SnapshotSettingsBuilder<SnapshotSettingsT> where SnapshotSettingsT : SnapshotSettings
     {
-        public delegate SnapshotSettingsT SettingsFactory(IEnumerable<Action<SnapshotSettingsT>> settingsInitializers);
+        public delegate SnapshotSettingsT SettingsFactory();
 
         private SettingsFactory settingsFactory;
         private List<Action<SnapshotSettingsT>> settingsInitializers = new List<Action<SnapshotSettingsT>>();
@@ -33,7 +33,18 @@ namespace SnapTest
         /// The created and initialized <see cref="SnapshotSettings"/> object.
         /// </returns>
         public SnapshotSettingsT Build()
-            => settingsFactory(settingsInitializers);
+        {
+            var s = settingsFactory();
+
+            if (settingsInitializers != null) {
+                foreach (var initializer in settingsInitializers)
+                    initializer(s);
+            }
+
+            s.ApplyDefaults();
+
+            return s;
+        }
 
         /// <summary>
         /// Register an action to be called to set properties on a <see cref="SnapshotSettings"/> object when <see cref="Build"/> is called.
