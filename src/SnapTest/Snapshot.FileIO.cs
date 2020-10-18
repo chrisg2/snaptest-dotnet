@@ -96,10 +96,10 @@ namespace SnapTest
             } else if (!comparisonResult) {
                 fileToWrite = mismatchFilePath;
 
-                Message($"Created snapshot actual mismatched output file at {mismatchFilePath}", settings);
+                Message($"Created snapshot mismatched actual output file at {mismatchFilePath}", settings);
                 if (!shownMismatchReviewTip) {
                     shownMismatchReviewTip = true;
-                    Message("===> Tip: Review the content of mismatched output files to and use them to update snapshot files as appropriate.", settings);
+                    Message("===> Tip: Review the content of mismatched actual output files and use them to update snapshot files as appropriate.", settings);
                 }
             }
 
