@@ -17,9 +17,10 @@ namespace SnapTest
         private List<Action<SnapshotSettingsT>> settingsInitializers = new List<Action<SnapshotSettingsT>>();
 
         /// <summary>
-        /// TODO: Document
+        /// Constructors a <see cref="SnapshotSettingBuilder"/> with the specified factory that can be called
+        /// to instantiate a new <c>SnapshotSettingsT</c> object when required.
         /// </summary>
-        /// <param name="settingsFactory"></param>
+        /// <param name="settingsFactory">A factory delegate that can be called to instantiate a new <c>SnapshotSettingsT</c> object when required.</param>
         public SnapshotSettingsBuilder(SettingsFactory settingsFactory)
         {
             this.settingsFactory = settingsFactory;
