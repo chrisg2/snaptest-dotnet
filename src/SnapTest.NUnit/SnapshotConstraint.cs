@@ -81,7 +81,7 @@ namespace SnapTest.NUnit
 
         #region Methods
         /// <summary>
-        /// Shortcut method to call <see cref="SnapshotSettingsBuilder<SnapshotSettings>.WithSettings"/> on <see cref="SettingsBuilder"/>.
+        /// Shortcut method to call <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;.WithSettings"/> on <see cref="SettingsBuilder"/>.
         /// </summary>
         /// <param name="settingsInitializer">
         /// An action to be called to initialize <see cref="SnapshotSettings"/> property values when a new settings object
