@@ -7,9 +7,9 @@ SnapTest is able to automatically create snapshots which are missing, or refresh
 
 ## Automatically creating missing snapshots
 
-Run tests with the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable set to any non-blank value to automatically create any snapshots that are missing. Snapshots will be created with the actual values which are passed in to the snapshot match operations that are performed by the test run.
+Any snapshot that does not already exist will be created by a test run while the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable is set to any non-blank value. Each snapshot will be created with the actual value which is passed in to the snapshot match operation performed during the test run.
 
-For example:
+For example, if the snapshot for the `Can_use_simple_Assert_constraint` does not already exist:
 
 ```shell
 jonas@DTP001:~/src/snaptest-dotnet/examples$ SNAPTEST_CREATE_MISSING_SNAPSHOTS=yes dotnet test --filter Can_use_simple_Assert_constraint
@@ -26,6 +26,31 @@ jonas@dtp001:~/src/snaptest-dotnet/examples$ cat SnapTest.NUnit.Examples/_snapsh
 {
   "Latitude": 90.0,
   "Longitude": 0.0
+}
+```
+
+An alternate way to create a missing snapshot is to (temporarily) change the test code to set the `CreateMissingSnapshots` setting value to `true`, run the test, and then revert the test code.
+
+For example, given the following NUnit test:
+
+```C#
+[Test]
+public void Can_use_simple_Assert_constraint()
+{
+    var actual = ...;
+    Assert.That(actual, SnapshotDoes.Match());
+}
+```
+
+This could temporarily be changed as follows to create a missing snapshot:
+
+```C#
+[Test]
+public void Can_use_simple_Assert_constraint()
+{
+    var actual = ...;
+    Assert.That(actual, SnapshotDoes.Match()
+        .WithSettings(_ => _.CreateMissingSnapshots = true));
 }
 ```
 
@@ -53,19 +78,48 @@ Total tests: 7
 > __TIP:__ Be sure to have an appropriate backup, checked in copy, or way to recover snapshot files before forcing a refresh like this in case of any unfortunate accidents!
 
 
+An alternate way to force a snapshot to be refreshed is to (temporarily) change the test code to set the `ForceSnapshotRefresh` setting value to `true`, run the test, and then revert the test code.
+
+For example, given the following NUnit test:
+
+```C#
+[Test]
+public void Can_use_simple_Assert_constraint()
+{
+    var actual = ...;
+    Assert.That(actual, SnapshotDoes.Match());
+}
+```
+
+This could temporarily be changed as follows to force a refresh of the snapshot:
+
+```C#
+[Test]
+public void Can_use_simple_Assert_constraint()
+{
+    var actual = ...;
+    Assert.That(actual, SnapshotDoes.Match()
+        .WithSettings(_ => _.ForceSnapshotRefresh = true));
+}
+```
+
+
 ## Mismatched actual files
 
 If a snapshot match fails, a "mismatched actual" file is created containing the actual value used in the match operation. This file may be helpful to investigate a failing test, or to manually update the snapshot file if it is out of date.
 
-If a snapshot match succeeds, any existing mismatched actual file for the snapshot is deleted. This generally means that mismatched actual files will only remain on the filesystem under one of the following conditions:
-1. The last run of a test failed, or
-1. A snapshot name has changed during development.
+If the latest actual output now reflects the expected output, the mismatched actual file can simply be moved to overwrite the current snapshot (unless snapshot groups are being used, in which case updates are a little more complicated - see [Mismatched actual files and snapshot groups](#mismatched-actual-files-and-snapshot-groups) below). This may be a useful alternate approach to update a snapshot rather than using the `SNAPTEST_REFRESH` environment variable (or `ForceSnapshotRefresh` setting) described above.
 
-Mismatched actual files have default extension of `.txt.actual`. It is good practice to configure the source control system to ignore these files. For example, add a line like the following to the top level `.gitignore` file:
+If a snapshot match succeeds, any existing mismatched actual file for the snapshot is deleted. This generally means that mismatched actual files will only remain on the filesystem under one of the following conditions:
+1. The last run of the associated test failed, or
+1. The snapshot name used by a test has changed during development.
+
+Mismatched actual files have (by default) an extension of `.txt.actual`. It is good practice to configure the source control system to ignore these files. For example, add a line like the following to the top level `.gitignore` file:
 
 ```
 **/_snapshots/*.txt.actual
 ```
+
 
 ### Mismatched actual files and snapshot groups
 
