@@ -1,4 +1,11 @@
 {
-  "Latitude": 90.0,
-  "Longitude": 0.0
+  "Coordinates": {
+    "Latitude": 90.0,
+    "Longitude": 0.0
+  },
+  "Landmarks": [
+    "Santa's Workshop"
+  ],
+  "Name": "North Pole",
+  "TimeZone": null
 }

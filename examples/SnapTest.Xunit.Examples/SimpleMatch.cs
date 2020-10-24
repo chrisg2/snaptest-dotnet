@@ -12,7 +12,6 @@ namespace SnapTest.Xunit.Examples
             var santasHomeLocation
                 = Model.Localities.All
                     .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
-                    .Select(_ => _.Coordinates)
                     .FirstOrDefault();
 
             SnapshotAssert.Matches(santasHomeLocation);
@@ -24,7 +23,6 @@ namespace SnapTest.Xunit.Examples
             var santasHomeLocation
                 = Model.Localities.All
                     .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
-                    .Select(_ => _.Coordinates)
                     .FirstOrDefault();
 
             santasHomeLocation.ShouldMatchSnapshot();
