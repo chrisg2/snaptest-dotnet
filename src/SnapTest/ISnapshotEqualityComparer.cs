@@ -18,7 +18,8 @@ namespace SnapTest
         /// </remarks>
         /// <param name="actualValue">The actual value to compare against the snapshotted value.</param>
         /// <param name="snapshottedValue">The snapshotted value to compare against the actual value.</param>
+        /// <param name="settings">The settings that are being used for the the snapshot comparison.</param>
         /// <returns>true if <paramref name="actualValue"/> compares as being equal to <paramref name="snapshottedValue"/>; otherwise false.</returns>
-        bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue);
+        bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue, SnapshotSettings settings);
     }
 }

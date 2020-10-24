@@ -9,9 +9,9 @@ namespace SnapTest.Xunit
     internal class XunitSnapshotEqualityComparer : SnapshotEqualityComparer
     {
         /// <inheritdoc/>
-        public override bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue)
+        public override bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue, SnapTest.SnapshotSettings settings)
         {
-            if (!base.Equals(actualValue, snapshottedValue)) {
+            if (!base.Equals(actualValue, snapshottedValue, settings)) {
                 var snapshottedValueSerialized = snapshottedValue.Serialize(false);
                 var actualValueSerialized = actualValue.Serialize(false);
 

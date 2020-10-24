@@ -42,7 +42,7 @@ namespace SnapTest
                 return comparisonResult =
                     settings.ForceSnapshotRefresh
                     || (settings.CreateMissingSnapshots && snapshottedValue == null)
-                    || (settings.SnapshotComparer ?? SnapshotEqualityComparer.Default).Equals(actualSnapshotValue, snapshottedValue);
+                    || (settings.SnapshotComparer ?? SnapshotEqualityComparer.Default).Equals(actualSnapshotValue, snapshottedValue, settings);
             }
             finally {
                 WriteSnapshotIfRequired(comparisonResult, actualSnapshotValue, snapshottedValue, completeSnapshotGroup, settings);

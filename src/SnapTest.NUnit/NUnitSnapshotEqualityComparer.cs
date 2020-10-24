@@ -11,7 +11,6 @@ namespace SnapTest.NUnit
         #region Fields
         public ConstraintResult ConstraintResult;
         private readonly IConstraint constraint;
-        private readonly SnapshotSettings settings;
         #endregion
 
         #region Constructors
@@ -20,11 +19,9 @@ namespace SnapTest.NUnit
         /// <see cref="IConstraint"/> and <see cref="SnapshotSettings"/>.
         /// </summary>
         /// <param name="constraint">The NUnit constraint the comparer is to be used with.</param>
-        /// <param name="settings">The snapshot settings the comparer is to be used with.</param>
-        internal NUnitSnapshotEqualityComparer(IConstraint constraint, SnapshotSettings settings)
+        internal NUnitSnapshotEqualityComparer(IConstraint constraint)
         {
             this.constraint = constraint;
-            this.settings = settings;
         }
         #endregion
 
@@ -34,14 +31,14 @@ namespace SnapTest.NUnit
         /// are stored in <see cref="ConstraintResult"/> for later access by <see cref="SnapshotConstraint.ApplyTo"/>.
         /// </summary>
         /// <seealso cref="SnapshotEqualityComparer.Equals"/>
-        public override bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue)
+        public override bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue, SnapTest.SnapshotSettings settings)
         {
             if (snapshottedValue == null) {
                 ConstraintResult = new ConstraintResult(constraint, $"No snapshotted value available in {settings.SnapshotFilePath}", false);
                 return false;
             }
 
-            if (base.Equals(actualValue, snapshottedValue))
+            if (base.Equals(actualValue, snapshottedValue, settings))
                 ConstraintResult = new ConstraintResult(constraint, actualValue, true);
             else
                 ConstraintResult = Is.EqualTo(snapshottedValue.Serialize(false)).ApplyTo(actualValue.Serialize(false));
