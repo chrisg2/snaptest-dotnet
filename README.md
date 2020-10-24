@@ -12,6 +12,59 @@ This library has taken inspiration from:
 Treat this as experimental status. This means (amongst other things) that the interfaces and classes exposed from the SnapTest namespace are subject to change. If you are interested in using this library and the potential for changes is problematic for you then get in touch and we can discuss.
 
 
+## What is snapshot testing?
+
+Snapshot testing can help to simplify recording of expected data produced by tests, especially when the expected data is somewhat complex. Consider the following NUnit test:
+
+```C#
+[Test]
+public void Each_field_can_be_asserted()
+{
+    var santasHomeLocation
+        = Model.Localities.All
+            .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
+            .FirstOrDefault();
+
+    Assert.That(santasHomeLocation.Coordinates.Latitude, Is.EqualTo(90.0));
+    Assert.That(santasHomeLocation.Coordinates.Longitude, Is.EqualTo(0.0));
+    Assert.That(santasHomeLocation.Landmarks.Length, Is.EqualTo(1));
+    Assert.That(santasHomeLocation.Name, Is.EqualTo("North Pole"));
+    Assert.That(santasHomeLocation.TimeZone, Is.Null);
+}
+```
+
+A similar test using snaptest-dotnet looks like:
+
+```C#
+[Test]
+public void Can_use_simple_Assert_constraint()
+{
+    var santasHomeLocation
+        = Model.Localities.All
+            .Where(_ => _.Landmarks.Contains("Santa's Workshop"))
+            .FirstOrDefault();
+
+    Assert.That(santasHomeLocation, SnapshotDoes.Match());
+}
+```
+
+This compares the actual results against snapshotted expected results stored in JSON format in the file `_snapshots/Tests.Can_use_simple_Assert_constraint.txt`:
+
+```json
+{
+  "Coordinates": {
+    "Latitude": 90.0,
+    "Longitude": 0.0
+  },
+  "Landmarks": [
+    "Santa's Workshop"
+  ],
+  "Name": "North Pole",
+  "TimeZone": null
+}
+```
+
+
 ## Getting Started
 
 <!-- This content is duplicated in docs/WorkflowOverview.md. Try to keep the two renditions in sync! -->
