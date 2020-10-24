@@ -37,5 +37,16 @@ namespace SnapTest.Xunit.Examples
             // The snapshot name defaults to the xUnit.net test method name, but can be explicitly overridden when calling SnapshotAssert.Matches
             SnapshotAssert.Matches(firstLocalityName, "SampleSnapshotName", GetSettingsBuilder());
         }
+
+        [Fact]
+        public void Matches_can_accept_settings_initializer_action()
+        {
+            var sydneyCoordinates = Model.Localities.All.Where(_ => _.Name == "Sydney").FirstOrDefault()?.Coordinates;
+
+            SnapshotAssert.Matches(sydneyCoordinates, _ => {
+                _.SnapshotName = "SnapshotNameFromSettingsInitializer";
+                _.IndentJson = false;
+            });
+        }
     }
 }

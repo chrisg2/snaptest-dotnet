@@ -1,4 +1,6 @@
-﻿namespace SnapTest.Xunit
+﻿using System;
+
+namespace SnapTest.Xunit
 {
     public static class SnapshotAssert
     {
@@ -35,6 +37,18 @@
             => Matches(actual, null, settingsBuilder);
 
         /// <summary>
+        /// Verifies that an actual value matches a snapshotted value, using settings initialized by the specified action.
+        /// </summary>
+        /// <param name="actual">The actual value to match against the snapshotted value.</param>
+        /// <param name="settingsInitializer">An action that takes a single <see cref="SnapshotSettings"/> parameter and set properties on
+        /// the passed settings object to control how the snapshot match operation is performed.</param>
+        /// <exception cref="global::Xunit.Sdk.EqualException">
+        /// Thrown when the <paramref name="actual"/> value does not match the snapshotted value.
+        /// </exception>
+        public static void Matches(object actual, Action<SnapshotSettings> settingsInitializer)
+            => Matches(actual, null, SnapshotSettings.GetBuilder().WithSettings(settingsInitializer));
+
+        /// <summary>
         /// Verifies that an actual value matches a snapshotted value using a fluent-style expression,
         /// optionally with a snapshot name and settings produced by the specified settings builder.
         /// </summary>
@@ -60,5 +74,18 @@
         /// </exception>
         public static void ShouldMatchSnapshot(this object actual, SnapshotSettingsBuilder<SnapshotSettings> settingsBuilder)
             => Matches(actual, null, settingsBuilder);
+
+        /// <summary>
+        /// Verifies that an actual value matches a snapshotted value using a fluent-style expression,
+        /// using settings initialized by the specified action.
+        /// </summary>
+        /// <param name="actual">The actual value to match against the snapshotted value.</param>
+        /// <param name="settingsInitializer">An action that takes a single <see cref="SnapshotSettings"/> parameter and set properties on
+        /// the passed settings object to control how the snapshot match operation is performed.</param>
+        /// <exception cref="global::Xunit.Sdk.EqualException">
+        /// Thrown when the <paramref name="actual"/> value does not match the snapshotted value.
+        /// </exception>
+        public static void ShouldMatchSnapshot(this object actual, Action<SnapshotSettings> settingsInitializer)
+            => Matches(actual, null, SnapshotSettings.GetBuilder().WithSettings(settingsInitializer));
     }
 }
