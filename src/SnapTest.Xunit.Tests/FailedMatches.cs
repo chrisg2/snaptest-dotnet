@@ -34,5 +34,12 @@ namespace SnapTest.Xunit.Tests
 
             Assert.True(File.Exists(mismatchedActualFilePath));
 		}
+
+        [Fact]
+        public void Match_with_no_snapshot_fails() // There should be no snapshot stored for this test
+        {
+            Assert.Throws<global::Xunit.Sdk.XunitException>(() =>
+                SnapshotAssert.Matches(Guid.NewGuid(), _ => _.ForceSnapshotRefresh = _.CreateMissingSnapshots = false ));
+        }
     }
 }

@@ -11,6 +11,9 @@ namespace SnapTest.Xunit
         /// <inheritdoc/>
         public override bool Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue, SnapTest.SnapshotSettings settings)
         {
+            if (snapshottedValue == null)
+                throw new XunitException($"No snapshotted value available in {settings.SnapshotFilePath}");
+
             if (!base.Equals(actualValue, snapshottedValue, settings)) {
                 var snapshottedValueSerialized = snapshottedValue.Serialize(false);
                 var actualValueSerialized = actualValue.Serialize(false);
