@@ -67,7 +67,7 @@ namespace SnapTest.NUnit.Tests
             => Assert.That("a value", SnapshotDoes.Match().WithSettings(_ => _.SnapshotSubdirectory = "_alternateSnapshots"));
 
         [Test]
-        public void SnapshotSubdirectory_can_be_set_through_MatchSnapshot()
+        public void SnapshotSubdirectory_can_be_set_through_Match_action()
             => Assert.That("a value", SnapshotDoes.Match(_ => _.SnapshotSubdirectory = "_alternateSnapshots"));
 
         [Test]
