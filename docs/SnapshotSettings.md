@@ -70,8 +70,10 @@ For example:
 var localities = Model.Localities.All.OrderBy(_ => _.Name);
 
 var builder = SnapshotSettings.GetBuilder();
-builder.WithSettings(_ => _.Field("$..['Name','Coordinates']").Include());
-builder.WithSettings(_ => _.DefaultSnapshotGroupKeyFromTestName = true);
+builder.WithSettings(_ => {
+    _.Field("$..['Name','Coordinates']").Include();
+    _.DefaultSnapshotGroupKeyFromTestName = true;
+});
 
 Assert.That(localities, SnapshotDoes.Match(builder));
 ```
