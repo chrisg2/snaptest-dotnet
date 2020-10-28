@@ -43,7 +43,8 @@ namespace SnapTest.NUnit.Examples
 
             // Settings can also be overridden by calling SnapshotConstraint.WithSettings
             Assert.That(localities, SnapshotDoes.Match(commonBuilder).WithSettings(_ =>
-                _.IncludedPaths.Add("$..['Name','Coordinates']")));
+                _.Field("$..['Name','Coordinates']").Include()
+            ));
         }
 
         [Test]
@@ -62,7 +63,7 @@ namespace SnapTest.NUnit.Examples
             // to be called when settings are initialized.
             Assert.That(Model.Localities.All, SnapshotDoes.Match(_ => {
                 _.IndentJson = false;
-                _.ExcludedPaths.Add("$..TimeZone.CurrentTime");
+                _.Field("$..TimeZone.CurrentTime").Exclude();
             }));
         }
     }

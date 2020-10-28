@@ -13,7 +13,7 @@ namespace SnapTest
     /// <para>An instance of the <c>SnapshotSettings</c> class may be provided as a parameter when calling</para>
     /// <see cref="Snapshot.MatchTo"/>.
     /// </remarks>
-    public class SnapshotSettings
+    public partial class SnapshotSettings
     {
         #region Internal fields
         private string _snapshotGroupKey;
@@ -54,65 +54,34 @@ namespace SnapTest
         }
         #endregion
 
-        #region Settings related to Json serialization of values
+        #region Settings related to configuring how individual fields are treated during snapshot matching
         /// <summary>
-        /// A list of JSON Paths identifying element(s) to be included from a compound object when it is compared to a snapshotted value.
+        /// Gets a <see cref="SnapshotField"/> object representing the elements in a compound snapshotted object that match
+        /// the specified JSON Path. Members on the <see cref="SnapshotField"/> can subsequently be accessed to control how
+        /// elements identified by the JSON Path are treated during snapshot processing.
         /// </summary>
-        ///
+        /// <param name="jsonPath">The JSON Path. For  more information about and examples of JSON Path syntax, see https://goessner.net/articles/JsonPath/ .</param>
         /// <remarks>
-        /// <para>When a compound object (that is, an object that is <em>not</em> a primitive type, string, or similar) is compared
-        /// to a snapshotted value, it is sometimes helpful to select particular elements of the object to be compared. JSON Paths to identify such elements
-        /// can be added to this setting.</para>
-        ///
-        /// <para>As an example, consider the following classes:</para>
-        /// <code language="c#">
-        /// public class Address
-        /// {
-        ///     public string Street;
-        ///     public string Postcode;
-        /// }
-        ///
-        /// public class Garden
-        /// {
-        ///     public string Name;
-        ///     public Address Address;
-        ///     public IEnumerable&lt;string&gt; Trees;
-        /// }
-        /// </code>
-        ///
-        /// <para>Given a <c>Garden</c> object to match against a snapshot, the following JSON Paths could be added to <c>IncludedPaths</c>
-        /// to select particular elements of the object for comparison:</para>
-        /// <list type="bullet">
-        /// <item><term><c>$</c></term> <description>Selects the entire object. This gives the same result as if <c>IncludedPaths</c> is null.</description></item>
-        /// <item><term><c>Name</c></term> <description>Selects just the <c>Garden.Name</c> field.</description></item>
-        /// <item><term><c>Address.Street</c></term> <description>Selects just the <c>Garden.Address.Street</c> field.</description></item>
-        /// <item><term><c>Trees[0,1]</c></term> <description>Selects the first and second elements of the <c>Garden.Trees</c> enumeration.</description></item>
-        /// <item><term><c>$['Name','Address']</c></term> <description>Selects both the <c>Garden.Name</c> and <c>Garden.Address</c> fields.
-        ///     This would give the same result as calling <c>IncludePath("Name")</c> followed by <c>IncludePath("Address")</c>.</description></item>
-        /// </list>
-        ///
-        /// <para>For more information about and examples of JSON Path syntax, see https://goessner.net/articles/JsonPath/.</para>
-        ///
-        /// <para>If the <c>IncludedPaths</c> list is empty then the entire actual object is compared to the snapshot value.</para>
-        ///
-        /// <para>The value of this property is ignored when matching simple primitive or string values again a snapshot.</para>
+        /// See <see cref="SnapshotField"/> for more information about configuring snapshot matching behaviors for specific elements.
         /// </remarks>
-        /// <seealso cref="ExcludedPaths"/>
-        public IList<string> IncludedPaths { get; } = new List<string>();
+        /// <returns>A <see cref="SnapshotField"/> object for the specified <paramref name="jsonPath"/>.</returns>
+        /// <seealso cref="SnapshotField"/>
+        public SnapshotField Field(string jsonPath)
+            => new SnapshotField(this, jsonPath);
 
         /// <summary>
-        /// A list of JSON Paths identifying element(s) to be excluded from a compound object when it is compared to a snapshot.
+        /// JSON Paths that have been configured to be included in a snapshot match by calling <see cref="SnapshotField.Include"/>.
         /// </summary>
-        ///
-        /// <remarks>
-        /// <para>When a compound object (that is, an object that is <em>not</em> a primitive type, string, or similar) is compared to a snapshot,
-        /// it is sometimes helpful to exclude particular elements of the object from the comparison. JSON Paths to identify such elements
-        /// can be added to this setting.</para>
-        ///
-        /// <para>See <see cref="IncludedPaths"/> for more information about and examples of JSON Paths.</para>
-        /// </remarks>
-        /// <seealso cref="IncludedPaths"/>
-        public IList<string> ExcludedPaths { get; } = new List<string>();
+        /// <seealso cref="SnapshotField.Include"/>
+        protected internal IEnumerable<string> IncludedPaths
+            => _includedPaths;
+
+        /// <summary>
+        /// JSON Paths that have been configured to be excluded from a snapshot match by calling <see cref="SnapshotField.Exclude"/>.
+        /// </summary>
+        /// <seealso cref="SnapshotField.Exclude"/>
+        protected internal IEnumerable<string> ExcludedPaths
+            => _excludedPaths;
         #endregion
 
         #region Settings related to snapshot files
@@ -235,6 +204,10 @@ namespace SnapTest
         /// <summary>
         /// Apply default settings to this settings object.
         /// </summary>
+        /// <remarks>
+        /// This method can be overriden in classes derived from <see cref="SnapshotSettings"/> to set default settings values when a settings object is being built.
+        /// This method is called by <see cref="SnapshotSettingsBuilder&lt;SnapshotSettings&gt;"/> after settings initializer actions that are registered with the builder have been invoked.
+        /// </remarks>
         public virtual void ApplyDefaults()
         {
             // Empty

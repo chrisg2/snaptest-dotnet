@@ -96,7 +96,7 @@ public void WithSettings_can_be_called_on_SnapshotConstraint()
     var localities = Model.Localities.All.OrderBy(_ => _.Name);
 
     Assert.That(localities, SnapshotDoes.Match(commonBuilder).WithSettings(_ =>
-        _.IncludedPaths.Add("$..['Name','Coordinates']")
+        _.Field("$..['Name','Coordinates']").Include()
     ));
 }
 ```

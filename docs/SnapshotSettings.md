@@ -10,8 +10,6 @@ Setting|Description|Default
 ---|---|---
 `SnapshotName`|The name of the snapshot. Used as the basename of the snapshot filename.|`null` (*)
 `SnapshotGroupKey`|A key used to identify the particular snapshot to use out of a group of snapshots identified by `SnapshotName`. See [Snapshot Groups](SnapshotGroups.md) for more information.|`null` (*)
-`IncludedPaths`|A list of JSON Paths identifying element(s) to be included from a compound object when it is matched against a snapshot. See [Filtering Values](Filtering.md) for more information.|None
-`ExcludedPaths`|A list of JSON Paths identifying element(s) to be excluded from a compound object when it is matched against a snapshot. See [Filtering Values](Filtering.md) for more information.|None
 `CreateMissingSnapshots`|Flag indicating whether missing snapshot files should be created based on actual values provided when a snapshot is matched.|`true` if the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable is not empty; `false` otherwise
 `ForceSnapshotRefresh`|Flag indicating whether snapshot files should be forcibly refreshed to reflect actual values provided for snapshot matches.|`true` if the `SNAPTEST_REFRESH` environment variable is not empty; `false` otherwise
 `IndentJson`|Flag used to control whether serialized JSON for an actual value saved to a snapshot file when either `ForceSnapshotRefresh` or `CreateMissingSnapshots` are `true` has new lines and indentation (`true`, which is the default), or has no indentation and appears on a single line (`false`).|`true`
@@ -22,6 +20,13 @@ Setting|Description|Default
 `MessageWriter`|An object impementing the `IMessageWriter` interface to be used for emitting informational messages during snapshot processing.|`null` (*)
 
 Defaults for some settings marked with (*) may be overridden in snapshot settings classes defined by SnapTest modules for different test frameworks.
+
+Settings related to individual fields identified by JSON Paths can be configured by calling methods on the object returned from `SnapshotSettings.Field("<JSON Path...>"):
+
+Method|Description
+---|---
+`Include`|Include elements(s) that match the field's path in a compound object that is matched against a snapshot. See [Filtering Values](Filtering.md) for more information. If this method is not explicitly called for any field then all elements of the object are included in the match.
+`Exclude`|Exclude element(s) that match the field's path in a component object that is matched against a snapshot. See [Filtering Values](Filtering.md) for more information.
 
 The following further settings are defined in the `SnapTest.SnapshotTestFrameworkSettingsBase` class that is derived from `SnapTest.SnapshotSettings`. These settings are used when snapshot match operations are performed from the context of tests run by various test frameworks such as NUnit and xUnit.net.
 
@@ -65,7 +70,7 @@ For example:
 var localities = Model.Localities.All.OrderBy(_ => _.Name);
 
 var builder = SnapshotSettings.GetBuilder();
-builder.WithSettings(_ => _.IncludedPaths.Add("$..['Name','Coordinates']"));
+builder.WithSettings(_ => _.Field("$..['Name','Coordinates']").Include());
 builder.WithSettings(_ => _.DefaultSnapshotGroupKeyFromTestName = true);
 
 Assert.That(localities, SnapshotDoes.Match(builder));

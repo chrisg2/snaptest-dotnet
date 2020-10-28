@@ -13,9 +13,9 @@ namespace SnapTest.Xunit.Examples
 
             var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
                 // Include only the TimeZone field in the snapshot
-                _.IncludedPaths.Add("TimeZone");
+                _.Field("TimeZone").Include();
                 // Exclude the current time from the snapshot as it changes from moment to moment
-                _.ExcludedPaths.Add("TimeZone.CurrentTime");
+                _.Field("TimeZone.CurrentTime").Exclude();
             });
 
             SnapshotAssert.Matches(sydney, builder);

@@ -109,7 +109,7 @@ namespace SnapTest
                 .Select(p => {
                     var tokens = jToken.SelectTokens(p);
                     if (tokens.Where(_ => _.Root == _).Any())
-                        throw new SnapTestParseException($"JsonPath '{p}' in ExcludedPaths matched root token of the result. You cannot exclude the entire result.");
+                        throw new SnapTestParseException($"Excluded JSON Path '{p}' matched root token of the result. The entire result cannot be excluded from a snapshot match.");
 
                     return tokens;
                 })

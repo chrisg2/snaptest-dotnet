@@ -23,9 +23,12 @@ namespace SnapTest
         /// <returns>true if the actual value matches the snapshotted value, otherwise false.</returns>
         /// <exception cref="SnapTestParseException">
         /// Thrown if:
-        /// - A snapshot file contains content that is not valid JSON when JSON content is expected.
-        /// - A snapshot file contains JSON that is not an object when an object is expected.
-        /// - A value in <c>settings.ExcludedPaths</c> results in the entire actual value being excluded from snapshotting.
+        /// <list type="bullet">
+        /// <item>A snapshot file contains content that is not valid JSON when JSON content is expected.</item>
+        /// <item>A snapshot file contains JSON that is not an object when an object is expected.</item>
+        /// <item>A field identified to be excluded from the snapshot match by calling <see cref="SnapshotSettings.SnapshotField.Exclude"/> results in the
+        /// entire actual value being excluded from the match.</item>
+        /// </list>
         /// </exception>
         public static bool MatchTo(object actual, SnapshotSettings settings)
         {
