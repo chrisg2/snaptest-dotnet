@@ -55,23 +55,20 @@ namespace SnapTest.NUnit.Tests
             Assert.That(builder.Build().SnapshotGroupKey, Is.EqualTo(TestContext.CurrentContext.Test.Name));
         }
 
-        [Test]
-        public void SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromTestName_set_takes_explicitly_set_value()
-        {
-            var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
+        [Test(ExpectedResult = "explicit")]
+        public string SnapshotGroupKey_with_DefaultSnapshotGroupKeyFromTestName_set_takes_explicitly_set_value()
+            => SnapshotSettings.GetBuilder().WithSettings(_ => {
                 _.DefaultSnapshotGroupKeyFromTestName = true;
                 _.SnapshotGroupKey = "explicit";
-            });
+            })
+                .Build()
+                .SnapshotGroupKey;
 
-            Assert.That(builder.Build().SnapshotGroupKey, Is.EqualTo("explicit"));
-        }
-
-        [Test]
-        public void SnapshotName_with_DefaultSnapshotGroupKeyFromTestName_set_is_fixture_class_name()
-        {
-            var builder = SnapshotSettings.GetBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromTestName = true);
-            Assert.That(builder.Build().SnapshotName, Is.EqualTo(nameof(SnapshotSettingsBuilderTest)));
-        }
+        [Test(ExpectedResult = nameof(SnapshotSettingsBuilderTest))]
+        public string SnapshotName_with_DefaultSnapshotGroupKeyFromTestName_set_is_fixture_class_name()
+            => SnapshotSettings.GetBuilder().WithSettings(_ => _.DefaultSnapshotGroupKeyFromTestName = true)
+                .Build()
+                .SnapshotName;
         #endregion
     }
 }

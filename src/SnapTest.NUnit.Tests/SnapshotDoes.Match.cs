@@ -5,9 +5,9 @@ namespace SnapTest.NUnit.Tests
 {
     public class Does_MatchSnapshot
     {
-        [Test]
-        public void SnapshotDoes_Match_can_accept_test_name()
-            => Assert.That(SnapshotDoes.Match("snapshot name").SnapshotName, Is.EqualTo("snapshot name"));
+        [Test(ExpectedResult = "snapshot name")]
+        public string SnapshotDoes_Match_can_accept_test_name()
+            => SnapshotDoes.Match("snapshot name").SnapshotName;
 
         [Test]
         public void SnapshotDoes_Match_ApplyTo_result_properties_show_success_for_matching_content()
