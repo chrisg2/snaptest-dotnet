@@ -37,23 +37,32 @@ namespace SnapTest
         /// <inheritdoc/>
         public override void ApplyDefaults()
         {
-            var testMethodInfo = FindTestMethodInStackTrace();
+            var (testMethod, stackFrame) = FindTestMethodInStackTrace();
+
+            var attributes =
+                testMethod?.GetCustomAttributes<UseSnapshotGroupAttribute>()
+                .Union(testMethod?.DeclaringType.GetCustomAttributes<UseSnapshotGroupAttribute>(true));
 
             // Set various properties that have not otherwise already been set to calculated default values.
 
+            if (attributes?.Any() ?? false)
+                DefaultSnapshotGroupKeyFromTestName = true;
+
             if (string.IsNullOrWhiteSpace(SnapshotName)) {
-                SnapshotName = DeriveSnapshotNameFromTestContext(testMethodInfo.Item1) ??
-                    throw new SnapTestException(
-                        "SnapshotName can only be dynamically determined when accessed while an NUnit test method is executing. " +
+                SnapshotName =
+                    attributes?.Where(_ => !string.IsNullOrWhiteSpace(_.SnapshotName)).Select(_ => _.SnapshotName).FirstOrDefault()
+                    ?? (testMethod != null ? DeriveSnapshotNameFromTestContext(testMethod) : null)
+                    ?? throw new SnapTestException(
+                        "SnapshotName can only be dynamically determined when accessed while a test method is executing. " +
                         "To access SnapshotName at other times, you may need to explicitly specify a name when creating the SnapshotConstraint."
                     );
             }
 
-            if (string.IsNullOrWhiteSpace(SnapshotGroupKey) && DefaultSnapshotGroupKeyFromTestName)
-                SnapshotGroupKey = DeriveSnapshotGroupKeyFromTestContext(testMethodInfo.Item1);
+            if (string.IsNullOrWhiteSpace(SnapshotGroupKey) && DefaultSnapshotGroupKeyFromTestName && testMethod != null)
+                SnapshotGroupKey = DeriveSnapshotGroupKeyFromTestContext(testMethod);
 
             if (string.IsNullOrWhiteSpace(SnapshotDirectoryPath)) {
-                var d = Path.GetDirectoryName(testMethodInfo.Item2.GetFileName()) ??
+                if (stackFrame == null) {
                     throw new SnapTestException(
                         "The directory to hold snapshot files could not be determined from the current stack trace. " +
                         "Verify that the stack trace includes a method that is identified as a test method by the test framework, " +
@@ -61,8 +70,9 @@ namespace SnapTest
                         "If these conditions cannot be met you may need to explicitly specify a snapshot directory using a settings builder." +
                         "For example: settingsBuilder.WithSettings(s => s.SnapshotDirectoryPath = \"...\"); "
                     );
+                }
 
-                SnapshotDirectoryPath = Path.Combine(d, SnapshotSubdirectory ?? string.Empty);
+                SnapshotDirectoryPath = Path.Combine(Path.GetDirectoryName(stackFrame.GetFileName()), SnapshotSubdirectory ?? string.Empty);
             }
         }
 
@@ -80,7 +90,7 @@ namespace SnapTest
                 let m = frame.GetMethod()
                 where m != null
                 let syncMethod = (IsAsyncMethod(m) ? FindAsynchMethodBase(m) : m)
-                where IsTestMethod(syncMethod)
+                where syncMethod != null && IsTestMethod(syncMethod)
                 select (syncMethod, frame)
             ).FirstOrDefault();
 

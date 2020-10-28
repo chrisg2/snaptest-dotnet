@@ -1,0 +1,3 @@
+{
+  "UseSnapshotGroupAttribute_on_class_is_effective": "actual-UseSnapshotGroupOnClass.UseSnapshotGroupAttribute_on_class_is_effective"
+}

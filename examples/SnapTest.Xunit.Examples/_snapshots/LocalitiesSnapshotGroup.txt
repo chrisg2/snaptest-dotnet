@@ -1,0 +1,10 @@
+{
+  "Santas_home_location": {
+    "Latitude": 90.0,
+    "Longitude": 0.0
+  },
+  "Sydney_location": {
+    "Latitude": -33.8688,
+    "Longitude": 151.2093
+  }
+}

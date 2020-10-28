@@ -1,0 +1,4 @@
+{
+  "UseSnapshotGroupAttribute_on_method_is_effective": "actual-UseSnapshotGroupOnMethod.UseSnapshotGroupAttribute_on_method_is_effective",
+  "UseSnapshotGroupAttribute_with_SnapshotGroupKey_on_method_is_effective - overridden group key": "actual-UseSnapshotGroupOnMethod.UseSnapshotGroupAttribute_with_SnapshotGroupKey_on_method_is_effective"
+}

@@ -1,0 +1,4 @@
+{
+  "UseSnapshotGroupAttribute_on_class_is_effective": "actual-UseSnapshotGroupOnClassWithSnapshotName.UseSnapshotGroupAttribute_on_class_is_effective",
+  "UseSnapshotGroupAttribute_on_class_with_overridden_SnapshotGroupKey_is_effective - overridden group key": "actual-UseSnapshotGroupOnClassWithSnapshotName.UseSnapshotGroupAttribute_on_class_with_overridden_SnapshotGroupKey_is_effective"
+}

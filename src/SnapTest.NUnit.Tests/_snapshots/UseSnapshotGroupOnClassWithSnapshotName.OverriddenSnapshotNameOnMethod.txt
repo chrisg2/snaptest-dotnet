@@ -1,0 +1,3 @@
+{
+  "UseSnapshotGroupAttribute_on_class_with_overridden_SnapshotName_on_method_is_effective": "actual-UseSnapshotGroupOnClassWithSnapshotName.UseSnapshotGroupAttribute_on_class_with_overridden_SnapshotName_on_method_is_effective"
+}
