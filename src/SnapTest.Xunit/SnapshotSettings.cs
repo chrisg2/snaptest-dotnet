@@ -39,7 +39,7 @@ namespace SnapTest.Xunit
         /// <inheritdoc/>
         protected override string DeriveSnapshotNameFromTestContext(MethodBase testMethod)
         {
-            var className = testMethod.ReflectedType.Name;
+            var className = testMethod.DeclaringType.Name;
 
             return DefaultSnapshotGroupKeyFromTestName ? className : $"{className}.{testMethod.Name}";
         }
