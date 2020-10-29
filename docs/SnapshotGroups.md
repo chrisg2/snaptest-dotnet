@@ -30,7 +30,7 @@ Applying the `UseSnapshotGroup` to a test class (fixture) or method is a conveni
 
 The `UseSnapshotGroup` attribute has a `SnapshotName` property which can be set to specify the name to be used for snapshot matches performed by the class/method.
 
-Here is an example illustrating how this looks:
+Here is an NUnit-based example illustrating how this looks (an xUnit.net equivalent is similar):
 
 ```C#
 using NUnit.Framework;

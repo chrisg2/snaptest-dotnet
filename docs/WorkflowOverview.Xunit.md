@@ -1,38 +1,39 @@
-# Workflow for writing and running snapshot-based tests
+# Workflow for writing and running snapshot-based tests - xUnit.net
 
 Snapshot-based testing is a technique where expected output from running tests is stored in snapshot files. When tests are run, the actual output produced is matched against the expected output that has been previously saved.
 
-Here is an overview of a typical workflow for developing and running snapshot-based tests using SnapTest. This example assumes you are using [NUnit](https://nunit.org/) - similar workflows apply to other test frameworks.
-
-<!-- This content is duplicated in the root README.md. Try to keep the two renditions in sync! -->
+Here is an overview of a typical workflow for developing and running snapshot-based tests using SnapTest. This example assumes you are using [xUnit.net](https://xunit.net/) - see [here](WorkflowOverview.NUnit.md) for a similar workflow based on NUnit tests.
 
 1. __Add SnapTest to your test project__
 
-    Add the `SnapTest.NUnit` Nuget package to your NUnit-based test project:
+    Add the `SnapTest.Xunit` Nuget package to your xUnit.net-based test project:
 
     ```shell
-    dotnet add package SnapTest.NUnit
+    dotnet add package SnapTest.Xunit
     ```
 
 1. __Add test assertions to match actual output against snapshotted output__
 
-    `DoesMatch.Snapshot()` can be used as an assertion expression in your test.
+    `SnapshotAssert.Matches()` (or the fluent `ShouldMatchSnapshot()`) can be used as an assertion expression in your test.
 
     Example:
     ```C#
     // SantaTests.cs
 
-    using NUnit.Framework;
-    using SnapTest.NUnit;
+    using SnapTest.Xunit;
     using System.Linq;
+    using Xunit;
 
     public class SantaTests
     {
-        [Test]
+        [Fact]
         public void Santa_lives_at_the_NorthPole()
         {
             var santasHomeLocation = Model.Localities.All.Where(_ => _.Landmarks.Contains("Santa's Workshop")).Select(_ => _.Coordinates).FirstOrDefault();
-            Assert.That(santasHomeLocation, SnapshotDoes.Match());
+
+            SnapshotAssert.Matches(santasHomeLocation);
+
+            // Or: santasHomeLocation.ShouldMatchSnapshot();
         }
     }
     ```
@@ -77,19 +78,25 @@ Here is an overview of a typical workflow for developing and running snapshot-ba
 
 1. __When a change occurs that results in different actual result...___
 
-    ... the NUnit test output will indicate the change:
+    ... the xUnit.net test output will indicate the change:
     ```
+    $ dotnet test
+    [...]
     Created mismatched actual file at /home/jonas/src/Santa.Tests/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt.actual
     ===> Tip: Review the content of mismatched actual files and use them to update snapshot files as appropriate.
-    X Santa_lives_at_the_NorthPole [93ms]
+    [xUnit.net 00:00:00.71]     SantaTests.Santa_lives_at_the_NorthPole [FAIL]
+    X SantaTests.Santa_lives_at_the_NorthPole [18ms]
     Error Message:
-        Expected string length 33 but was 35. Strings differ at index 29.
+    Assert.Equal() Failure
+                                            ↓ (pos 40)
     Expected: "{"Latitude":90.0,"Longitude":0.0}"
-    But was:  "{"Latitude":90.0,"Longitude":135.0}"
-    ----------------------------------------^
-
+    Actual:   "{"Latitude":90.0,"Longitude":135.0}"
+                                            ↑ (pos 40)
     Stack Trace:
-        at SantaTests.Santa_lives_at_the_NorthPole() in /home/jonas/src/Santa.Tests/SantaTests.cs:line 13
+        at SnapTest.Xunit.XunitSnapshotEqualityComparer.Equals(SnapshotValue actualValue, SnapshotValue snapshottedValue, SnapshotSettings settings)
+    at SnapTest.Snapshot.MatchTo(Object actual, SnapshotSettings settings)
+    at SnapTest.Xunit.SnapshotAssert.Matches(Object actual, String snapshotName, SnapshotSettingsBuilder`1 settingsBuilder)
+    at SantaTests.Santa_lives_at_the_NorthPole() in /home/jonas/src/Santa.Tests/SantaTests.cs:line 12
     ```
 
     If the change is acceptable, update the snapshot file with the new actual value:

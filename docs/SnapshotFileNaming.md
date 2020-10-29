@@ -5,13 +5,15 @@ The paths of snapshot files are determined according to the following properties
 - Mismatched actual file paths are derived from combining `SnapshotDirectoryPath`, `SnapshotName`, `SnapshotGroupKey` and `MismatchedActualExtension`.
 
 The default extensions used are:
-- `SnapshotExtension` = `.txt`
-- `MismatchedActualExtension` = `.txt.actual`
+Setting|Default
+---|---
+`SnapshotExtension`|`.txt`
+`MismatchedActualExtension`|`.txt.actual`
 
 Defaults for the other path-related settings are generally determined by the SnapTest package for the particular unit testing framework in use.
 
 
-## Snapshot file naming with NUnit tests
+## Snapshot file naming with NUnit and xUnit.net tests
 
 ### Default snapshot file location and naming
 
@@ -19,7 +21,7 @@ Snapshot files are placed (by default) in `<Test source file directory>/_snapsho
 
 ### Overriding default details
 
-The components used to construct the snapshot file path can be individually overridden by calling the `WithSettings` method on a `SnapshotSettingsBuilder` or `SnapshotConstraint`. For example:
+The components used to construct the snapshot file path can be individually overridden by calling the `WithSettings` method on a `SnapshotSettingsBuilder` (or `SnapshotConstraint` for NUnit tests). For example:
 
 ```C#
 var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
@@ -29,7 +31,11 @@ var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
     _.MismatchedActualExtension = ".snapshot.actual";
 });
 
+// NUnit assertion:
 Assert.That("actual output", SnapshotDoes.Match(builder));
+
+// xUnit.net assertion:
+SnapshotAssert.Matches("actual output", builder);
 ```
 
 These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a snapshot match fails and a mismatched actual file is created then it will be created at `C:\MyPath\MySnapshot.snapshot.actual`.
@@ -42,12 +48,18 @@ var builder = SnapshotSettings.GetBuilder().WithSettings(
 );
 ```
 
-> __TIP:__ It is possible that the snapshot filename selected for multiple tests may be the same. This may be desired (for example, when multiple tests are intended to share the same snapshot). However in a situation where it is not desired, consider overriding the default test name to ensure the snapshot file name for each test is unique. For example:
+> __TIP:__ It is possible that the snapshot filename selected for multiple tests may be the same. This may be desired (for example, when multiple tests are intended to share the same snapshot). However in a situation where it is not desired, consider overriding the default test name to ensure the snapshot file name for each test is unique.
+
+For example (for NUnit):
 >
 > ```C#
-> Assert.That(actualValue,
->     SnapshotDoes.Match(nameof(MyTestClass) + ".Overridden_test_name_that_is_unique")
-> );
+> Assert.That(actualValue, SnapshotDoes.Match("Snapshot_name_that_is_unique"));
+> ```
+
+Or for xUnit.net:
+>
+> ```C#
+> SnapshotAssert.Matches(actualValue, "Snapshot__name_that_is_unique");
 > ```
 
 
@@ -61,7 +73,7 @@ Any of the following special characters that would otherwise appear in a snapsho
 Unless `SnapshotDirectoryPath` is explicitly set in a `SnapshotSettings` object, the snapshot directory is automatically determined based on the directory that contains the source file for the test being executed.
 
 This directory is identified from information in the call stack at the time a `SnaphotSettings` object is built. This will generally work without a problem, but there are a few situations where this directory cannot be automatically determined. For example:
-- If the call stack leading to a `SnapshotSettings` object being built does not contain a method that has an attribute applied that identifies it as an NUnit test.
+- If the call stack leading to a `SnapshotSettings` object being built does not contain a method that has an attribute applied that identifies it as an NUnit or xUnit.net test method.
 - If the test assembly is compiled without debugging information.
 - In certain situations where async methods are used.
 

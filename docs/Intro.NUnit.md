@@ -104,7 +104,7 @@ public void WithSettings_can_be_called_on_SnapshotConstraint()
 
 ### Explicitly specifying a snapshot name
 
-The snapshot name (which is used to determine the snapshot file name) defaults to the NUnit test name, but can be explicitly overridden when calling `SnapshotDoes.Match`:
+The snapshot name (which is used to determine the name of the file the snapshot is stored in) defaults to the NUnit "{Test class name}.{Test name}", but can be explicitly overridden when calling `SnapshotDoes.Match`:
 
 ```C#
 [Test]

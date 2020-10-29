@@ -2,7 +2,7 @@
 
 ![Build and Test](https://github.com/chrisg2/snaptest-dotnet/workflows/Build%20and%20Test/badge.svg) ![Test Examples](https://github.com/chrisg2/snaptest-dotnet/workflows/Test%20Examples/badge.svg)
 
-This is snaptest-dotnet, a tool to enable effective snapshot testing with .NET Core and .NET Framework.
+This is snaptest-dotnet, a tool to enable effective snapshot testing with .NET Core and .NET Framework. Packages for working with either [NUnit](https://nunit.org) or [xUnit.net](https://xunit.net) test frameworks are available.
 
 This library has taken inspiration from:
 - [Jest snapshot testing](https://jestjs.io/docs/en/snapshot-testing)
@@ -48,6 +48,14 @@ public void Can_use_simple_Assert_constraint()
 }
 ```
 
+For an xUnit.net test the `Assert` statement looks like:
+
+```C#
+    SnapshotAssert.Matches(santasHomeLocation);
+
+    // Or fluent style: santasHomeLocation.ShouldMatchSnapshot();
+```
+
 This compares the actual results against snapshotted expected results stored in JSON format in the file `_snapshots/Tests.Can_use_simple_Assert_constraint.txt`:
 
 ```json
@@ -66,6 +74,9 @@ This compares the actual results against snapshotted expected results stored in 
 
 
 ## Getting Started
+
+The following example illustrates how to get started using snaptest-dotnet with NUnit tests. See [here](docs/WorkflowOverview.Xunit.md) for a similar example for xUnit.net tests.
+
 
 <!-- This content is duplicated in docs/WorkflowOverview.md. Try to keep the two renditions in sync! -->
 

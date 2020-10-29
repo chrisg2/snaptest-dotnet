@@ -1,15 +1,15 @@
 # Creating and updating snapshots
 
-SnapTest is able to automatically create snapshots which are missing, or refresh existing snapshots based on the actual results. The following sections describe how this is managed.
+SnapTest is able to automatically save actual values passed to match against snapshots to create snapshots which are missing, or refresh existing snapshots. The following sections describe how this is managed.
 
-> __TIP__: If a snapshot is refreshed or created when running a test, the snapshot match is deemed to pass.
+> __TIP__: When a snapshot is refreshed or created while perform a snapshot match, the match is deemed to succeed.
 
 
 ## Automatically creating missing snapshots
 
 Any snapshot that does not already exist will be created by a test run while the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable is set to any non-blank value. Each snapshot will be created with the actual value which is passed in to the snapshot match operation performed during the test run.
 
-For example, if the snapshot for the `Can_use_simple_Assert_constraint` does not already exist:
+For example, if the snapshot for the `Can_use_simple_Assert_constraint` test does not already exist:
 
 ```shell
 jonas@DTP001:~/src/snaptest-dotnet/examples$ SNAPTEST_CREATE_MISSING_SNAPSHOTS=yes dotnet test --filter Can_use_simple_Assert_constraint
@@ -29,7 +29,7 @@ jonas@dtp001:~/src/snaptest-dotnet/examples$ cat SnapTest.NUnit.Examples/_snapsh
 }
 ```
 
-An alternate way to create a missing snapshot is to (temporarily) change the test code to set the `CreateMissingSnapshots` setting value to `true`, run the test, and then revert the test code.
+An alternate way to create a missing snapshot is to (temporarily) change the test code to set the `CreateMissingSnapshots` setting to `true`, run the test, and then revert the test code.
 
 For example, given the following NUnit test:
 
@@ -51,6 +51,17 @@ public void Can_use_simple_Assert_constraint()
     var actual = ...;
     Assert.That(actual, SnapshotDoes.Match()
         .WithSettings(_ => _.CreateMissingSnapshots = true));
+}
+```
+
+An equivalent xUnit.net test may look like:
+
+```C#
+[Fact]
+public void Can_use_simple_snapshot_match()
+{
+    var actual = ...;
+    SnapshotAssert.Matches(actual, _ => _.CreateMissingSnapshots = true);
 }
 ```
 
@@ -77,7 +88,6 @@ Total tests: 7
 
 > __TIP:__ Be sure to have an appropriate backup, checked in copy, or way to recover snapshot files before forcing a refresh like this in case of any unfortunate accidents!
 
-
 An alternate way to force a snapshot to be refreshed is to (temporarily) change the test code to set the `ForceSnapshotRefresh` setting value to `true`, run the test, and then revert the test code.
 
 For example, given the following NUnit test:
@@ -100,6 +110,17 @@ public void Can_use_simple_Assert_constraint()
     var actual = ...;
     Assert.That(actual, SnapshotDoes.Match()
         .WithSettings(_ => _.ForceSnapshotRefresh = true));
+}
+```
+
+Or with xUnit.net:
+
+```C#
+[Fact]
+public void Can_use_simple_snapshot_match()
+{
+    var actual = ...;
+    SnapshotAssert.Matches(actual, _ => _.ForceSnapshotRefresh = true);
 }
 ```
 
