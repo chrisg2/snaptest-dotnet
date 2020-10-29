@@ -27,6 +27,9 @@ namespace SnapTest.Xunit.Examples
 
             // Overide default settings by providing a SnapshotSettings when calling SnapshotAssert.Matches
             SnapshotAssert.Matches(landmarks, GetSettingsBuilder());
+
+            // Or using fluent style:
+            // landmarks.ShouldMatchSnapshot(GetSettingsBuilder());
         }
 
         [Fact]
@@ -36,6 +39,9 @@ namespace SnapTest.Xunit.Examples
 
             // The snapshot name defaults to the xUnit.net test method name, but can be explicitly overridden when calling SnapshotAssert.Matches
             SnapshotAssert.Matches(firstLocalityName, "SampleSnapshotName", GetSettingsBuilder());
+
+            // Or using fluent style:
+            // firstLocalityName.ShouldMatchSnapshot("SampleSnapshotName", GetSettingsBuilder());
         }
 
         [Fact]
