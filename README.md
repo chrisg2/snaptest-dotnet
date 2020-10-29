@@ -11,7 +11,6 @@ This library has taken inspiration from:
 
 Treat this as experimental status. This means (amongst other things) that the interfaces and classes exposed from the SnapTest namespace are subject to change. If you are interested in using this library and the potential for changes is problematic for you then get in touch and we can discuss.
 
-
 ## What is snapshot testing?
 
 Snapshot testing can help to simplify recording of expected data produced by tests, especially when the expected data is somewhat complex. Consider the following NUnit test:
@@ -183,17 +182,22 @@ The following example illustrates how to get started using snaptest-dotnet with 
     ```
 
 
-# Going Deeper
+## Going Deeper
 
 - Learn more about SnapTest in the [documentation](docs/README.md).
 
 - Browse [examples of tests using SnapTest](examples).
 
 
-# Questions and feedback sought
+## Questions and feedback sought
 
-## How should configuration to force snapshots to be updated or missing snapshots created be managed?
+### How should configuration to force snapshots to be updated or missing snapshots created be managed?
 
 Currently the `SNAPTEST_REFRESH` and `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variables are set when running tests to automatically create or update snapshot files based on actual values. Alternatively, code can explicitly set the `SnapshotSettings` `ForceSnapshotRefresh` and `CreateMissingSnapshots` properties.
 
 However these options may not suit all kinds of workflows and development practices. What other kinds of approaches for controlling this might be helpful to suit different styles of development practices & workflows?
+
+
+## License
+
+This project is licensed under the terms of the MIT License. See [License](LICENSE.md) for details.
