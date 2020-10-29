@@ -21,7 +21,7 @@ Setting|Description|Default
 
 Defaults for some settings marked with (*) may be overridden in snapshot settings classes defined by SnapTest modules for different test frameworks.
 
-Settings related to individual fields identified by JSON Paths can be configured by calling methods on the object returned from `SnapshotSettings.Field("<JSON Path...>"):
+Settings related to individual fields identified by JSON Paths can be configured by calling methods on the object returned from `SnapshotSettings.Field("{JSON Path...}")`:
 
 Method|Description
 ---|---
