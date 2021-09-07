@@ -135,10 +135,10 @@ If a snapshot match succeeds, any existing mismatched actual file for the snapsh
 1. The last run of the associated test failed, or
 1. The snapshot name used by a test has changed during development.
 
-Mismatched actual files have (by default) an extension of `.txt.actual`. It is good practice to configure the source control system to ignore these files. For example, add a line like the following to the top level `.gitignore` file:
+Mismatched actual files have (by default) an extension of `.Actual.txt`. It is good practice to configure the source control system to ignore these files. For example, add a line like the following to the top level `.gitignore` file:
 
 ```
-**/_snapshots/*.txt.actual
+**/_snapshots/*.Actual.txt
 ```
 
 
@@ -163,14 +163,14 @@ The snapshot file `MySnapshot.txt` will contain a JSON representation of the exp
 
 If the matches performed against both snapshots fail, the following mismatched actual files will be created showing the actual values provided to the match operations:
 
-1. `MySnapshot.A.txt.actual`:
+1. `MySnapshot.A.Actual.txt`:
     ```json
     {
         "A": { "expectedA": "different value" }
     }
     ```
 
-1. `MySnapshot.B.txt.actual`:
+1. `MySnapshot.B.Actual.txt`:
     ```json
     {
         "B": { "expectedB": "different other value" }
@@ -179,7 +179,7 @@ If the matches performed against both snapshots fail, the following mismatched a
 
 If the contents of the mismatched actual files are correct, examples of possible approaches to update the snapshot file include:
 
-1. Edit the `MySnapshot.txt` file and make updates to reflect the correct details based on the details in the `.txt.actual` files; OR
+1. Edit the `MySnapshot.txt` file and make updates to reflect the correct details based on the details in the `.Actual.txt` files; OR
 
 1. Edit the `MySnapshot.txt` file and _delete_ the keys to be updated, then re-run the tests with the `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variable set.
 

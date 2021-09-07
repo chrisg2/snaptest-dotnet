@@ -61,7 +61,6 @@ private SnapshotSettingsBuilder<SnapshotSettings> GetSettingsBuilder()
     return SnapshotSettings.GetBuilder().WithSettings(_ => {
         _.SnapshotName = "SettingsOverrides";
         _.DefaultSnapshotGroupKeyFromTestName = true;
-        _.MismatchedActualExtension = ".actual.json";
         _.SnapshotExtension = ".json";
         _.SnapshotSubdirectory = ".snapshots";
     });

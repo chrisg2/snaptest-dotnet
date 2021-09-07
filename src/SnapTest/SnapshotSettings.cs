@@ -150,7 +150,7 @@ namespace SnapTest
         /// </summary>
         /// <remarks>
         /// Any occurrence of the "*" character in this property is replaced with <see cref="SnapshotExtension"/>.
-        /// Default value is "*.actual".
+        /// Default value is ".Actual*".
         /// </remarks>
         /// <seealso cref="SnapshotDirectoryPath"/>
         /// <seealso cref="MismatchedActualFilePath"/>
@@ -160,7 +160,7 @@ namespace SnapTest
             set { _mismatchedActualExtension = value; }
         }
 
-        private string _mismatchedActualExtension = "*.actual";
+        private string _mismatchedActualExtension = ".Actual*";
 
         private static readonly Regex badFilenameCharacters = new Regex(@"[/|:*?\\\""<>]");
 

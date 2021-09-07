@@ -4,11 +4,11 @@ namespace SnapTest.Tests
 {
     public class SnapshotSettingsTest
     {
-        [Test(ExpectedResult = ".txt.actual")]
+        [Test(ExpectedResult = ".Actual.txt")]
         public string MismatchedActualExtension_has_expected_default()
             => new SnapshotSettings().MismatchedActualExtension;
 
-        [Test(ExpectedResult = "alternate.actual")]
+        [Test(ExpectedResult = ".Actualalternate")]
         public string MismatchedActualExtension_follows_SnapshotExtension()
         {
             var s = new SnapshotSettings();
@@ -16,11 +16,11 @@ namespace SnapTest.Tests
             return s.MismatchedActualExtension;
         }
 
-        [Test(ExpectedResult = ".actualalternate")]
+        [Test(ExpectedResult = "alternate.actual")]
         public string MismatchedActualExtension_can_be_updated_with_star()
         {
             var s = new SnapshotSettings();
-            s.MismatchedActualExtension = ".actual*";
+            s.MismatchedActualExtension = "*.actual";
             s.SnapshotExtension = "alternate";
             return s.MismatchedActualExtension;
         }
