@@ -138,7 +138,7 @@ namespace SnapTest
         public string SnapshotDirectoryPath { get; set; }
 
         /// <summary>
-        /// The extension to append as a suffix to snapshot filenames, including a ".". Default value is ".txt".
+        /// The extension to append as a suffix to snapshot filenames, including a leading ".". Default value is ".txt".
         /// </summary>
         /// <seealso cref="SnapshotDirectoryPath"/>
         /// <seealso cref="SnapshotFilePath"/>
@@ -146,12 +146,21 @@ namespace SnapTest
         public string SnapshotExtension { get; set; } = ".txt";
 
         /// <summary>
-        /// The extension to append as a suffix to mismatched actual filenames, including a ".". Default value is ".txt.actual".
+        /// The extension to append as a suffix to mismatched actual filenames, including a leading ".".
         /// </summary>
+        /// <remarks>
+        /// Any occurrence of the "*" character in this property is replaced with <see cref="SnapshotExtension"/>.
+        /// Default value is "*.actual".
+        /// </remarks>
         /// <seealso cref="SnapshotDirectoryPath"/>
         /// <seealso cref="MismatchedActualFilePath"/>
         /// <seealso cref="SnapshotExtension"/>
-        public string MismatchedActualExtension { get; set; } = ".txt.actual";
+        public string MismatchedActualExtension {
+            get { return _mismatchedActualExtension.Replace("*", SnapshotExtension); }
+            set { _mismatchedActualExtension = value; }
+        }
+
+        private string _mismatchedActualExtension = "*.actual";
 
         private static readonly Regex badFilenameCharacters = new Regex(@"[/|:*?\\\""<>]");
 
