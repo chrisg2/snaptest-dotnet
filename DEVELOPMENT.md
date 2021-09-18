@@ -31,7 +31,6 @@ dotnet test examples/*sln
 ```shell
 dotnet pack src/*sln
 dotnet nuget push src/SnapTest/bin/Debug/*nupkg --api-key "$KEY" --source https://api.nuget.org/v3/index.json
-dotnet nuget push src/SnapTest/bin/Debug/*nupkg --api-key "$KEY" --source https://api.nuget.org/v3/index.json
 ```
 
 NuGet Gallery API keys can be managed at https://www.nuget.org/account/apikeys
@@ -43,7 +42,6 @@ NuGet Gallery API keys can be managed at https://www.nuget.org/account/apikeys
 dotnet nuget add source https://nuget.pkg.github.com/chrisg2/index.json -n github -u chrisg2 -p "$PAT" --store-password-in-clear-text
 
 dotnet pack src/*sln
-dotnet nuget push src/SnapTest/bin/Release/*nupkg --source github
 dotnet nuget push src/SnapTest/bin/Release/*nupkg --source github
 ```
 
