@@ -8,7 +8,7 @@ The default extensions used are:
 Setting|Default
 ---|---
 `SnapshotExtension`|`.txt`
-`MismatchedActualExtension`|`.Actual.txt`
+`MismatchedActualExtension`|`=.txt`
 
 Defaults for the other path-related settings are generally determined by the SnapTest package for the particular unit testing framework in use.
 
@@ -37,7 +37,7 @@ Assert.That("actual output", SnapshotDoes.Match(builder));
 SnapshotAssert.Matches("actual output", builder);
 ```
 
-These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a snapshot match fails and a mismatched actual file is created then it will be created at `C:\MyPath\MySnapshot.Actual.snapshot`.
+These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a snapshot match fails and a mismatched actual file is created then it will be created at `C:\MyPath\MySnapshot=.snapshot`.
 
 To determine the snapshot directory based on the test source file directory but with another subdirectory name instead of `_snapshots`, set the `SnapshotSubdirectory` setting (and do _not_ explicitly set `SnapshotDirectoryPath`):
 

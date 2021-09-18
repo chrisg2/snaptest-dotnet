@@ -68,10 +68,10 @@ Here is an overview of a typical workflow for developing and running snapshot-ba
 
     Commit the test source file and associated snapshot file to your version control repository.
 
-    It is also good practice to configure your version control tool to ignore `*.Actual.txt` files in the `_snapshots` subdirectory (these files will be created when a snapshot match fails).
+    It is also good practice to configure your version control tool to ignore `*=.txt` files in the `_snapshots` subdirectory (these files will be created when a snapshot match fails).
 
     ```shell
-    echo '*.Actual.txt' >>_snapshots/.gitignore
+    echo '*=.txt' >>_snapshots/.gitignore
     git commit SantaTests.cs _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt _snapshots/.gitignore
     ```
 
@@ -79,7 +79,7 @@ Here is an overview of a typical workflow for developing and running snapshot-ba
 
     ... the NUnit test output will indicate the change:
     ```
-    Created mismatched actual file at /home/jonas/src/Santa.Tests/_snapshots/SantaTests.Santa_lives_at_the_NorthPole.Actual.txt
+    Created mismatched actual file at /home/jonas/src/Santa.Tests/_snapshots/SantaTests.Santa_lives_at_the_NorthPole=.txt
     ===> Tip: Review the content of mismatched actual files and use them to update snapshot files as appropriate.
     X Santa_lives_at_the_NorthPole [93ms]
     Error Message:
@@ -103,7 +103,7 @@ Here is an overview of a typical workflow for developing and running snapshot-ba
     dotnet test --filter Santa_lives_at_the_NorthPole
     ```
 
-    Or simply copy the `.Actual.txt` snapshot file over the `.txt` file:
+    Or simply copy the `=.txt` snapshot file over the `.txt` file:
     ```shell
-    cp _snapshots/SantaTests.Santa_lives_at_the_NorthPole.Actual.txt _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt
+    cp _snapshots/SantaTests.Santa_lives_at_the_NorthPole=.txt _snapshots/SantaTests.Santa_lives_at_the_NorthPole.txt
     ```

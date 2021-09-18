@@ -4,11 +4,11 @@ namespace SnapTest.Tests
 {
     public class SnapshotSettingsTest
     {
-        [Test(ExpectedResult = ".Actual.txt")]
+        [Test(ExpectedResult = "=.txt")]
         public string MismatchedActualExtension_has_expected_default()
             => new SnapshotSettings().MismatchedActualExtension;
 
-        [Test(ExpectedResult = ".Actualalternate")]
+        [Test(ExpectedResult = "=alternate")]
         public string MismatchedActualExtension_follows_SnapshotExtension()
         {
             var s = new SnapshotSettings();
