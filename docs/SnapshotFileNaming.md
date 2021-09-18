@@ -25,7 +25,7 @@ The components used to construct the snapshot file path can be individually over
 
 ```C#
 var builder = SnapshotSettings.GetBuilder().WithSettings(_ => {
-    _.SnapshotDirectoryPath = @"C:\MyPath";
+    _.SnapshotDirectoryPath = @"~/snapshots";
     _.SnapshotName = "MySnapshot";
     _.SnapshotExtension = ".snapshot";
 });
@@ -37,7 +37,7 @@ Assert.That("actual output", SnapshotDoes.Match(builder));
 SnapshotAssert.Matches("actual output", builder);
 ```
 
-These settings will use the snapshot file `C:\MyPath\MySnapshot.snapshot`. If a snapshot match fails and a mismatched actual file is created then it will be created at `C:\MyPath\MySnapshot=.snapshot`.
+These settings will use the snapshot file `~/snapshots/MySnapshot.snapshot`. If a snapshot match fails and a mismatched actual file is created then it will be created at `~/snapshots/MySnapshot=.snapshot`.
 
 To determine the snapshot directory based on the test source file directory but with another subdirectory name instead of `_snapshots`, set the `SnapshotSubdirectory` setting (and do _not_ explicitly set `SnapshotDirectoryPath`):
 
