@@ -4,11 +4,6 @@
 
 This is snaptest-dotnet, a tool to enable effective snapshot testing with .NET Core and .NET Framework. Packages for working with either [NUnit](https://nunit.org) or [xUnit.net](https://xunit.net) test frameworks are available.
 
-This library has taken inspiration from:
-- [Jest snapshot testing](https://jestjs.io/docs/en/snapshot-testing)
-- [Snapshooter](https://github.com/SwissLife-OSS/snapshooter)
-- [Snapper](https://theramis.github.io/Snapper/)
-
 Treat this as experimental status. This means (amongst other things) that the interfaces and classes exposed from the SnapTest namespace are subject to change. If you are interested in using this library and the potential for changes is problematic for you then get in touch and we can discuss.
 
 ## What is snapshot testing?
@@ -196,6 +191,14 @@ The following example illustrates how to get started using snaptest-dotnet with 
 Currently the `SNAPTEST_REFRESH` and `SNAPTEST_CREATE_MISSING_SNAPSHOTS` environment variables are set when running tests to automatically create or update snapshot files based on actual values. Alternatively, code can explicitly set the `SnapshotSettings` `ForceSnapshotRefresh` and `CreateMissingSnapshots` properties.
 
 However these options may not suit all kinds of workflows and development practices. What other kinds of approaches for controlling this might be helpful to suit different styles of development practices & workflows?
+
+
+## Other similar tools
+
+This library has taken inspiration from:
+- [Jest snapshot testing](https://jestjs.io/docs/en/snapshot-testing)
+- [Snapshooter](https://github.com/SwissLife-OSS/snapshooter)
+- [Snapper](https://theramis.github.io/Snapper/)
 
 
 ## License
