@@ -1,9 +1,5 @@
 # Filtering values
 
-> _TODO: Documentation to be written_
-
-## Filter certain elements of the actual result to be included or excluded using JSON Paths
-
 Call `SnapshotSettings.Field(...).Include()` and `SnapshotSettings.Field(...).Exclude()` to specify JSON Paths identifying elements of the actual result to be included or excluded from the snapshot.
 
 For example, in an NUnit test:
