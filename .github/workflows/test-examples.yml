@@ -20,7 +20,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.100
+        dotnet-version: 6.0.300
     - name: Install dependencies
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/chrisg2/index.json -n github -u chrisg2 -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
