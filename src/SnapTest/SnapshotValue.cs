@@ -14,7 +14,7 @@ namespace SnapTest
     /// <para>Much of the interface exposed by this class is marked as "internal" as the details of SnapshotValue objects are
     /// generally intended to be opaque for code outside the SnapTest assembly.</para>
     ///
-    /// <para>The implementations of this clsas is based on <see cref="Newtonsoft.Json"/> capabilities and represents
+    /// <para>The implementation of this class is based on <see cref="Newtonsoft.Json"/> capabilities and represents
     /// underlying values as <see cref="JToken"/> values, but the purpose of this class is to hide that detail from all users of the class.</para>
     /// </remarks>
     public class SnapshotValue
